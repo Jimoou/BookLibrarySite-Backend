@@ -10,14 +10,22 @@ export const SearchBooksPage = () => {
   const [httpError, setHttpError] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [booksPerPage] = useState(5);
-  const [totalAmountOfBooks, setTotalAmountofBooks] =useState(0);
+  const [totalAmountOfBooks, setTotalAmountOfBooks] =useState(0);
   const [totalPages, setTotalPages] = useState(0);
+  const [search, setSearch] = useState('');
+  const [searchUrl, setSearchUrl] = useState('');
 
   useEffect(() => {
     const fetchBooks = async () => {
       const baseUrl: string = "http://localhost:8080/api/books";
 
-      const url: string = `${baseUrl}?page=${currentPage-1}&size=${booksPerPage}`;
+      let url: string = '';
+
+      if (searchUrl === '') {
+        url = `${baseUrl}?page=${currentPage-1}&size=${booksPerPage}`;
+      } else {
+        url = baseUrl + searchUrl;
+      }
 
       const response = await fetch(url);
 
@@ -29,8 +37,8 @@ export const SearchBooksPage = () => {
 
       const responseData = responseJson._embedded.books;
 
-    setTotalAmountofBooks(responseJson.page.totalElements);
-    setTotalPages(responseJson.page.totalPages);
+      setTotalAmountOfBooks(responseJson.page.totalElements);
+      setTotalPages(responseJson.page.totalPages);
 
 
       const loadedBooks: BookModel[] = [];
@@ -55,7 +63,7 @@ export const SearchBooksPage = () => {
       setHttpError(error.message);
     });
     window.scrollTo(0,0);
-  }, [currentPage]);
+  }, [currentPage, searchUrl]);
 
   if (isLoading) {
     return <SpinnerLoading />;
@@ -67,6 +75,14 @@ export const SearchBooksPage = () => {
         <p>{httpError}</p>
       </div>
     );
+  }
+
+  const searchHandleChange = () => {
+    if (search ==='') {
+      setSearchUrl('');
+    } else {
+      setSearchUrl(`/search/findByTitleContaining?title=${search}&page=0&size=${booksPerPage}`)
+    }
   }
 
   const indexOfLastBook: number = currentPage * booksPerPage;
@@ -84,8 +100,9 @@ export const SearchBooksPage = () => {
                 <div className="col-6">
                     <div className='d-flex'>
                         <input className='form-control me-2' type='search'
-                        placeholder='Search' aria-labelledby='Search' />
-                        <button className='btn btn-outline-sueccess'>
+                        placeholder='Search' aria-labelledby='Search'
+                        onChange={e => setSearch(e.target.value)} />
+                        <button className='btn btn-outline-sueccess' onClick={() => searchHandleChange()}>
                             Search
                         </button>
                     </div>
