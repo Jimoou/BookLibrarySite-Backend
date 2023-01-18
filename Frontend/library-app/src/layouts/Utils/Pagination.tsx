@@ -36,7 +36,7 @@ export const Pagination: React.FC<{currentPage:number,
                 <ul className="pagination">
                     <li className="page-item" onClick={() => props.paginate(1)}>
                         <button className='page-link'>
-                            First PAge
+                            First Page
                         </button>
                     </li>
                     {pageNumbers.map(number => (
