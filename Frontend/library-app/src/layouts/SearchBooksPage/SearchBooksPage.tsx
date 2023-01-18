@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import BookModel from "../../models/BookModel";
+import { Pagination } from "../Utils/Pagination";
 import { SpinnerLoading } from "../Utils/SpinnerLoading";
 import { SearchBook } from "./components/SearchBook";
 
@@ -69,7 +70,9 @@ export const SearchBooksPage = () => {
 
   const indexOfLastBook: number = currentPage * booksPerPage;
   const indexOfFirstBook:number = indexOfLastBook - booksPerPage;
-  let lastItem = booksPerPage * currentPage;
+  let lastItem = booksPerPage * currentPage <= totlaAmountOfBooks ? booksPerPage * currentPage: totlaAmountOfBooks;
+
+  const paginate = (pageNumber:number) => setCurrentPage(pageNumber);
 
   return (
     <div>
@@ -129,6 +132,9 @@ export const SearchBooksPage = () => {
                 {books.map(book => (
                     <SearchBook book={book} key={book.id} />
                 ))}
+                {totalPages >1 &&
+                  <Pagination currentPage={currentPage} totalPages={totalPages} paginate={paginate} />
+                }
             </div>
         </div>
       </div>
