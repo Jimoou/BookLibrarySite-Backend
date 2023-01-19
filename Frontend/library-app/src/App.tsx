@@ -7,15 +7,17 @@ import { Navigate, Route, Routes } from "react-router-dom";
 
 function App() {
   return (
-    <>
+    <div className="d-flex flex-column min-vh-100">
       <Navbar />
+      <div className='flex-grow-1'>
       <Routes>
         <Route path="/home" element={<HomPage />} />
         <Route path="/" element={<Navigate replace to="/home"/>} />
         <Route path="/search" element={<SearchBooksPage />} />
       </Routes>
+      </div>
       <Footer />
-    </>
+    </div>
   );
 }
 
