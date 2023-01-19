@@ -2,9 +2,9 @@ import { NavLink } from "react-router-dom";
 
 export const Navbar = () => {
   return (
-    <nav className='navbar navbar-expand-lg navbar-dark main-color py-3'>
+    <nav className='navbar navbar-expand-lg bg-light main-color py-3'>
       <div className='container-fluid'>
-        <span className='navbar-brand'>Luv 2 Read</span>
+        <span className='navbar-brand'>Jiwoon to Read</span>
         <button
           className='navbar-toggler'
           type="button"
@@ -41,7 +41,7 @@ export const Navbar = () => {
           </ul>
           <ul className="navbar-nav ms-auto">
             <li className="nav-item m-1">
-              <a type="button" className="btn btn-outline-light" href="#!">
+              <a type="button" className="btn btn-outline-secondary" href="#!">
                 Sign in
               </a>
             </li>
