@@ -2,7 +2,7 @@ import { NavLink } from "react-router-dom";
 
 export const Navbar = () => {
   return (
-    <nav className='navbar navbar-expand-lg bg-light main-color py-3'>
+    <nav className='navbar navbar-expand-lg bg-primary py-3'>
       <div className='container-fluid'>
         <span className='navbar-brand'>Jiwoon to Read</span>
         <button
