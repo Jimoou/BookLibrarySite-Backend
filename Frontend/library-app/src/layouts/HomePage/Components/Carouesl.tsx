@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 
 export const Carousel = () => {
     const [books, setBooks] = useState<BookModel[]>([]);
-    const [isLoding, setIsLoading] = useState(true);
+    const [isLoading, setIsLoading] = useState(true);
     const [httpError, setHttpError] = useState(null);
   
     useEffect(() => {
@@ -48,7 +48,7 @@ export const Carousel = () => {
       });
     }, []);
   
-    if (isLoding) {
+    if (isLoading) {
       return (
         <SpinnerLoading />
       );
