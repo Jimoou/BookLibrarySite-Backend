@@ -111,7 +111,7 @@ export const Carousel = () => {
                     <ReturnBook book={books[7]} key={books[7].id}/>
                 </div>
             </div>
-            <div className='homepage-carousel-title mt-3'>
+            <div className='homepage-carousel-title d-grid gap-2 col-2 mx-auto'>
                 <Link className='btn btn-outline-secondary btn-lg' to='/search'>View More</Link>
             </div>
         </div>

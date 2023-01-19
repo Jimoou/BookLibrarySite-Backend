@@ -12,11 +12,11 @@ export const LibraryServices = () => {
                         send our library admin's a personal message!
                     </p>
                     <div className='d-grid gap-2 justify-content-md-start mb-4 mb-lg-3'>
-                        <a href='/messages' type='button' className='btn main-color btn-lg px-4 me-md-2 fw-bold text-white'>
+                        <a href='/messages' type='button' className='btn btn-outline-secondary btn-lg px-4 me-md-2text-gray'>
                             Library Services
                         </a>   
                         :
-                        <a className='btn main-color btn-lg text-white' href='/login'>
+                        <a type='button' className='btn btn-outline-secondary btn-lg px-4 me-md-2text-gray' href='/login'>
                             Sign up
                         </a> 
                     </div>
