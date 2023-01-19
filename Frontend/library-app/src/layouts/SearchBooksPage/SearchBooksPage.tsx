@@ -126,7 +126,7 @@ export const SearchBooksPage = () => {
                   onChange={(e) => setSearch(e.target.value)}
                 />
                 <button
-                  className="btn btn-outline-sueccess"
+                  className="btn btn-outline-success"
                   onClick={() => searchHandleChange()}
                 >
                   Search
