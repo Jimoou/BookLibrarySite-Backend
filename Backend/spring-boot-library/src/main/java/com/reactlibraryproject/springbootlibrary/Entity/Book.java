@@ -2,14 +2,11 @@ package com.reactlibraryproject.springbootlibrary.Entity;
 
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Data;
 
-@Getter
-@Setter
-@ToString
-@RequiredArgsConstructor
 @Entity
 @Table(name = "book")
+@Data
 public class Book {
 
     @Id
