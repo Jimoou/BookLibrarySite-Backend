@@ -42,7 +42,7 @@ Temporary Items
 logs
 **/*.backup.*
 **/*.back.*
-
+oktaConfig.ts
 node_modules
 bower_components
 
