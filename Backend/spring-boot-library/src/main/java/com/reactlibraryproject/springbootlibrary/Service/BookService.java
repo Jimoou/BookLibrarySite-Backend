@@ -14,9 +14,9 @@ import java.util.Optional;
 @Transactional
 public class BookService {
 
-    private BookRepository bookRepository;
+    private final BookRepository bookRepository;
 
-    private CheckoutRepository checkoutRepository;
+    private final CheckoutRepository checkoutRepository;
 
     public BookService(BookRepository bookRepository, CheckoutRepository checkoutRepository) {
         this.bookRepository = bookRepository;
@@ -28,8 +28,8 @@ public class BookService {
 
         Checkout validateCheckout = checkoutRepository.findByUserEmailAndBookId(userEmail, bookId);
 
-        if (!book.isPresent() || validateCheckout != null || book.get().getCopiesAvailable() <= 0) {
-            throw new Exception("Book doesn't exist or already checed out by user");
+        if (book.isEmpty() || validateCheckout != null || book.get().getCopiesAvailable() <= 0) {
+            throw new Exception("Book doesn't exist or already checked out by user");
         }
         book.get().setCopiesAvailable(book.get().getCopiesAvailable() - 1);
         bookRepository.save(book.get());
@@ -44,5 +44,14 @@ public class BookService {
         checkoutRepository.save(checkout);
 
         return book.get();
+    }
+
+    public boolean checkoutBookByUser(String userEmail, Long bookId) {
+        Checkout validateCheckout = checkoutRepository.findByUserEmailAndBookId(userEmail, bookId);
+        return validateCheckout != null;
+    }
+
+    public int currentLoansCount(String userEmail) {
+        return checkoutRepository.findBooksByUserEmail(userEmail).size();
     }
 }
