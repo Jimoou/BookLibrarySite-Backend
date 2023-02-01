@@ -28,9 +28,10 @@ export const BookCheckoutPage = () => {
   const [isCheckedOut, setIsCheckedOut] = useState(false);
   const [isLoadingBookCheckedOut, setIsLoadingBookCheckedOut] = useState(true);
 
-  const bookId = window.location.pathname.split("/")[2];
+  
 
   useEffect(() => {
+    const bookId = window.location.pathname.split("/")[2];
     const fetchBook = async () => {
       const baseUrl: string = `http://localhost:8080/api/books/${bookId}`;
 
@@ -63,7 +64,9 @@ export const BookCheckoutPage = () => {
   }, []);
 
   useEffect(() => {
+    const bookId = window.location.pathname.split("/")[2];
     const fetchBookReviews = async () => {
+
       const reviewUrl: string = `http://localhost:8080/api/reviews/search/findByBookId?bookId=${bookId}`;
 
       const responseReviews = await fetch(reviewUrl);
@@ -136,6 +139,7 @@ export const BookCheckoutPage = () => {
   }, [authState]);
 
   useEffect(() => {
+    const bookId = window.location.pathname.split("/")[2];
     const fetchUserCheckedOutBook = async () => {
       if (authState && authState.isAuthenticated) {
         const url = `http://localhost:8080/api/books/secure/ischeckedout/byuser/?bookId=${bookId}`;
