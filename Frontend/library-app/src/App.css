@@ -1,9 +1,10 @@
-:root{
+:root {
   --mainOpacity: rgba(0, 0, 0, 0.55);
 }
 
 .header {
-  background-image: linear-gradient( rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7) ), url("./Images/PublicImages/image-2.jpg");
+  background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)),
+    url("./Images/PublicImages/image-2.jpg");
   opacity: var(--mainOpacity);
   height: 25em !important;
 }
@@ -18,7 +19,7 @@
 }
 
 .main-color {
-  background-color: #0e76a8 ;
+  background-color: #0e76a8;
 }
 
 .col-image-left {
@@ -34,7 +35,7 @@
 .lost-image {
   background-image: url("./Images/PublicImages/image-3.jpg");
   height: 25em !important;
-  width: "720"
+  width: "720";
 }
 
 .homepage-carousel-title {
