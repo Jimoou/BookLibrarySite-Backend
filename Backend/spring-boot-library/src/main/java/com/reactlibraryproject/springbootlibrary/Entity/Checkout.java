@@ -1,6 +1,6 @@
 package com.reactlibraryproject.springbootlibrary.Entity;
 
-import jakarta.persistence.*;
+import javax.persistence.*;
 import lombok.Data;
 
 @Entity
