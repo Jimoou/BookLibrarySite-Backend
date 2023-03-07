@@ -3,21 +3,18 @@ package com.reactlibraryproject.springbootlibrary.Controller;
 import com.reactlibraryproject.springbootlibrary.Entity.Book;
 import com.reactlibraryproject.springbootlibrary.Service.BookService;
 import com.reactlibraryproject.springbootlibrary.Utils.ExtractJWT;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 @CrossOrigin("http://localhost:3000")
 @RestController
+@AllArgsConstructor
 @RequestMapping("/api/books")
 public class BookController {
 
 
     private BookService bookService;
-
-    @Autowired
-    public BookController(BookService bookService) {
-        this.bookService = bookService;
-    }
 
     @GetMapping("/secure/currentloans/count")
     public int currentLoansCount(@RequestHeader(value="Authorization") String token) {
