@@ -16,7 +16,6 @@ import java.time.LocalDate;
 @Transactional
 @AllArgsConstructor
 public class ReviewService {
-    private BookRepository bookRepository;
     private ReviewRepository reviewRepository;
 
     public void postReview(String userEmail, ReviewRequest reviewRequest) throws Exception {
@@ -36,5 +35,9 @@ public class ReviewService {
         }
         review.setDate(Date.valueOf(LocalDate.now()));
         reviewRepository.save(review);
+    }
+    public Boolean userReviewListed(String userEmail, Long bookId) {
+        Review validateReview = reviewRepository.findByUserEmailAndBookId(userEmail, bookId);
+        return validateReview != null;
     }
 }
