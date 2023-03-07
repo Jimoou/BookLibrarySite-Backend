@@ -4,6 +4,7 @@ import com.reactlibraryproject.springbootlibrary.DAO.BookRepository;
 import com.reactlibraryproject.springbootlibrary.DAO.CheckoutRepository;
 import com.reactlibraryproject.springbootlibrary.Entity.Book;
 import com.reactlibraryproject.springbootlibrary.Entity.Checkout;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -11,17 +12,13 @@ import java.time.LocalDate;
 import java.util.Optional;
 
 @Service
+@AllArgsConstructor
 @Transactional
 public class BookService {
 
     private final BookRepository bookRepository;
 
     private final CheckoutRepository checkoutRepository;
-
-    public BookService(BookRepository bookRepository, CheckoutRepository checkoutRepository) {
-        this.bookRepository = bookRepository;
-        this.checkoutRepository = checkoutRepository;
-    }
 
     public Book checkoutBook (String userEmail, Long bookId) throws Exception {
         Optional<Book> book = bookRepository.findById(bookId);
