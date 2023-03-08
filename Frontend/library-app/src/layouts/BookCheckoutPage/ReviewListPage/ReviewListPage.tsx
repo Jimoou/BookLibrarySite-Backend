@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 import ReviewModel from "../../../models/ReviewModel";
+import { Pagination } from "../../Utils/Pagination";
+import { Review } from "../../Utils/Review";
 import { SpinnerLoading } from "../../Utils/SpinnerLoading";
 
 export const ReviewListPage = () => {
-
   const [reviews, setReviews] = useState<ReviewModel[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [httpError, setHttpError] = useState(null);
@@ -17,7 +18,9 @@ export const ReviewListPage = () => {
   useEffect(() => {
     const bookId = window.location.pathname.split("/")[2];
     const fetchBookReviews = async () => {
-      const reviewUrl: string = `http://localhost:8080/api/reviews/search/findByBookId?bookId=${bookId}&page=${currentPage - 1}&size=${reviewsPerPage}`;
+      const reviewUrl: string = `http://localhost:8080/api/reviews/search/findByBookId?bookId=${bookId}&page=${
+        currentPage - 1
+      }&size=${reviewsPerPage}`;
 
       const responseReviews = await fetch(reviewUrl);
 
@@ -33,8 +36,6 @@ export const ReviewListPage = () => {
       setTotalPages(responseJsonReviews.page.totalPages);
 
       const loadedReviews: ReviewModel[] = [];
-
-      let weightedStarReviews: number = 0;
 
       for (const key in responseData) {
         loadedReviews.push({
@@ -56,22 +57,47 @@ export const ReviewListPage = () => {
   }, [currentPage]);
 
   if (isLoading) {
-    return (
-      <SpinnerLoading />
-    )
+    return <SpinnerLoading />;
   }
   if (httpError) {
     return (
       <div className="container m-5">
         <p>{httpError}</p>
       </div>
-    )
+    );
   }
 
   const indexOfLastReview: number = currentPage * reviewsPerPage;
   const indexOfFirstReview: number = indexOfLastReview - reviewsPerPage;
 
-  let lastItem = reviewsPerPage * currentPage <= totalAmountOfReviews ? reviewsPerPage * currentPage: totalAmountOfReviews;
+  let lastItem =
+    reviewsPerPage * currentPage <= totalAmountOfReviews
+      ? reviewsPerPage * currentPage
+      : totalAmountOfReviews;
 
-  return();
-}
+  const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
+
+  return (
+    <div className="container mt-5">
+      <div>
+        <h3>Comments: ({reviews.length})</h3>
+      </div>
+      <p>
+        {indexOfFirstReview + 1} to {lastItem} of {totalAmountOfReviews} items:
+      </p>
+      <div className="row">
+        {reviews.map((review) => (
+          <Review review={review} key={review.id} />
+        ))}
+      </div>
+
+      {totalPages > 1 && (
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          paginate={paginate}
+        />
+      )}
+    </div>
+  );
+};

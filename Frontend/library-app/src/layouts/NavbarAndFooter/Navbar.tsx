@@ -39,9 +39,9 @@ export const Navbar = () => {
               </NavLink>
             </li>
             <li className="nav-item">
-              <a className="nav-link" href="#!">
+              <NavLink className="nav-link" to="/shelf">
                 Shelf
-              </a>
+              </NavLink>
             </li>
             <li className="nav-item">
               <a className="nav-link" href="#!">
