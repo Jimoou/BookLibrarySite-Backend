@@ -5,7 +5,6 @@ import com.reactlibraryproject.springbootlibrary.ReponseModels.ShelfCurrentLoans
 import com.reactlibraryproject.springbootlibrary.Service.BookService;
 import com.reactlibraryproject.springbootlibrary.Utils.ExtractJWT;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;

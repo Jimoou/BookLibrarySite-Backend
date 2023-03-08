@@ -1,28 +1,29 @@
 package com.reactlibraryproject.springbootlibrary.Entity;
 
 import javax.persistence.*;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "checkout")
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Checkout {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
+
     private String userEmail;
+
     private String checkoutDate;
-    private String returnDate;
+
+    private String returnedDate;
+
     private Long bookId;
-
-    public Checkout() {}
-
-    public Checkout(String userEmail, String checkoutDate, String returnDate, Long bookId) {
-        this.userEmail = userEmail;
-        this.checkoutDate = checkoutDate;
-        this.returnDate = returnDate;
-        this.bookId = bookId;
-    }
 }
