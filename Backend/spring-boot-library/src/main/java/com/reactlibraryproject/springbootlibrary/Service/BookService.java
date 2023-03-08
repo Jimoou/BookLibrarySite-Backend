@@ -2,8 +2,10 @@ package com.reactlibraryproject.springbootlibrary.Service;
 
 import com.reactlibraryproject.springbootlibrary.DAO.BookRepository;
 import com.reactlibraryproject.springbootlibrary.DAO.CheckoutRepository;
+import com.reactlibraryproject.springbootlibrary.DAO.HistoryRepository;
 import com.reactlibraryproject.springbootlibrary.Entity.Book;
 import com.reactlibraryproject.springbootlibrary.Entity.Checkout;
+import com.reactlibraryproject.springbootlibrary.Entity.History;
 import com.reactlibraryproject.springbootlibrary.ReponseModels.ShelfCurrentLoansResponse;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -22,6 +24,8 @@ public class BookService {
     private final BookRepository bookRepository;
 
     private final CheckoutRepository checkoutRepository;
+
+    private final HistoryRepository historyRepository;
 
     public Book checkoutBook(String userEmail, Long bookId) throws Exception {
         Optional<Book> book = bookRepository.findById(bookId);
@@ -96,6 +100,17 @@ public class BookService {
 
         bookRepository.save(book.get());
         checkoutRepository.deleteById(validateCheckout.getId());
+
+        History history = History.builder()
+         .userEmail(validateCheckout.getUserEmail())
+         .returnedDate(LocalDate.now().toString())
+         .title(book.get().getTitle())
+         .author(book.get().getAuthor())
+         .description(book.get().getDescription())
+         .img(book.get().getImg())
+         .build();
+
+        historyRepository.save(history);
     }
 
     public void renewLoan (String userEmail, Long bookId) throws Exception {
