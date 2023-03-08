@@ -97,4 +97,21 @@ public class BookService {
         bookRepository.save(book.get());
         checkoutRepository.deleteById(validateCheckout.getId());
     }
+
+    public void renewLoan (String userEmail, Long bookId) throws Exception {
+        Checkout validateCheckout = checkoutRepository.findByUserEmailAndBookId(userEmail, bookId);
+
+        if (validateCheckout == null) {
+            throw new Exception("Book does not exist or not checked out by user");
+        }
+
+        LocalDate currentDate = LocalDate.now();
+        LocalDate returnDate = LocalDate.parse(validateCheckout.getReturnDate());
+
+        if (!returnDate.isBefore(currentDate)) {
+            int renewalPeriod = 7;
+            validateCheckout.setReturnDate(currentDate.plusDays(renewalPeriod).toString());
+            checkoutRepository.save(validateCheckout);
+        }
+    }
 }
