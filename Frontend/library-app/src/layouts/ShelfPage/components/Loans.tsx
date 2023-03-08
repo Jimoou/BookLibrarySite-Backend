@@ -13,6 +13,8 @@ export const Loans = () => {
   const [shelfCurrentLoans, setShelfCurrentLoans] = useState<
     ShelfCurrentLoans[]
   >([]);
+  const [checkout, setCheckout] = useState(false);
+
   const [isLoadingUserLoans, setIsLoadingUserLoans] = useState(true);
 
   useEffect(() => {
@@ -41,7 +43,7 @@ export const Loans = () => {
       setHttpError(error.message);
     });
     window.scrollTo(0, 0);
-  }, [authState]);
+  }, [authState, checkout]);
 
   if (isLoadingUserLoans) {
     return <SpinnerLoading />;
@@ -53,6 +55,22 @@ export const Loans = () => {
         <p>{httpError}</p>
       </div>
     );
+  }
+
+  async function returnBook(bookId: number) {
+    const url = `http://localhost:8080/api/books/secure/return/?bookId=${bookId}`;
+    const requestOptions = {
+      method: "PUT",
+      headers: {
+        Authorization: `Bearer ${authState?.accessToken?.accessToken}`,
+        "Contetn-Type": "application/json",
+      },
+    };
+    const returnResponse = await fetch(url, requestOptions);
+    if (!returnResponse.ok) {
+      throw new Error("Something went wrong!");
+    }
+    setCheckout(!checkout);
   }
 
   return (
@@ -134,6 +152,7 @@ export const Loans = () => {
                 <LoansModal
                   shelfCurrentLoan={shelfCurrentLoan}
                   mobile={false}
+                  returnbook={returnBook}
                 />
               </div>
             ))}
@@ -220,7 +239,11 @@ export const Loans = () => {
                   </div>
                 </div>
                 <hr />
-                <LoansModal shelfCurrentLoan={shelfCurrentLoan} mobile={true} />
+                <LoansModal
+                  shelfCurrentLoan={shelfCurrentLoan}
+                  mobile={true}
+                  returnbook={returnBook}
+                />
               </div>
             ))}
           </>
