@@ -5,7 +5,6 @@ import com.reactlibraryproject.springbootlibrary.DAO.ReviewRepository;
 import com.reactlibraryproject.springbootlibrary.Entity.Review;
 import com.reactlibraryproject.springbootlibrary.RequestModels.ReviewRequest;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,18 +23,18 @@ public class ReviewService {
             throw new Exception("Review already created");
         }
 
-        Review review = new Review();
-        review.setBookId(reviewRequest.getBookId());
-        review.setRating(reviewRequest.getRating());
-        review.setUserEmail(userEmail);
-        if (reviewRequest.getReviewDescription().isPresent()) {
-            review.setReviewDescription(reviewRequest.getReviewDescription().map(
-             Object::toString
-            ).orElse(null));
-        }
+        Review review = Review.builder()
+         .id(reviewRequest.getBookId())
+         .rating(reviewRequest.getRating())
+         .userEmail(userEmail)
+         .reviewDescription(String.valueOf(reviewRequest.getReviewDescription()))
+         .date(Date.valueOf(LocalDate.now()))
+         .build();
+
         review.setDate(Date.valueOf(LocalDate.now()));
         reviewRepository.save(review);
     }
+
     public Boolean userReviewListed(String userEmail, Long bookId) {
         Review validateReview = reviewRepository.findByUserEmailAndBookId(userEmail, bookId);
         return validateReview != null;

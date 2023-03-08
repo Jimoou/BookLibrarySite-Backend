@@ -34,12 +34,12 @@ public class BookService {
         book.get().setCopiesAvailable(book.get().getCopiesAvailable() - 1);
         bookRepository.save(book.get());
 
-        Checkout checkout = new Checkout(
-         userEmail,
-         LocalDate.now().toString(),
-         LocalDate.now().plusDays(7).toString(),
-         book.get().getId()
-        );
+        Checkout checkout = Checkout.builder()
+         .userEmail(userEmail)
+         .checkoutDate(LocalDate.now().toString())
+         .returnedDate(LocalDate.now().plusDays(7).toString())
+         .bookId(bookId)
+         .build();
 
         checkoutRepository.save(checkout);
 
@@ -74,7 +74,7 @@ public class BookService {
             Checkout checkout = checkoutMap.get(book.getId());
 
             if (checkout != null) {
-                LocalDate returnDate = LocalDate.parse(checkout.getReturnDate(), formatter);
+                LocalDate returnDate = LocalDate.parse(checkout.getReturnedDate(), formatter);
                 long differenceInDays = ChronoUnit.DAYS.between(currentDate, returnDate);
 
                 shelfCurrentLoansResponses.add(new ShelfCurrentLoansResponse(book, (int) differenceInDays));
@@ -106,11 +106,11 @@ public class BookService {
         }
 
         LocalDate currentDate = LocalDate.now();
-        LocalDate returnDate = LocalDate.parse(validateCheckout.getReturnDate());
+        LocalDate returnDate = LocalDate.parse(validateCheckout.getReturnedDate());
 
         if (!returnDate.isBefore(currentDate)) {
             int renewalPeriod = 7;
-            validateCheckout.setReturnDate(currentDate.plusDays(renewalPeriod).toString());
+            validateCheckout.setReturnedDate(currentDate.plusDays(renewalPeriod).toString());
             checkoutRepository.save(validateCheckout);
         }
     }
