@@ -103,6 +103,7 @@ public class BookService {
 
         History history = History.builder()
          .userEmail(validateCheckout.getUserEmail())
+         .checkoutDate(validateCheckout.getCheckoutDate())
          .returnedDate(LocalDate.now().toString())
          .title(book.get().getTitle())
          .author(book.get().getAuthor())
