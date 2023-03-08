@@ -63,7 +63,7 @@ export const Loans = () => {
       method: "PUT",
       headers: {
         Authorization: `Bearer ${authState?.accessToken?.accessToken}`,
-        "Contetn-Type": "application/json",
+        "Content-Type": "application/json",
       },
     };
     const returnResponse = await fetch(url, requestOptions);
@@ -79,9 +79,10 @@ export const Loans = () => {
       method: "PUT",
       headers: {
         Authorization: `Bearer ${authState?.accessToken?.accessToken}`,
-        "Contetn-Type": "application/json",
+        "Content-Type": "application/json",
       },
     };
+
     const returnResponse = await fetch(url, requestOptions);
     if (!returnResponse.ok) {
       throw new Error("Something went wrong!");
