@@ -24,10 +24,12 @@ export const PostNewMessage = () => {
         },
         body: JSON.stringify(messageRequestModel),
       };
+
       const submitNewQuestionResponse = await fetch(url, requestOptions);
       if (!submitNewQuestionResponse.ok) {
         throw new Error("Something went wrong!");
       }
+
       setTitle("");
       setQuestion("");
       setDisplayWarning(false);
@@ -43,17 +45,16 @@ export const PostNewMessage = () => {
       <div className="card-header">Ask question to Luv 2 Read Admin</div>
       <div className="card-body">
         <form method="POST">
-          {displaySuccess && (
-            <div className="alert alert-success" role="alert">
-              Question added successfully
-            </div>
-          )}
           {displayWarning && (
             <div className="alert alert-danger" role="alert">
               All fields must be filled out
             </div>
           )}
-
+          {displaySuccess && (
+            <div className="alert alert-success" role="alert">
+              Question added successfully
+            </div>
+          )}
           <div className="mb-3">
             <label className="form-label">Title</label>
             <input
