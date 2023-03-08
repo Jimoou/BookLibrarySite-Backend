@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React from "react";
 import { Footer } from "./layouts/NavbarAndFooter/Footer";
 import { Navbar } from "./layouts/NavbarAndFooter/Navbar";
 import { HomePage } from "./layouts/HomePage/HomePage";
@@ -9,6 +9,7 @@ import { oktaConfig } from "./lib/oktaConfig";
 import { OktaAuth, toRelativeUrl } from "@okta/okta-auth-js";
 import { LoginCallback, Security } from "@okta/okta-react";
 import LoginWidget from "./Auth/LoginWidget";
+import { ReviewListPage } from "./layouts/BookCheckoutPage/ReviewListPage/ReviewListPage";
 
 function App() {
   const oktaAuth = new OktaAuth(oktaConfig);
@@ -17,14 +18,14 @@ function App() {
     navigate("/login");
   };
 
-  const restoreOriginalUri = useCallback(
-    (oktaAuth: any, orginalUri: string) => {
-      navigate(toRelativeUrl(orginalUri || "/", window.location.origin), {
-        replace: true,
-      });
-    },
-    []
-  );
+  const restoreOriginalUri = async (
+    _oktaAuth: any,
+    originalUri: any
+  ): Promise<void> => {
+    navigate(toRelativeUrl(originalUri || "/", window.location.origin), {
+      replace: true,
+    });
+  };
 
   return (
     <div className="d-flex flex-column min-vh-100">
@@ -39,6 +40,7 @@ function App() {
             <Route path="/home" element={<HomePage />} />
             <Route path="/" element={<Navigate replace to="/home" />} />
             <Route path="/search" element={<SearchBooksPage />} />
+            <Route path="/reviewlist/:bookId" element={<ReviewListPage />} />
             <Route path="/checkout/:bookId" element={<BookCheckoutPage />} />
             <Route
               path="/login"
