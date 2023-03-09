@@ -21,8 +21,12 @@ function App() {
     navigate("/login");
   };
 
-  const restoreOriginalUri = async (_oktaAuth: any, originalUri: any) => {
-    navigate(toRelativeUrl(originalUri || "/", window.location.origin), {
+  const restoreOriginalUri = async (
+    _oktaAuth: any,
+    originalUri: string | undefined
+  ) => {
+    const origin = window.location.origin;
+    navigate(originalUri ? toRelativeUrl(originalUri, origin) : "/", {
       replace: true,
     });
   };

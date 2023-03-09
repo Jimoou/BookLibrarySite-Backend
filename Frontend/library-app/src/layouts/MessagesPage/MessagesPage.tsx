@@ -1,9 +1,17 @@
+import { useOktaAuth } from "@okta/okta-react";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Messages } from "./components/Messages";
 import { PostNewMessage } from "./components/PostNewMessage";
 
 export const MessagesPage = () => {
   const [messagesClick, setMessagesClick] = useState(false);
+  const navigate = useNavigate();
+  const { authState } = useOktaAuth();
+
+  if (!authState?.isAuthenticated) {
+    navigate("/login");
+  }
 
   return (
     <div className="container">

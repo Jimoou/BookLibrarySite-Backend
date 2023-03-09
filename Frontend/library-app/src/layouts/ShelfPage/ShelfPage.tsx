@@ -1,9 +1,17 @@
+import { useOktaAuth } from "@okta/okta-react";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { HistoryPage } from "./components/HistoryPage";
 import { Loans } from "./components/Loans";
 
 export const ShelfPage = () => {
   const [historyClick, setHistoryClick] = useState(false);
+  const navigate = useNavigate();
+  const { authState } = useOktaAuth();
+
+  if (!authState?.isAuthenticated) {
+    navigate("/login");
+  }
 
   return (
     <div className="container">
