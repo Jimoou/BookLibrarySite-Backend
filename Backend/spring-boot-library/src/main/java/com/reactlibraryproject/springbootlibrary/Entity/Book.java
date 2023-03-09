@@ -3,11 +3,13 @@ package com.reactlibraryproject.springbootlibrary.Entity;
 
 import javax.persistence.*;
 
+import lombok.Builder;
 import lombok.Data;
 
 @Entity
 @Table(name = "book")
 @Data
+@Builder
 public class Book {
 
     @Id
