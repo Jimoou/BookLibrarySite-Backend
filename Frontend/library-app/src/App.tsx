@@ -7,11 +7,12 @@ import { Navigate, Route, Routes, useNavigate } from "react-router-dom";
 import { BookCheckoutPage } from "./layouts/BookCheckoutPage/BookCheckoutPage";
 import { oktaConfig } from "./lib/oktaConfig";
 import { OktaAuth, toRelativeUrl } from "@okta/okta-auth-js";
-import { LoginCallback, Security, useOktaAuth } from "@okta/okta-react";
+import { LoginCallback, Security } from "@okta/okta-react";
 import LoginWidget from "./Auth/LoginWidget";
 import { ReviewListPage } from "./layouts/BookCheckoutPage/ReviewListPage/ReviewListPage";
 import { ShelfPage } from "./layouts/ShelfPage/ShelfPage";
-import { MessagesPage } from "./MessagesPage/MessagesPage";
+import { MessagesPage } from "./layouts/MessagesPage/MessagesPage";
+import { ManageLibraryPage } from "./layouts/ManageLibraryPage/ManageLibraryPage";
 
 function App() {
   const oktaAuth = new OktaAuth(oktaConfig);
@@ -20,10 +21,7 @@ function App() {
     navigate("/login");
   };
 
-  const restoreOriginalUri = async (
-    _oktaAuth: any,
-    originalUri: any
-  ): Promise<void> => {
+  const restoreOriginalUri = async (_oktaAuth: any, originalUri: any) => {
     navigate(toRelativeUrl(originalUri || "/", window.location.origin), {
       replace: true,
     });
@@ -51,6 +49,7 @@ function App() {
             <Route path="/login/callback" element={<LoginCallback />} />
             <Route path="/shelf" element={<ShelfPage />} />
             <Route path="/messages" element={<MessagesPage />} />
+            <Route path="/admin" element={<ManageLibraryPage />} />
           </Routes>
         </div>
         <Footer />
