@@ -1,6 +1,6 @@
 import { useOktaAuth } from "@okta/okta-react";
 import { useState } from "react";
-import MessageModel from "../../models/MessageModel";
+import MessageModel from "../../../models/MessageModel";
 
 export const PostNewMessage = () => {
   const { authState } = useOktaAuth();
