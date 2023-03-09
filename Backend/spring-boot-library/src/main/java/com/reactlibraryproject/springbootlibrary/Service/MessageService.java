@@ -31,6 +31,10 @@ public class MessageService {
             throw new Exception("Message not found");
         }
         Message message = Message.builder()
+         .id(findedMessage.get().getId())
+         .userEmail(findedMessage.get().getUserEmail())
+         .title(findedMessage.get().getTitle())
+         .question(findedMessage.get().getQuestion())
          .adminEmail(useremail)
          .response(adminQuestionRequest.getResponse())
          .closed(true)
