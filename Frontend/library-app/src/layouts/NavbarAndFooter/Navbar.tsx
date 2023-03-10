@@ -3,6 +3,7 @@ import { useOktaAuth } from "@okta/okta-react";
 import { SpinnerLoading } from "../Utils/SpinnerLoading";
 import {
   AccountBalance,
+  AdminPanelSettings,
   AllInbox,
   Home,
   Login,
@@ -64,13 +65,14 @@ export const Navbar = () => {
               authState.accessToken?.claims?.userType === "admin" && (
                 <li className="nav-item">
                   <NavLink className="nav-link" to="/admin">
+                    <AdminPanelSettings />
                     &nbsp;관리자 페이지
                   </NavLink>
                 </li>
               )}
             {!authState.isAuthenticated ? (
               <li className="nav-item m-1">
-                <NavLink className="nav-linkt" to="/login">
+                <NavLink className="nav-link" to="/login">
                   <Login />
                   &nbsp;로그인
                 </NavLink>

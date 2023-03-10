@@ -125,13 +125,6 @@ export const SearchBooksPage = () => {
     }
   };
 
-  const indexOfLastBook: number = currentPage * booksPerPage;
-  const indexOfFirstBook: number = indexOfLastBook - booksPerPage;
-  let lastItem =
-    booksPerPage * currentPage <= totalAmountOfBooks
-      ? booksPerPage * currentPage
-      : totalAmountOfBooks;
-
   const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
 
   return (
@@ -144,7 +137,7 @@ export const SearchBooksPage = () => {
                 <input
                   className="form-control me-2"
                   type="search"
-                  placeholder="Search"
+                  placeholder="책 검색하기..."
                   aria-labelledby="Search"
                   onChange={(e) => setSearch(e.target.value)}
                 />
@@ -181,12 +174,8 @@ export const SearchBooksPage = () => {
             {totalAmountOfBooks > 0 ? (
               <>
                 <div className="mt-3">
-                  <h5>Number of results: ({totalAmountOfBooks})</h5>
+                  <h5>모든 책 수: {totalAmountOfBooks} 권</h5>
                 </div>
-                <p>
-                  {indexOfFirstBook + 1} to {lastItem} of {totalAmountOfBooks}{" "}
-                  items:
-                </p>
                 {books.map((book) => (
                   <SearchBook book={book} key={book.id} />
                 ))}
