@@ -93,7 +93,7 @@ export const SearchBook: React.FC<{ book: BookModel }> = (props) => {
               <button className="btn mt-1 btn-primary main-color text-white">
                 수량 <Add />
               </button>
-              <button className="btn btn-warning">
+              <button className="btn mt-1 btn-warning">
                 수량 <Remove />
               </button>
             </>
