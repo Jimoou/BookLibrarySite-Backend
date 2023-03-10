@@ -3,8 +3,24 @@ import BookModel from "../../models/BookModel";
 import { Pagination } from "../Utils/Pagination";
 import { SpinnerLoading } from "../Utils/SpinnerLoading";
 import { SearchBook } from "./components/SearchBook";
+import SearchIcon from "@mui/icons-material/Search";
+import CategoryList from "../ManageLibraryPage/components/CategoryList";
 
 export const SearchBooksPage = () => {
+  // Categories
+  const categories = [
+    { label: "모든 분야", value: "모든 분야" },
+    { label: "컴퓨터/IT", value: "컴퓨터/IT" },
+    { label: "자기계발", value: "자기계발" },
+    { label: "만화", value: "만화" },
+    { label: "경제/경영", value: "경제/경영" },
+    { label: "소설", value: "소설" },
+    { label: "정치/사회", value: "정치/사회" },
+    { label: "인문", value: "인문" },
+    { label: "종교", value: "종교" },
+    { label: "시/에세이", value: "시/에세이" },
+  ];
+
   const [books, setBooks] = useState<BookModel[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [httpError, setHttpError] = useState(null);
@@ -14,7 +30,7 @@ export const SearchBooksPage = () => {
   const [totalPages, setTotalPages] = useState(0);
   const [search, setSearch] = useState("");
   const [searchUrl, setSearchUrl] = useState("");
-  const [categorySelection, setCategorySelection] = useState("Book category");
+  const [categorySelection, setCategorySelection] = useState("모든 분야");
 
   useEffect(() => {
     const fetchBooks = async () => {
@@ -89,18 +105,23 @@ export const SearchBooksPage = () => {
 
   const categoryField = (value: string) => {
     if (
-      value.toLowerCase() === "fe" ||
-      value.toLowerCase() === "be" ||
-      value.toLowerCase() === "data" ||
-      value.toLowerCase() === "devops"
+      value === "컴퓨터/IT" ||
+      value === "자기계발" ||
+      value === "만화" ||
+      value === "경제/경영" ||
+      value === "소설" ||
+      value === "정치/사회" ||
+      value === "인문" ||
+      value === "종교" ||
+      value === "시/에세이"
     ) {
       setCategorySelection(value);
       setSearchUrl(
         `/search/findByCategory?category=${value}&page=0&size=${booksPerPage}`
       );
     } else {
-      setCategorySelection("All");
-      setSearchUrl(`?page=0&size=${booksPerPage}`);
+      setCategorySelection("모든 분야");
+      setSearchUrl("");
     }
   };
 
@@ -131,7 +152,7 @@ export const SearchBooksPage = () => {
                   className="btn btn-outline-success"
                   onClick={() => searchHandleChange()}
                 >
-                  Search
+                  <SearchIcon />
                 </button>
               </div>
             </div>
@@ -150,31 +171,10 @@ export const SearchBooksPage = () => {
                   className="dropdown-menu"
                   aria-labelledby="dropdownMenuButton1"
                 >
-                  <li onClick={() => categoryField("All")}>
-                    <a className="dropdown-item" href="#!">
-                      All
-                    </a>
-                  </li>
-                  <li onClick={() => categoryField("FE")}>
-                    <a className="dropdown-item" href="#!">
-                      Front end
-                    </a>
-                  </li>
-                  <li onClick={() => categoryField("BE")}>
-                    <a className="dropdown-item" href="#!">
-                      Back end
-                    </a>
-                  </li>
-                  <li onClick={() => categoryField("Data")}>
-                    <a className="dropdown-item" href="#!">
-                      Data
-                    </a>
-                  </li>
-                  <li onClick={() => categoryField("DevOps")}>
-                    <a className="dropdown-item" href="#!">
-                      DevOps
-                    </a>
-                  </li>
+                  <CategoryList
+                    categories={categories}
+                    onSelect={categoryField}
+                  />
                 </ul>
               </div>
             </div>
@@ -193,13 +193,13 @@ export const SearchBooksPage = () => {
               </>
             ) : (
               <div className="m-5">
-                <h3>Can't find what you are looking for?</h3>
+                <h3>찾는 책이 없으신가요?</h3>
                 <a
                   type="button"
                   className="btn btn-primary btn-md px-4 me-md-2 fw-bold text-white"
-                  href="#!"
+                  href="/messages"
                 >
-                  Library Services
+                  문의 하기
                 </a>
               </div>
             )}

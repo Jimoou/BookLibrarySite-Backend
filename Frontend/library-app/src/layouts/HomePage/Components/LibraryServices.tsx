@@ -8,12 +8,9 @@ export const LibraryServices = () => {
     <div className="container my-5">
       <div className="row p-4 align-items-center border shadow-lg">
         <div className="col-lg-7 p-3">
-          <h1 className="display-4 fw-bold">
-            Can't find what you are looking for?
-          </h1>
+          <h1 className="display-4 fw-bold">찾는 책이 없으신가요?</h1>
           <p className="lead">
-            If you cannot find what you are looking for, send our library
-            admin's a personal message!
+            찾는 책이 없으시다면, 원하시는 책을 저희에게 알려주세요.
           </p>
           <div className="d-grid gap-2 justify-content-md-start mb-4 mb-lg-3">
             {authState?.isAuthenticated ? (
@@ -22,7 +19,7 @@ export const LibraryServices = () => {
                 type="button"
                 className="btn btn-outline-secondary btn-lg px-4 me-md-2text-gray"
               >
-                Library Services
+                문의하기
               </Link>
             ) : (
               <Link
@@ -30,7 +27,7 @@ export const LibraryServices = () => {
                 className="btn btn-outline-secondary btn-lg px-4 me-md-2text-gray"
                 to="/login"
               >
-                Sign up
+                로그인
               </Link>
             )}
           </div>

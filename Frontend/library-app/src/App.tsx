@@ -1,5 +1,4 @@
 import React from "react";
-import { Footer } from "./layouts/NavbarAndFooter/Footer";
 import { Navbar } from "./layouts/NavbarAndFooter/Navbar";
 import { HomePage } from "./layouts/HomePage/HomePage";
 import { SearchBooksPage } from "./layouts/SearchBooksPage/SearchBooksPage";
@@ -56,7 +55,6 @@ function App() {
             <Route path="/admin" element={<ManageLibraryPage />} />
           </Routes>
         </div>
-        <Footer />
       </Security>
     </div>
   );

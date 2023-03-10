@@ -21,21 +21,21 @@ export const AdminMessage: React.FC<{
     <div key={props.message.id}>
       <div className="card mt-2 shadow p-3 bg-body rounded">
         <h5>
-          Case #{props.message.id}: {props.message.title}
+          질문 #{props.message.id}: {props.message.title}
         </h5>
         <h6>{props.message.userEmail}</h6>
         <p>{props.message.question}</p>
         <hr />
         <div>
-          <h5>Response: </h5>
+          <h5>답변 : </h5>
           <form action="PUT">
             {displayWarning && (
               <div className="alert alert-danger" role="alert">
-                All fields must be filled out.
+                내용을 입력하세요.
               </div>
             )}
             <div className="col-md-12 mb-3">
-              <label className="form-label"> Description </label>
+              <label className="form-label"> 내용 </label>
               <textarea
                 className="form-control"
                 id="exampleFormControlTextarea1"
@@ -50,7 +50,7 @@ export const AdminMessage: React.FC<{
                 className="btn btn-primary mt-3"
                 onClick={submitBtn}
               >
-                Submit Response
+                답변하기
               </button>
             </div>
           </form>

@@ -61,8 +61,8 @@ export const Carousel = () => {
   }
   return (
     <div className="container mt-5" style={{ height: 550 }}>
-      <div className="homepage-carousel-title">
-        <h3>Find your next "I stayed up too late reading" book.</h3>
+      <div className="homepage-carousel-title" style={{ textAlign: "center" }}>
+        <h3>오늘의 선택</h3>
       </div>
       <div
         id="carouselExampleControls"
@@ -128,7 +128,7 @@ export const Carousel = () => {
       </div>
       <div className="homepage-carousel-title d-grid gap-2 col-2 mx-auto">
         <Link className="btn btn-outline-secondary btn-lg" to="/search">
-          View More
+          더 보기
         </Link>
       </div>
     </div>

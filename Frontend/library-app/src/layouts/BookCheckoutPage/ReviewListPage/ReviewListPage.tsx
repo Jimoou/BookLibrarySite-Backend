@@ -80,7 +80,7 @@ export const ReviewListPage = () => {
   return (
     <div className="container mt-5">
       <div>
-        <h3>Comments: ({reviews.length})</h3>
+        <h3>리뷰: ({reviews.length})</h3>
       </div>
       <p>
         {indexOfFirstReview + 1} to {lastItem} of {totalAmountOfReviews} items:

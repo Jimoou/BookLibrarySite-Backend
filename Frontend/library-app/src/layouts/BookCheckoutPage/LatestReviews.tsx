@@ -10,29 +10,28 @@ export const LatestReviews: React.FC<{
   return (
     <div className={props.mobile ? "mt-3" : "row mt-5"}>
       <div className={props.mobile ? "" : "col-sm-2 col-md-2"}>
-        <h2>Latest Reviews: </h2>
+        <h2>최근 리뷰 : </h2>
       </div>
-
       <div className="col-sm-10 col-md-10">
         {props.reviews.length > 0 ? (
           <>
             {props.reviews.slice(0, 3).map((eachReview) => (
               <Review review={eachReview} key={eachReview.id}></Review>
             ))}
-            <hr />
+
             <div className="m-3">
               <Link
                 type="button"
-                className="btn btn-primary btn-md text-white"
+                className="btn main-color btn-md text-white"
                 to={`/reviewlist/${props.bookId}`}
               >
-                Reach all Reviews.
+                모든 리뷰 보기
               </Link>
             </div>
           </>
         ) : (
-          <div className="m-3">
-            <p className="lead">Currently there are no reviews for this book</p>
+          <div className="m-3 mb-5">
+            <p className="lead">리뷰가 없습니다. 첫 리뷰를 남겨보세요.</p>
           </div>
         )}
       </div>

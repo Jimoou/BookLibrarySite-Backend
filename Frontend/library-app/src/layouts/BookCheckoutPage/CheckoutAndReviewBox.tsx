@@ -20,22 +20,22 @@ export const CheckOutAndReviewBox: React.FC<{
             onClick={() => props.checkoutBook()}
             className="btn btn-success btn-lg"
           >
-            Checkout
+            대여하기
           </button>
         );
       } else if (props.isCheckedOut) {
         return (
           <p>
-            <b>Book Checked out. Enjoy!</b>
+            <b>책을 대여했습니다.</b>
           </p>
         );
       } else if (!props.isCheckedOut) {
-        return <p className="text-danger">Too many books checked out.</p>;
+        return <p className="text-danger">대여한 책이 너무 많습니다.</p>;
       }
     }
     return (
       <Link to={"/login"} className="btn btn-success btn-lg">
-        Sign in
+        로그인
       </Link>
     );
   }
@@ -50,14 +50,14 @@ export const CheckOutAndReviewBox: React.FC<{
     } else if (props.isAuthenticated && props.isReviewLeft) {
       return (
         <p>
-          <b>Thank you for your review!</b>
+          <b>리뷰를 남긴 도서입니다.</b>
         </p>
       );
     }
     return (
       <div>
         <hr />
-        <p>Sign in to be able to leave a review.</p>
+        <p>로그인 후 리뷰를 남겨보세요!</p>
       </div>
     );
   }
@@ -72,32 +72,28 @@ export const CheckOutAndReviewBox: React.FC<{
         <div className="mt-3">
           <p>
             <b>{props.currentLoansCount}/5</b>
-            books checked out
+            나의 대여 권 수
           </p>
           <hr />
           {props.book &&
           props.book.copiesAvailable &&
           props.book.copiesAvailable > 0 ? (
-            <h4 className="text-success">Available</h4>
+            <h4 className="text-success">대여 가능함</h4>
           ) : (
-            <h4 className="text-danger">Wait</h4>
+            <h4 className="text-danger">대여 불가능</h4>
           )}
           <div className="row">
             <p className="col-6 lead">
-              <b>{props.book?.copies}</b>
-              copies
+              <b>대여 권 수 : {props.book?.copies}</b>
             </p>
             <p className="col-6 lead">
-              <b>{props.book?.copiesAvailable}</b>
-              available
+              <b>남은 권 수 : {props.book?.copiesAvailable}</b>
             </p>
           </div>
         </div>
         {buttonRender()}
         <hr />
-        <p className="mt-3">
-          This number can change until placing order has been complete.
-        </p>
+        <p className="mt-3">책의 수량은 변경될 수 있습니다.</p>
         {reviewRender()}
       </div>
     </div>

@@ -29,7 +29,7 @@ export const ShelfPage = () => {
               aria-controls="nav-loans"
               aria-selected="true"
             >
-              Loans
+              대여중인 책
             </button>
             <button
               onClick={() => setHistoryClick(true)}
@@ -42,7 +42,7 @@ export const ShelfPage = () => {
               aria-controls="nav-history"
               aria-selected="false"
             >
-              Your History
+              대여 내역
             </button>
           </div>
         </nav>

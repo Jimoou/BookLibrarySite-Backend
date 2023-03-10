@@ -1,7 +1,14 @@
 import { Link, NavLink } from "react-router-dom";
 import { useOktaAuth } from "@okta/okta-react";
 import { SpinnerLoading } from "../Utils/SpinnerLoading";
-
+import {
+  AccountBalance,
+  AllInbox,
+  Home,
+  Login,
+  Logout,
+  Search,
+} from "@mui/icons-material";
 export const Navbar = () => {
   const { oktaAuth, authState } = useOktaAuth();
 
@@ -12,9 +19,12 @@ export const Navbar = () => {
   const handleLogout = async () => oktaAuth.signOut();
 
   return (
-    <nav className="navbar navbar-expand-lg bg-primary py-3">
+    <nav className="navbar navbar-expand-lg py-3">
       <div className="container-fluid">
-        <span className="navbar-brand">Jiwoon to Read</span>
+        <NavLink className="navbar-brand" to="/">
+          <AccountBalance />
+          스프링 도서관
+        </NavLink>
         <button
           className="navbar-toggler"
           type="button"
@@ -30,18 +40,23 @@ export const Navbar = () => {
           <ul className="navbar-nav">
             <li className="nav-item">
               <NavLink className="nav-link" to="/">
-                Home
+                <Home />
+                &nbsp;홈
               </NavLink>
             </li>
             <li className="nav-item">
               <NavLink className="nav-link" to="/search">
-                Search Books
+                <Search />
+                &nbsp;책 찾기
               </NavLink>
             </li>
+          </ul>
+          <ul className="navbar-nav ms-auto">
             {authState.isAuthenticated && (
               <li className="nav-item">
                 <NavLink className="nav-link" to="/shelf">
-                  Shelf
+                  <AllInbox />
+                  &nbsp;내 서랍
                 </NavLink>
               </li>
             )}
@@ -49,30 +64,23 @@ export const Navbar = () => {
               authState.accessToken?.claims?.userType === "admin" && (
                 <li className="nav-item">
                   <NavLink className="nav-link" to="/admin">
-                    Admin
+                    &nbsp;관리자 페이지
                   </NavLink>
                 </li>
               )}
-          </ul>
-          <ul className="navbar-nav ms-auto">
             {!authState.isAuthenticated ? (
               <li className="nav-item m-1">
-                <Link
-                  type="button"
-                  className="btn btn-outline-secondary"
-                  to="/login"
-                >
-                  Sign in
-                </Link>
+                <NavLink className="nav-linkt" to="/login">
+                  <Login />
+                  &nbsp;로그인
+                </NavLink>
               </li>
             ) : (
-              <li>
-                <button
-                  className="btn btn-outline-secondary"
-                  onClick={handleLogout}
-                >
-                  Logout
-                </button>
+              <li className="nav-item">
+                <span className="nav-link" onClick={handleLogout}>
+                  <Logout />
+                  &nbsp;로그아웃
+                </span>
               </li>
             )}
           </ul>

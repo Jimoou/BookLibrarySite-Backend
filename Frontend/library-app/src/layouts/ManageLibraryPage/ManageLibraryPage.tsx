@@ -34,7 +34,7 @@ export const ManageLibraryPage = () => {
   return (
     <div className="container">
       <div className="mt-5">
-        <h3>Manage Library</h3>
+        <h3>관리자 페이지</h3>
         <nav>
           <div className="nav nav-tabs" id="nav-tab" role="tablist">
             <button
@@ -48,7 +48,7 @@ export const ManageLibraryPage = () => {
               aria-controls="nav-add-book"
               aria-selected="false"
             >
-              Add new book
+              책 추가하기
             </button>
             <button
               onClick={changeQuantityOfBooksClickFunction}
@@ -61,7 +61,7 @@ export const ManageLibraryPage = () => {
               aria-controls="nav-quantity"
               aria-selected="true"
             >
-              Change quantity
+              책 수량 변경
             </button>
             <button
               onClick={messagesClickFunction}
@@ -74,7 +74,7 @@ export const ManageLibraryPage = () => {
               aria-controls="nav-messages"
               aria-selected="false"
             >
-              Messages
+              문의 답변
             </button>
           </div>
         </nav>

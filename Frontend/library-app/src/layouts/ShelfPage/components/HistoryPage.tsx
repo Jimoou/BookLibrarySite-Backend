@@ -64,7 +64,7 @@ export const HistoryPage = () => {
     <div className="mt-2">
       {histories.length > 0 ? (
         <>
-          <h5>Recent History:</h5>
+          <h5>최근 내역 :</h5>
 
           {histories.map((history) => (
             <div key={history.id}>
@@ -114,11 +114,11 @@ export const HistoryPage = () => {
                       <hr />
                       <p className="card-text">
                         {" "}
-                        Checked out on: {history.checkoutDate}
+                        대여일 : {history.checkoutDate}
                       </p>
                       <p className="card-text">
                         {" "}
-                        Returned on: {history.returnedDate}
+                        반납일 : {history.returnedDate}
                       </p>
                     </div>
                   </div>
@@ -130,9 +130,9 @@ export const HistoryPage = () => {
         </>
       ) : (
         <>
-          <h3 className="mt-3">Currently no history: </h3>
+          <h3 className="mt-3">내역이 없습니다. </h3>
           <Link className="btn btn-primary" to={"search"}>
-            Search for new book
+            책 찾아보기
           </Link>
         </>
       )}

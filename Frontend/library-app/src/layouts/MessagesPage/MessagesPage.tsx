@@ -29,7 +29,7 @@ export const MessagesPage = () => {
               aria-controls="nav-send-message"
               aria-selected="true"
             >
-              Submit Question
+              문의 하기
             </button>
             <button
               onClick={() => setMessagesClick(true)}
@@ -42,7 +42,7 @@ export const MessagesPage = () => {
               aria-controls="nav-message"
               aria-selected="false"
             >
-              Q/A Response/Pending
+              문의 내역
             </button>
           </div>
         </nav>
