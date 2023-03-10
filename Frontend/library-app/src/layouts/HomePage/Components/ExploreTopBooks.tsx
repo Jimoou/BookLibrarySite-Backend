@@ -1,23 +1,66 @@
 import { Link } from "react-router-dom";
-
+import "./ExploreTopBooks.css";
 export const ExploreTopBooks = () => {
   return (
-    <div className="p-5 mb-4 bg-dark header">
-      <div
-        className="container-fluid py-5 text-white 
-                d-flex justify-content-center align-items-center"
-      >
-        <div>
-          <h1 className="display-5 fw-bold">Find your next adventure</h1>
-          <p className="col-md-8 fs-4">Where would you like to go next?</p>
-          <Link
-            type="button"
-            className="btn btn-outline-primary btn-lg text-white"
-            to="/search"
-          >
-            Explore top books
-          </Link>
+    <div id="explore-top-books-container">
+      <div id="hopeful-message">
+        <h1>책이 주는 즐거움을 느껴보세요!</h1>
+        <p>지금 바로 도서관에서 좋은 책을 찾아보세요.</p>
+        <Link id="search-link" to="/search">
+          책 찾아보기
+        </Link>
+      </div>
+      <div className="carousel slide">
+        <div className="carousel-inner">
+          <div className="carousel-item active">
+            <img
+              src="image-5.jpg"
+              className="d-block"
+              alt="..."
+              style={{ width: "100%", height: "400px", overflow: "hidden" }}
+            />
+          </div>
+          <div className="carousel-item">
+            <img
+              src="image-2.jpg"
+              className="d-block"
+              alt="..."
+              style={{ width: "100%", height: "400px", overflow: "hidden" }}
+            />
+          </div>
+          <div className="carousel-item">
+            <img
+              src="image-1.jpg"
+              className="d-block"
+              alt="..."
+              style={{ width: "100%", height: "400px", overflow: "hidden" }}
+            />
+          </div>
         </div>
+        <button
+          className="carousel-control-prev"
+          type="button"
+          data-bs-target="#carouselExample"
+          data-bs-slide="prev"
+        >
+          <span
+            className="carousel-control-prev-icon"
+            aria-hidden="true"
+          ></span>
+          <span className="visually-hidden">Previous</span>
+        </button>
+        <button
+          className="carousel-control-next"
+          type="button"
+          data-bs-target="#carouselExample"
+          data-bs-slide="next"
+        >
+          <span
+            className="carousel-control-next-icon"
+            aria-hidden="true"
+          ></span>
+          <span className="visually-hidden">Next</span>
+        </button>
       </div>
     </div>
   );

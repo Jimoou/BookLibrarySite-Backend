@@ -262,22 +262,23 @@ export const BookCheckoutPage = () => {
         {/* Screen */}
         <div className="row mt-5">
           <div className="col-sm-2 col-md-2">
-            {book?.img ? (
-              <img src={book?.img} width="226" height="349" alt="Book" />
-            ) : (
-              <img
-                src={require("./../../Images/BooksImages/book-luv2code-1000.png")}
-                width="226"
-                height="349"
-                alt="Book"
-              />
-            )}
+            <img
+              src={book?.img}
+              width="226"
+              height="349"
+              alt="Book"
+              className="shadow bg-body-tertiary"
+            />
           </div>
           <div className="col-4 col-md-4 container">
             <div className="ml-2">
               <h2>{book?.title}</h2>
               <h5 className="text-primary">{book?.author}</h5>
-              <p className="lead">{book?.description}</p>
+              <div style={{ width: "130%" }}>
+                <p className="lead" style={{ whiteSpace: "pre-wrap" }}>
+                  {book?.description}
+                </p>
+              </div>
               <StarsReview rating={totalStars} size={32} />
             </div>
           </div>
@@ -298,22 +299,21 @@ export const BookCheckoutPage = () => {
       {/* Mobile */}
       <div className="container d-lg-none mt-5">
         <div className="d-flex justify-content-center align-items-center">
-          {book?.img ? (
-            <img src={book?.img} width="226" height="349" alt="Book" />
-          ) : (
-            <img
-              src={require("./../../Images/BooksImages/book-luv2code-1000.png")}
-              width="226"
-              height="349"
-              alt="Book"
-            />
-          )}
+          <img
+            src={book?.img}
+            width="226"
+            height="349"
+            alt="Book"
+            className="shadow bg-body-tertiary"
+          />
         </div>
         <div className="mt-4">
           <div className="ml-2">
             <h2>{book?.title}</h2>
             <h5 className="text-primary">{book?.author}</h5>
-            <p className="lead">{book?.description}</p>
+            <p className="lead" style={{ whiteSpace: "pre-wrap" }}>
+              {book?.description}
+            </p>
             <StarsReview rating={totalStars} size={32} />
           </div>
         </div>

@@ -100,7 +100,7 @@ export const AdminMessages = () => {
     <div className="mt-3">
       {messages.length > 0 ? (
         <>
-          <h5>Pending Q/A: </h5>
+          <h5>답변 대기 중</h5>
           {messages.map((message) => (
             <AdminMessage
               message={message}
@@ -110,7 +110,7 @@ export const AdminMessages = () => {
           ))}
         </>
       ) : (
-        <h5>No pending Q/A</h5>
+        <h5>대기 중 문의 없음</h5>
       )}
       {totalPages > 1 && (
         <Pagination

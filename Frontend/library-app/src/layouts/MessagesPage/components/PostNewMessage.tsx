@@ -42,33 +42,33 @@ export const PostNewMessage = () => {
 
   return (
     <div className="card mt-3">
-      <div className="card-header">Ask question to Luv 2 Read Admin</div>
+      <div className="card-header">관리자에게 문의하기</div>
       <div className="card-body">
         <form method="POST">
           {displayWarning && (
             <div className="alert alert-danger" role="alert">
-              All fields must be filled out
+              내용을 입력하세요.
             </div>
           )}
           {displaySuccess && (
             <div className="alert alert-success" role="alert">
-              Question added successfully
+              문의해 주셔서 감사합니다.
             </div>
           )}
           <div className="mb-3">
-            <label className="form-label">Title</label>
+            <label className="form-label">문의 제목</label>
             <input
               type="text"
               className="form-control"
               id="exampleFormControlInput1"
-              placeholder="Title"
+              placeholder="제목"
               onChange={(e) => setTitle(e.target.value)}
               value={title}
             />
           </div>
 
           <div className="mb-3">
-            <label className="form-label">Question</label>
+            <label className="form-label">문의 내용</label>
             <textarea
               className="form-control"
               id="exampleFormControlTextarea1"
@@ -83,7 +83,7 @@ export const PostNewMessage = () => {
               className="btn btn-primary mt-3"
               onClick={submitNewQuestion}
             >
-              Submit Question
+              문의하기
             </button>
           </div>
         </form>

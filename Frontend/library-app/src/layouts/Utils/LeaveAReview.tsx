@@ -18,7 +18,7 @@ export const LeaveAReview: React.FC<{ submitReview: any }> = (props) => {
         id="dropdownMenuButton1"
         data-bs-toggle="dropdown"
       >
-        Leave a review?
+        리뷰를 남기시겠습니까?
       </h5>
       <ul
         id="submitReviewRating"
@@ -27,57 +27,57 @@ export const LeaveAReview: React.FC<{ submitReview: any }> = (props) => {
       >
         <li>
           <button onClick={() => starValue(0)} className="dropdown-item">
-            0 star
+            0 점
           </button>
         </li>
         <li>
           <button onClick={() => starValue(0.5)} className="dropdown-item">
-            0.5 star
+            0.5 점
           </button>
         </li>
         <li>
           <button onClick={() => starValue(1)} className="dropdown-item">
-            1 star
+            1 점
           </button>
         </li>
         <li>
           <button onClick={() => starValue(1.5)} className="dropdown-item">
-            1.5 star
+            1.5 점
           </button>
         </li>
         <li>
           <button onClick={() => starValue(2)} className="dropdown-item">
-            2 star
+            2 점
           </button>
         </li>
         <li>
           <button onClick={() => starValue(2.5)} className="dropdown-item">
-            2.5 star
+            2.5 점
           </button>
         </li>
         <li>
           <button onClick={() => starValue(3)} className="dropdown-item">
-            3 star
+            3 점
           </button>
         </li>
         <li>
           <button onClick={() => starValue(3.5)} className="dropdown-item">
-            3.5 star
+            3.5 점
           </button>
         </li>
         <li>
           <button onClick={() => starValue(4)} className="dropdown-item">
-            4 star
+            4 점
           </button>
         </li>
         <li>
           <button onClick={() => starValue(4.5)} className="dropdown-item">
-            4.5 star
+            4.5 점
           </button>
         </li>
         <li>
           <button onClick={() => starValue(5)} className="dropdown-item">
-            5 star
+            5 점
           </button>
         </li>
       </ul>
@@ -87,11 +87,11 @@ export const LeaveAReview: React.FC<{ submitReview: any }> = (props) => {
         <form method="POST" action="#">
           <hr />
           <div className="mb-3">
-            <label className="form-label">Description</label>
+            <label className="form-label">리뷰 내용</label>
             <textarea
               className="form-control"
               id="submitReviewDescription"
-              placeholder="Optional"
+              placeholder="내용을 입력하세요."
               rows={3}
               onChange={(e) => setReviewDescription(e.target.value)}
             ></textarea>
@@ -102,7 +102,7 @@ export const LeaveAReview: React.FC<{ submitReview: any }> = (props) => {
               onClick={() => props.submitReview(starInput, reviewDescription)}
               className="btn btn-primary mt-3"
             >
-              Submit Review
+              리뷰 남기기
             </button>
           </div>
         </form>

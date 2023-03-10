@@ -96,7 +96,7 @@ export const Loans = () => {
       <div className="d-none d-lg-block mt-2">
         {shelfCurrentLoans.length > 0 ? (
           <>
-            <h5>Current Loans: </h5>
+            <h5>대여중인 책 : </h5>
 
             {shelfCurrentLoans.map((shelfCurrentLoan) => (
               <div key={shelfCurrentLoan.book.id}>
@@ -120,19 +120,19 @@ export const Loans = () => {
                   </div>
                   <div className="card col-3 col-md-3 container d-flex">
                     <div className="card-body">
-                      <div className="mt-3">
-                        <h4>Loan Options</h4>
+                      <div className="mt-5">
+                        <h4>책 관리</h4>
                         {shelfCurrentLoan.daysLeft > 0 && (
                           <p className="text-secondary">
-                            Due in {shelfCurrentLoan.daysLeft} days.
+                            반납까지 {shelfCurrentLoan.daysLeft} 일 남았습니다.
                           </p>
                         )}
                         {shelfCurrentLoan.daysLeft === 0 && (
-                          <p className="text-success">Due Today.</p>
+                          <p className="text-success">반납일입니다.</p>
                         )}
                         {shelfCurrentLoan.daysLeft < 0 && (
                           <p className="text-danger">
-                            Past due by {shelfCurrentLoan.daysLeft} days.
+                            반납일이 {shelfCurrentLoan.daysLeft} 일 지났습니다.
                           </p>
                         )}
                         <div className="list-group mt-3">
@@ -142,25 +142,16 @@ export const Loans = () => {
                             data-bs-toggle="modal"
                             data-bs-target={`#modal${shelfCurrentLoan.book.id}`}
                           >
-                            Manage Loan
+                            대여 서비스
                           </button>
-                          <Link
-                            to={"search"}
-                            className="list-group-item list-group-item-action"
-                          >
-                            Search more books?
-                          </Link>
                         </div>
                       </div>
                       <hr />
-                      <p className="mt-3">
-                        Help other find their adventure by reviewing your loan.
-                      </p>
                       <Link
                         className="btn btn-primary"
                         to={`/checkout/${shelfCurrentLoan.book.id}`}
                       >
-                        Leave a review
+                        리뷰 쓰러 가기
                       </Link>
                     </div>
                   </div>
@@ -177,9 +168,9 @@ export const Loans = () => {
           </>
         ) : (
           <>
-            <h3 className="mt-3">Currently no loans</h3>
+            <h3 className="mt-3">대여중인 책이 없습니다.</h3>
             <Link className="btn btn-primary" to={`search`}>
-              Search for a new book
+              책 찾아보기
             </Link>
           </>
         )}
@@ -189,7 +180,7 @@ export const Loans = () => {
       <div className="container d-lg-none mt-2">
         {shelfCurrentLoans.length > 0 ? (
           <>
-            <h5 className="mb-3">Current Loans: </h5>
+            <h5 className="mb-3">대여중인 책: </h5>
 
             {shelfCurrentLoans.map((shelfCurrentLoan) => (
               <div key={shelfCurrentLoan.book.id}>
@@ -213,18 +204,18 @@ export const Loans = () => {
                 <div className="card d-flex mt-5 mb-3">
                   <div className="card-body container">
                     <div className="mt-3">
-                      <h4>Loan Options</h4>
+                      <h4>책 관리</h4>
                       {shelfCurrentLoan.daysLeft > 0 && (
                         <p className="text-secondary">
-                          Due in {shelfCurrentLoan.daysLeft} days.
+                          반납까지 {shelfCurrentLoan.daysLeft} 일 남았습니다.
                         </p>
                       )}
                       {shelfCurrentLoan.daysLeft === 0 && (
-                        <p className="text-success">Due Today.</p>
+                        <p className="text-success">반납일입니다.</p>
                       )}
                       {shelfCurrentLoan.daysLeft < 0 && (
                         <p className="text-danger">
-                          Past due by {shelfCurrentLoan.daysLeft} days.
+                          반납일이 {shelfCurrentLoan.daysLeft} 일 지났습니다.
                         </p>
                       )}
                       <div className="list-group mt-3">
@@ -234,25 +225,16 @@ export const Loans = () => {
                           data-bs-toggle="modal"
                           data-bs-target={`#mobilemodal${shelfCurrentLoan.book.id}`}
                         >
-                          Manage Loan
+                          대여 서비스
                         </button>
-                        <Link
-                          to={"search"}
-                          className="list-group-item list-group-item-action"
-                        >
-                          Search more books?
-                        </Link>
                       </div>
                     </div>
                     <hr />
-                    <p className="mt-3">
-                      Help other find their adventure by reviewing your loan.
-                    </p>
                     <Link
                       className="btn btn-primary"
                       to={`/checkout/${shelfCurrentLoan.book.id}`}
                     >
-                      Leave a review
+                      리뷰 쓰러 가기
                     </Link>
                   </div>
                 </div>
@@ -268,9 +250,9 @@ export const Loans = () => {
           </>
         ) : (
           <>
-            <h3 className="mt-3">Currently no loans</h3>
+            <h3 className="mt-3">대여중인 책이 없습니다.</h3>
             <Link className="btn btn-primary" to={`search`}>
-              Search for a new book
+              책 찾아보기
             </Link>
           </>
         )}

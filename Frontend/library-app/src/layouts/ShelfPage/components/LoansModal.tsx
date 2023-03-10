@@ -24,7 +24,7 @@ export const LoansModal: React.FC<{
         <div className="modal-content">
           <div className="modal-header">
             <h5 className="modal-title" id="staticBackdropLabel">
-              Loan Options
+              대여 서비스
             </h5>
             <button
               type="button"
@@ -62,15 +62,15 @@ export const LoansModal: React.FC<{
                 <hr />
                 {props.shelfCurrentLoan.daysLeft > 0 && (
                   <p className="text-secondary">
-                    Due in {props.shelfCurrentLoan.daysLeft} days.
+                    반납까지 {props.shelfCurrentLoan.daysLeft} 일 남았습니다.
                   </p>
                 )}
                 {props.shelfCurrentLoan.daysLeft === 0 && (
-                  <p className="text-success">Due Today.</p>
+                  <p className="text-success">반납일입니다.</p>
                 )}
                 {props.shelfCurrentLoan.daysLeft < 0 && (
                   <p className="text-danger">
-                    Past due by {props.shelfCurrentLoan.daysLeft} days.
+                    반납일이 {props.shelfCurrentLoan.daysLeft} 일 지났습니다.
                   </p>
                 )}
                 <div className="list-group mt-3">
@@ -82,7 +82,7 @@ export const LoansModal: React.FC<{
                     className="list-group-item list-group-item-action"
                     aria-current="true"
                   >
-                    Return Book
+                    책 반납하기
                   </button>
                   <button
                     onClick={() =>
@@ -98,8 +98,8 @@ export const LoansModal: React.FC<{
                     }
                   >
                     {props.shelfCurrentLoan.daysLeft < 0
-                      ? "Late dues cannot be renewed"
-                      : "Renew loan for 7 days"}
+                      ? "연체 되어 반납일을 갱신할 수 없습니다."
+                      : "반납일 연장하기"}
                   </button>
                 </div>
               </div>
@@ -111,7 +111,7 @@ export const LoansModal: React.FC<{
               className="btn btn-secondary"
               data-bs-dismiss="modal"
             >
-              Close
+              닫기
             </button>
           </div>
         </div>

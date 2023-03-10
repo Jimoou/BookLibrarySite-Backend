@@ -22,12 +22,13 @@ public class ReviewService {
         if (validateReview != null) {
             throw new Exception("Review already created");
         }
-
+        String reviewDescription = reviewRequest.getReviewDescription()
+         .orElse("");
         Review review = Review.builder()
-         .id(reviewRequest.getBookId())
+         .bookId(reviewRequest.getBookId())
          .rating(reviewRequest.getRating())
          .userEmail(userEmail)
-         .reviewDescription(String.valueOf(reviewRequest.getReviewDescription()))
+         .reviewDescription(reviewDescription)
          .date(Date.valueOf(LocalDate.now()))
          .build();
 

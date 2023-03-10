@@ -1,15 +1,29 @@
 import { useOktaAuth } from "@okta/okta-react";
 import { useState } from "react";
 import AddBookRequest from "../../../models/AddBookRequest";
+import CategoryList from "./CategoryList";
 export const AddNewBook = () => {
   const { authState } = useOktaAuth();
+
+  // Categories
+  const categories = [
+    { label: "컴퓨터/IT", value: "컴퓨터/IT" },
+    { label: "자기계발", value: "자기계발" },
+    { label: "만화", value: "만화" },
+    { label: "경제/경영", value: "경제/경영" },
+    { label: "소설", value: "소설" },
+    { label: "정치/사회", value: "정치/사회" },
+    { label: "인문", value: "인문" },
+    { label: "종교", value: "종교" },
+    { label: "시/에세이", value: "시/에세이" },
+  ];
 
   // New Book
   const [title, setTitle] = useState("");
   const [author, setAuthor] = useState("");
   const [description, setDescription] = useState("");
   const [copies, setCopies] = useState(0);
-  const [category, setCategory] = useState("Category");
+  const [category, setCategory] = useState("분야");
   const [selectedImage, setSelectedImage] = useState<any>(null);
 
   // Displays
@@ -71,7 +85,7 @@ export const AddNewBook = () => {
       setAuthor("");
       setDescription("");
       setCopies(0);
-      setCategory("Category");
+      setCategory("분야");
       setSelectedImage(null);
       setDisplayWarning(false);
       setDisplaySuccess(true);
@@ -85,21 +99,21 @@ export const AddNewBook = () => {
     <div className="container mt-5 mb-5">
       {displaySuccess && (
         <div className="alert alert-success" role="alert">
-          Book added successfully
+          책이 추가되었습니다.
         </div>
       )}
       {displayWarning && (
         <div className="alert alert-danger" role="alert">
-          All fields must be filled out
+          내용을 입력하세요.
         </div>
       )}
       <div className="card">
-        <div className="card-header">Add a new book</div>
+        <div className="card-header">책 추가하기</div>
         <div className="card-body">
           <form method="POST">
             <div className="row">
               <div className="col-md-6 mb-3">
-                <label className="form-label">Title</label>
+                <label className="form-label">제목</label>
                 <input
                   type="text"
                   className="form-control"
@@ -110,7 +124,7 @@ export const AddNewBook = () => {
                 />
               </div>
               <div className="col-md-3 mb-3">
-                <label className="form-label"> Author </label>
+                <label className="form-label"> 저자 </label>
                 <input
                   type="text"
                   className="form-control"
@@ -121,7 +135,7 @@ export const AddNewBook = () => {
                 />
               </div>
               <div className="col-md-3 mb-3">
-                <label className="form-label"> Category</label>
+                <label className="form-label">분야</label>
                 <button
                   className="form-control btn btn-secondary dropdown-toggle"
                   type="button"
@@ -136,43 +150,15 @@ export const AddNewBook = () => {
                   className="dropdown-menu"
                   aria-labelledby="dropdownMenuButton1"
                 >
-                  <li>
-                    <span
-                      onClick={() => categoryField("FE")}
-                      className="dropdown-item"
-                    >
-                      Front End
-                    </span>
-                  </li>
-                  <li>
-                    <span
-                      onClick={() => categoryField("BE")}
-                      className="dropdown-item"
-                    >
-                      Back End
-                    </span>
-                  </li>
-                  <li>
-                    <span
-                      onClick={() => categoryField("Data")}
-                      className="dropdown-item"
-                    >
-                      Data
-                    </span>
-                  </li>
-                  <li>
-                    <span
-                      onClick={() => categoryField("DevOps")}
-                      className="dropdown-item"
-                    >
-                      DevOps
-                    </span>
-                  </li>
+                  <CategoryList
+                    categories={categories}
+                    onSelect={categoryField}
+                  />
                 </ul>
               </div>
             </div>
             <div className="col-md-12 mb-3">
-              <label className="form-label">Description</label>
+              <label className="form-label">설명</label>
               <textarea
                 className="form-control"
                 id="exampleFormControlTextarea1"
@@ -182,7 +168,7 @@ export const AddNewBook = () => {
               ></textarea>
             </div>
             <div className="col-md-3 mb-3">
-              <label className="form-label">Copies</label>
+              <label className="form-label">수량</label>
               <input
                 type="number"
                 className="form-control"
@@ -199,7 +185,7 @@ export const AddNewBook = () => {
                 className="btn btn-primary mt-3"
                 onClick={submitNewBook}
               >
-                Add Book
+                추가
               </button>
             </div>
           </form>
