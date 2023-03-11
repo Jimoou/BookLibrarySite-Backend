@@ -62,7 +62,7 @@ export const ManageLibraryPage = () => {
               aria-controls="nav-quantity"
               aria-selected="true"
             >
-              책 수량 변경
+              도서 관리
             </button>
             <button
               onClick={messagesClickFunction}
