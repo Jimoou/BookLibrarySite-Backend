@@ -27,7 +27,7 @@ public class AdminService {
             throw new Exception("Book not found");
         }
 
-        book.get().setCopiesAvailable(book.get().getCopiesAvailable());
+        book.get().setCopiesAvailable(book.get().getCopiesAvailable() + 1);
         book.get().setCopies(book.get().getCopies() + 1);
 
         bookRepository.save(book.get());
