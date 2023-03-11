@@ -31,6 +31,7 @@ export const SearchBooksPage = () => {
   const [search, setSearch] = useState("");
   const [searchUrl, setSearchUrl] = useState("");
   const [categorySelection, setCategorySelection] = useState("모든 분야");
+  const [bookDelete, setBookDelete] = useState(false);
 
   useEffect(() => {
     const fetchBooks = async () => {
@@ -79,7 +80,7 @@ export const SearchBooksPage = () => {
       setHttpError(error.message);
     });
     window.scrollTo(0, 0);
-  }, [currentPage, searchUrl]);
+  }, [currentPage, searchUrl, bookDelete]);
 
   if (isLoading) {
     return <SpinnerLoading />;
@@ -126,6 +127,7 @@ export const SearchBooksPage = () => {
   };
 
   const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
+  const deleteBook = () => setBookDelete(!bookDelete);
 
   return (
     <div>
@@ -177,7 +179,11 @@ export const SearchBooksPage = () => {
                   <h5>모든 책 수: {totalAmountOfBooks} 권</h5>
                 </div>
                 {books.map((book) => (
-                  <SearchBook book={book} key={book.id} />
+                  <SearchBook
+                    book={book}
+                    key={book.id}
+                    deleteBook={deleteBook}
+                  />
                 ))}
               </>
             ) : (
