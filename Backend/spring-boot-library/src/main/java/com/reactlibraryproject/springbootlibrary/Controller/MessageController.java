@@ -7,7 +7,7 @@ import com.reactlibraryproject.springbootlibrary.Utils.ExtractJWT;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
-@CrossOrigin("http://localhost:3000")
+@CrossOrigin("https://localhost:3000")
 @RestController
 @AllArgsConstructor
 @RequestMapping("/api/messages")
