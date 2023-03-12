@@ -16,7 +16,7 @@ application.properties
 # AWS User-specific
 .idea/**/aws.xml
 .idea/compiler.xml
-resources/Jiwoon-keystore.p12
+Jiwoon-keystore.p12
 # Generated files
 .idea/**/contentModel.xml
 
