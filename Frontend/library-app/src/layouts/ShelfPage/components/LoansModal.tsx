@@ -38,21 +38,12 @@ export const LoansModal: React.FC<{
               <div className="mt-3">
                 <div className="row">
                   <div className="col-2">
-                    {props.shelfCurrentLoan.book?.img ? (
-                      <img
-                        src={props.shelfCurrentLoan.book?.img}
-                        width="56"
-                        height="87"
-                        alt="Book"
-                      />
-                    ) : (
-                      <img
-                        src={require("./../../../Images/BooksImages/book-luv2code-1000.png")}
-                        width="56"
-                        height="87"
-                        alt="Book"
-                      />
-                    )}
+                    <img
+                      src={props.shelfCurrentLoan.book?.img}
+                      width="56"
+                      height="87"
+                      alt="Book"
+                    />
                   </div>
                   <div className="col-10">
                     <h6>{props.shelfCurrentLoan.book.author}</h6>

@@ -1,4 +1,4 @@
-import { Link, NavLink } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import { useOktaAuth } from "@okta/okta-react";
 import { SpinnerLoading } from "../Utils/SpinnerLoading";
 import {
@@ -98,6 +98,3 @@ export const Navbar = () => {
     </nav>
   );
 };
-function async() {
-  throw new Error("Function not implemented.");
-}

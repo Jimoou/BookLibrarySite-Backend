@@ -72,38 +72,20 @@ export const HistoryPage = () => {
                 <div className="row g-0">
                   <div className="col-md-2">
                     <div className="d-none d-lg-block">
-                      {history.img ? (
-                        <img
-                          src={history.img}
-                          width="123"
-                          height="196"
-                          alt="Book"
-                        />
-                      ) : (
-                        <img
-                          src={require("./../../../Images/BooksImages/book-luv2code-1000.png")}
-                          width="123"
-                          height="196"
-                          alt="Default"
-                        />
-                      )}
+                      <img
+                        src={history.img}
+                        width="123"
+                        height="196"
+                        alt="Book"
+                      />
                     </div>
                     <div className="d-lg-none d-flex justify-content-center align-items-center">
-                      {history.img ? (
-                        <img
-                          src={history.img}
-                          width="123"
-                          height="196"
-                          alt="Book"
-                        />
-                      ) : (
-                        <img
-                          src={require("./../../../Images/BooksImages/book-luv2code-1000.png")}
-                          width="123"
-                          height="196"
-                          alt="Default"
-                        />
-                      )}
+                      <img
+                        src={history.img}
+                        width="123"
+                        height="196"
+                        alt="Book"
+                      />
                     </div>
                   </div>
                   <div className="col">
