@@ -9,10 +9,12 @@
 .gitignore
 package.json
 package-lock.json
-# Icon must end with two \r
-Icon
 localhost.conf
 ssl-localhost/*
+src/lib/tossConfig.ts
+# Icon must end with two \r
+Icon
+
 # Thumbnails
 ._*
 
