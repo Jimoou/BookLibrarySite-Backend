@@ -12,6 +12,7 @@ import { ReviewListPage } from "./layouts/BookCheckoutPage/ReviewListPage/Review
 import { ShelfPage } from "./layouts/ShelfPage/ShelfPage";
 import { MessagesPage } from "./layouts/MessagesPage/MessagesPage";
 import { ManageLibraryPage } from "./layouts/ManageLibraryPage/ManageLibraryPage";
+import CartPage from "./layouts/CartPage/CartPage";
 
 function App() {
   const oktaAuth = new OktaAuth(oktaConfig);
@@ -53,6 +54,7 @@ function App() {
             <Route path="/shelf" element={<ShelfPage />} />
             <Route path="/messages" element={<MessagesPage />} />
             <Route path="/admin" element={<ManageLibraryPage />} />
+            <Route path="/cart" element={<CartPage />} />
           </Routes>
         </div>
       </Security>
