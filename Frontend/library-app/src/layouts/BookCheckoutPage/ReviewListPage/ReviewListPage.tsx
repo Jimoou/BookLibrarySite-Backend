@@ -18,7 +18,9 @@ export const ReviewListPage = () => {
   useEffect(() => {
     const bookId = window.location.pathname.split("/")[2];
     const fetchBookReviews = async () => {
-      const reviewUrl: string = `http://localhost:8080/api/reviews/search/findByBookId?bookId=${bookId}&page=${
+      const reviewUrl: string = `${
+        process.env.REACT_APP_API
+      }/reviews/search/findByBookId?bookId=${bookId}&page=${
         currentPage - 1
       }&size=${reviewsPerPage}`;
 

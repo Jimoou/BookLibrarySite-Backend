@@ -78,7 +78,7 @@ export const Navbar = () => {
                 </li>
               )}
             {!authState.isAuthenticated ? (
-              <li className="nav-item m-1">
+              <li className="nav-item">
                 <NavLink className="nav-link" to="/login">
                   <Login />
                   &nbsp;로그인

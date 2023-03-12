@@ -20,7 +20,9 @@ export const HistoryPage = () => {
   useEffect(() => {
     const fetchUserHistory = async () => {
       if (authState && authState.isAuthenticated) {
-        const url = `http://localhost:8080/api/histories/search/findBooksByUserEmail/?userEmail=${
+        const url = `${
+          process.env.REACT_APP_API
+        }/histories/search/findBooksByUserEmail/?userEmail=${
           authState.accessToken?.claims.sub
         }&page=${currentPage - 1}&size=5`;
         const requestOptions = {
@@ -74,24 +76,26 @@ export const HistoryPage = () => {
                     <div className="d-none d-lg-block">
                       <img
                         src={history.img}
-                        width="123"
-                        height="196"
+                        width="195"
+                        height="268"
                         alt="Book"
+                        className="shadow bg-body-tertiary"
                       />
                     </div>
                     <div className="d-lg-none d-flex justify-content-center align-items-center">
                       <img
                         src={history.img}
-                        width="123"
-                        height="196"
+                        width="195"
+                        height="268"
                         alt="Book"
+                        className="shadow bg-body-tertiary"
                       />
                     </div>
                   </div>
                   <div className="col">
                     <div className="card-body">
-                      <h5 className="card-title"> {history.author} </h5>
                       <h4>{history.title}</h4>
+                      <h5 className="card-title"> {history.author} </h5>
                       <p className="card-text">{history.description}</p>
                       <hr />
                       <p className="card-text">
