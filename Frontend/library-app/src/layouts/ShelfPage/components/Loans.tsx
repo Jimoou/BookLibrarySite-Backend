@@ -1,3 +1,4 @@
+import { Bolt } from "@mui/icons-material";
 import { useOktaAuth } from "@okta/okta-react";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
@@ -96,22 +97,46 @@ export const Loans = () => {
       <div className="d-none d-lg-block mt-2">
         {shelfCurrentLoans.length > 0 ? (
           <>
-            <h5>대여중인 책 : </h5>
-
             {shelfCurrentLoans.map((shelfCurrentLoan) => (
               <div key={shelfCurrentLoan.book.id}>
-                <div className="row mt-3 mb-3">
-                  <div className="col-4 col-md-4 container">
-                    <img
-                      src={shelfCurrentLoan.book?.img}
-                      width="226"
-                      height="349"
-                      alt="Book"
-                    />
+                <div className="row mt-3 mb-2">
+                  <div className="d-flex col-md-8">
+                    <div className="col col-md-3">
+                      <img
+                        src={shelfCurrentLoan.book?.img}
+                        width="150"
+                        height="210"
+                        alt="Book"
+                        className="shadow bg-body-tertiary m-2"
+                      />
+                    </div>
+                    <div className="card-body m-2">
+                      <div className="card-title">
+                        <h4>{shelfCurrentLoan.book.title}</h4>
+                      </div>
+                      <div className="card-text">
+                        <h5>{shelfCurrentLoan.book.author}</h5>
+                      </div>
+                      <div className="card-text">
+                        <p>
+                          {shelfCurrentLoan.book.publisher} .
+                          {shelfCurrentLoan.book.publicationDate}
+                        </p>
+                      </div>
+                      <div className="card-text">
+                        <h5>{shelfCurrentLoan.book.price} 원</h5>
+                      </div>
+                      <div className="card-text">
+                        <h5>
+                          {shelfCurrentLoan.book.coin}{" "}
+                          <Bolt style={{ color: "yellow" }} />
+                        </h5>
+                      </div>
+                    </div>
                   </div>
-                  <div className="card col-3 col-md-3 container d-flex">
+                  <div className="card col-md-3 container d-flex">
                     <div className="card-body">
-                      <div className="mt-5">
+                      <div className="mt-2">
                         <h4>책 관리</h4>
                         {shelfCurrentLoan.daysLeft > 0 && (
                           <p className="text-secondary">
@@ -144,6 +169,9 @@ export const Loans = () => {
                       >
                         리뷰 쓰러 가기
                       </Link>
+                      <button className="btn btn-warning m-1">
+                        장바구니에 담기
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -171,17 +199,42 @@ export const Loans = () => {
       <div className="container d-lg-none mt-2">
         {shelfCurrentLoans.length > 0 ? (
           <>
-            <h5 className="mb-3">대여중인 책: </h5>
-
             {shelfCurrentLoans.map((shelfCurrentLoan) => (
-              <div key={shelfCurrentLoan.book.id}>
+              <div
+                key={shelfCurrentLoan.book.id}
+                style={{ textAlign: "center" }}
+              >
                 <div className="d-flex justify-content-center align-items-center">
                   <img
                     src={shelfCurrentLoan.book?.img}
-                    width="226"
-                    height="349"
+                    width="150"
+                    height="210"
                     alt="Book"
+                    className="shadow bg-body-tertiary m-2"
                   />
+                </div>
+                <div className="card-body">
+                  <div className="card-title">
+                    <h4>{shelfCurrentLoan.book.title}</h4>
+                  </div>
+                  <div className="card-title">
+                    <h5>{shelfCurrentLoan.book.author}</h5>
+                  </div>
+                  <div className="card-title">
+                    <p>
+                      {shelfCurrentLoan.book.publisher} .{" "}
+                      {shelfCurrentLoan.book.publicationDate}
+                    </p>
+                  </div>
+                  <div className="card-text">
+                    <h5>{shelfCurrentLoan.book.price} 원</h5>
+                  </div>
+                  <div className="card-text">
+                    <h5>
+                      {shelfCurrentLoan.book.coin}{" "}
+                      <Bolt style={{ color: "yellow" }} />
+                    </h5>
+                  </div>
                 </div>
                 <div className="card d-flex mt-5 mb-3">
                   <div className="card-body container">
@@ -218,6 +271,9 @@ export const Loans = () => {
                     >
                       리뷰 쓰러 가기
                     </Link>
+                    <button className="btn btn-warning m-1">
+                      장바구니에 담기
+                    </button>
                   </div>
                 </div>
                 <hr />
