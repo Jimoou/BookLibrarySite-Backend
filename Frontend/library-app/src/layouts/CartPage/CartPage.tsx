@@ -1,33 +1,71 @@
-import { loadPaymentWidget, ANONYMOUS } from "@tosspayments/payment-widget-sdk";
-import { useState, useEffect } from "react";
-import { tossConfig } from "../../lib/tossConfig";
+import { useOktaAuth } from "@okta/okta-react";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { Purchase } from "./components/Purchase";
+// import { HistoryPage } from "./components/HistoryPage";
+// import { Loans } from "./components/Loans";
 
 export const CartPage = () => {
-  const [totalPrice, setTotalPrice] = useState(0);
+  // const [historyClick, setHistoryClick] = useState(false);
+  const navigate = useNavigate();
+  const { authState } = useOktaAuth();
 
-  const tossPay = async () => {
-    const paymentWidget = await loadPaymentWidget(
-      tossConfig.clientKey,
-      tossConfig.customerKey
-    ); // 회원 결제
-    paymentWidget.renderPaymentMethods("#payment-method", totalPrice);
-
-    paymentWidget.requestPayment({
-      orderId: "AD8aZDpbzXs4EQa-UkIX6",
-      orderName: "토스 티셔츠 외 2건",
-      successUrl: "https://localhost:8443/success",
-      failUrl: "https://localhost:8443/fail",
-      customerEmail: "customer123@gmail.com",
-      customerName: "김토스",
-    });
-  };
+  if (!authState?.isAuthenticated) {
+    navigate("/login");
+  }
 
   return (
-    <div>
-      <div id="payment-method"></div>
-      <button onClick={tossPay}>결제하기</button>
+    <div className="container">
+      <div className="mt-3">
+        <nav>
+          <div className="nav nav-tabs" id="nav-tab" role="tablist">
+            <button
+              // onClick={() => setHistoryClick(false)}
+              className="nav-link active"
+              id="nav-loans-tab"
+              data-bs-toggle="tab"
+              data-bs-target="#nav-loans"
+              type="button"
+              role="tab"
+              aria-controls="nav-loans"
+              aria-selected="true"
+            >
+              내 장바구니
+            </button>
+            <button
+              // onClick={() => setHistoryClick(true)}
+              className="nav-link"
+              id="nav-history-tab"
+              data-bs-toggle="tab"
+              data-bs-target="#nav-history"
+              type="button"
+              role="tab"
+              aria-controls="nav-history"
+              aria-selected="false"
+            >
+              구매 내역
+            </button>
+          </div>
+        </nav>
+        <div className="tab-content" id="nav-tabContent">
+          <div
+            className="tab-pane fade show active"
+            id="nav-loans"
+            role="tabpanel"
+            aria-labelledby="nav-loans-tab"
+          >
+            <Purchase />
+          </div>
+          <div
+            className="tab-pane fade"
+            id="nav-history"
+            role="tabpanel"
+            aria-labelledby="nav-history-tab"
+          >
+            {/* {historyClick ? <HistoryPage /> : <></>} */}
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
-
-export default CartPage;
