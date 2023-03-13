@@ -1,7 +1,9 @@
 package com.reactlibraryproject.springbootlibrary.Controller;
 
 import com.reactlibraryproject.springbootlibrary.Entity.Book;
+import com.reactlibraryproject.springbootlibrary.ReponseModels.BooksInCartResponse;
 import com.reactlibraryproject.springbootlibrary.ReponseModels.ShelfCurrentLoansResponse;
+import com.reactlibraryproject.springbootlibrary.RequestModels.AddBookRequest;
 import com.reactlibraryproject.springbootlibrary.Service.BookService;
 import com.reactlibraryproject.springbootlibrary.Utils.ExtractJWT;
 import lombok.AllArgsConstructor;
@@ -51,5 +53,25 @@ public class BookController {
     public void renewLoan(@RequestHeader(value = "Authorization") String token, @RequestParam Long bookId) throws Exception {
         String userEmail = ExtractJWT.payloadJWTExtraction(token, "\"sub\"");
         bookService.renewLoan(userEmail, bookId);
+    }
+
+    @GetMapping("/secure/currentcart")
+    public List<BooksInCartResponse> currentCart(@RequestHeader(value = "Authorization") String token) throws Exception {
+        String userEmail = ExtractJWT.payloadJWTExtraction(token, "\"sub\"");
+        return bookService.currentCart(userEmail);
+    }
+
+    @PutMapping("/secure/add/bookincart")
+    public void addBookInCart(@RequestHeader(value = "Authorization") String token,
+                         @RequestParam Long bookId) throws Exception {
+        String userEmail = ExtractJWT.payloadJWTExtraction(token, "\"sub\"");
+        bookService.addBookInCart(userEmail, bookId);
+    }
+
+    @PutMapping("/secure/delete/bookincart")
+    public void deleteBookInCart(@RequestHeader(value = "Authorization") String token,
+                              @RequestParam Long bookId) throws Exception {
+        String userEmail = ExtractJWT.payloadJWTExtraction(token, "\"sub\"");
+        bookService.deleteBookInCart(userEmail, bookId);
     }
 }
