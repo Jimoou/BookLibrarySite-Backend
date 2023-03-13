@@ -3,6 +3,7 @@ import { useOktaAuth } from "@okta/okta-react";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import ShelfCurrentLoans from "../../../models/ShelfCurrentLoans";
+import { addBookInCart } from "../../CartPage/components/PurchaseFunction";
 import { SpinnerLoading } from "../../Utils/SpinnerLoading";
 import { LoansModal } from "./LoansModal";
 
@@ -169,7 +170,16 @@ export const Loans = () => {
                       >
                         리뷰 쓰러 가기
                       </Link>
-                      <button className="btn btn-warning m-1">
+                      <button
+                        className="btn btn-warning m-1"
+                        onClick={() =>
+                          addBookInCart(
+                            shelfCurrentLoan.book.id,
+                            authState,
+                            authState?.accessToken?.claims.sub || ""
+                          )
+                        }
+                      >
                         장바구니에 담기
                       </button>
                     </div>

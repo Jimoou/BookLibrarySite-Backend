@@ -3,9 +3,12 @@ package com.reactlibraryproject.springbootlibrary.Service;
 import com.reactlibraryproject.springbootlibrary.DAO.BookRepository;
 import com.reactlibraryproject.springbootlibrary.DAO.CheckoutRepository;
 import com.reactlibraryproject.springbootlibrary.DAO.HistoryRepository;
+import com.reactlibraryproject.springbootlibrary.DAO.PurchaseRepository;
 import com.reactlibraryproject.springbootlibrary.Entity.Book;
 import com.reactlibraryproject.springbootlibrary.Entity.Checkout;
 import com.reactlibraryproject.springbootlibrary.Entity.History;
+import com.reactlibraryproject.springbootlibrary.Entity.Purchase;
+import com.reactlibraryproject.springbootlibrary.ReponseModels.BooksInCartResponse;
 import com.reactlibraryproject.springbootlibrary.ReponseModels.ShelfCurrentLoansResponse;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -26,6 +29,8 @@ public class BookService {
     private final CheckoutRepository checkoutRepository;
 
     private final HistoryRepository historyRepository;
+
+    private final PurchaseRepository purchaseRepository;
 
     public Book checkoutBook(String userEmail, Long bookId) throws Exception {
         Optional<Book> book = bookRepository.findById(bookId);
@@ -87,7 +92,8 @@ public class BookService {
         return shelfCurrentLoansResponses;
     }
 
-    public void returnBook (String userEmail, Long bookId) throws Exception {
+
+    public void returnBook(String userEmail, Long bookId) throws Exception {
         Optional<Book> book = bookRepository.findById(bookId);
 
         Checkout validateCheckout = checkoutRepository.findByUserEmailAndBookId(userEmail, bookId);
@@ -114,7 +120,7 @@ public class BookService {
         historyRepository.save(history);
     }
 
-    public void renewLoan (String userEmail, Long bookId) throws Exception {
+    public void renewLoan(String userEmail, Long bookId) throws Exception {
         Checkout validateCheckout = checkoutRepository.findByUserEmailAndBookId(userEmail, bookId);
 
         if (validateCheckout == null) {
@@ -129,5 +135,51 @@ public class BookService {
             validateCheckout.setReturnedDate(currentDate.plusDays(renewalPeriod).toString());
             checkoutRepository.save(validateCheckout);
         }
+    }
+    public void addBookInCart(String userEmail, Long bookId) throws Exception {
+        Book book = bookRepository.findById(bookId).orElseThrow(() -> new Exception("It was wrong bookId"));
+
+        Purchase purchase = purchaseRepository.findByUserEmailAndBookId(userEmail, bookId);
+        int amount = purchase == null ? 1 : purchase.getAmount() + 1;
+
+        if (purchase == null) {
+            purchase = Purchase.builder().userEmail(userEmail).bookId(bookId).build();
+        }
+
+        purchase.setAmount(amount);
+        purchaseRepository.save(purchase);
+    }
+
+
+    public void deleteBookInCart(String userEmail, Long bookId) throws Exception {
+        Book book = bookRepository.findById(bookId).orElseThrow(() -> new Exception("It was wrong bookId"));
+        Purchase validatePurchase = purchaseRepository.findByUserEmailAndBookId(userEmail, bookId);
+
+        if (validatePurchase == null) {
+            throw new Exception("Book does not exist or not added in cart by user");
+        }
+        purchaseRepository.deleteById(validatePurchase.getId());
+    }
+
+    public List<BooksInCartResponse> currentCart(String userEmail) throws Exception {
+        List<BooksInCartResponse> booksInCartResponses = new ArrayList<>();
+
+        List<Purchase> purchaseList = purchaseRepository.findBooksByUserEmail(userEmail);
+
+        Map<Long, Purchase> purchaseMap = new HashMap<>();
+        for (Purchase purchase : purchaseList) {
+            purchaseMap.put(purchase.getBookId(), purchase);
+        }
+
+        List<Book> booksInCart = bookRepository.findBooksByBookIds(new ArrayList<>(purchaseMap.keySet()));
+
+        for (Book book : booksInCart) {
+            Purchase purchase = purchaseMap.get(book.getId());
+
+            if (purchase != null) {
+                booksInCartResponses.add(new BooksInCartResponse(book, purchase.getAmount()));
+            }
+        }
+        return booksInCartResponses;
     }
 }

@@ -1,22 +1,23 @@
-import { Bolt } from "@mui/icons-material";
+import { Add, Clear, Remove } from "@mui/icons-material";
 import { useOktaAuth } from "@okta/okta-react";
+import { loadPaymentWidget } from "@tosspayments/payment-widget-sdk";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import ShelfCurrentLoans from "../../../models/ShelfCurrentLoans";
+import { tossConfig } from "../../../lib/tossConfig";
+import BooksInCart from "../../../models/BooksInCart";
 import { SpinnerLoading } from "../../Utils/SpinnerLoading";
-// import { LoansModal } from "./LoansModal";
+import { deleteBookInCart } from "./PurchaseFunction";
 
 export const Purchase = () => {
   const { authState } = useOktaAuth();
   const [httpError, setHttpError] = useState(null);
   const [selectedBooks, setSelectedBooks] = useState<number[]>([]);
   const [isCheckAll, setIsCheckAll] = useState(false);
-  const [isCheck, setIsCheck] = useState(false);
 
-  // Current Loans
-  const [shelfCurrentLoans, setShelfCurrentLoans] = useState<
-    ShelfCurrentLoans[]
-  >([]);
+  const [deleteBook, setDeleteBook] = useState(false);
+
+  // Current Cart
+  const [booksInCart, setBooksInCart] = useState<BooksInCart[]>([]);
 
   const handleCheckboxChange = (bookId: number) => {
     if (selectedBooks.includes(bookId)) {
@@ -24,7 +25,7 @@ export const Purchase = () => {
       setIsCheckAll(false);
     } else {
       setSelectedBooks([...selectedBooks, bookId]);
-      if (selectedBooks.length + 1 === shelfCurrentLoans.length) {
+      if (selectedBooks.length + 1 === BooksInCart.length) {
         setIsCheckAll(true);
       }
     }
@@ -34,13 +35,11 @@ export const Purchase = () => {
     setSelectedBooks([]);
     if (e.target.checked) {
       setIsCheckAll(true);
-      setIsCheck(true);
-      setSelectedBooks(
-        shelfCurrentLoans.map((shelfCurrentLoan) => shelfCurrentLoan.book.id)
-      );
+
+      setSelectedBooks(booksInCart.map((bookInCart) => bookInCart.book.id));
     } else {
       setIsCheckAll(false);
-      setIsCheck(false);
+
       setSelectedBooks([]);
     }
   };
@@ -48,23 +47,57 @@ export const Purchase = () => {
   const calculateTotalPrice = () => {
     let total = 0;
     selectedBooks.forEach((bookId) => {
-      const selectedBook = shelfCurrentLoans.find(
-        (shelfCurrentLoan) => shelfCurrentLoan.book.id === bookId
+      const selectedBook = booksInCart.find(
+        (bookInCart) => bookInCart.book.id === bookId
       );
       if (selectedBook) {
-        total += selectedBook.book.price;
+        total += selectedBook.book.price * selectedBook.amount;
       }
     });
-    return `₩ ${total}`;
+    return total;
   };
-  const [checkout, setCheckout] = useState(false);
+  const selectedBooksArr = () => {
+    let booksArr: string[] = [];
+    selectedBooks.forEach((bookId) => {
+      const selectedBook = booksInCart.find(
+        (bookInCart) => bookInCart.book.id === bookId
+      );
+      if (selectedBook) {
+        booksArr.push(selectedBook.book.title);
+      }
+    });
+    return booksArr;
+  };
 
-  const [isLoadingUserLoans, setIsLoadingUserLoans] = useState(true);
+  const tossPay = async () => {
+    const paymentWidget = await loadPaymentWidget(
+      tossConfig.clientKey,
+      tossConfig.customerKey
+    );
+    paymentWidget.renderPaymentMethods(
+      "#payment-method",
+      calculateTotalPrice()
+    );
+
+    const userEmail = authState?.accessToken?.claims.sub;
+    const userName = authState?.accessToken?.claims.name;
+    let books = selectedBooksArr();
+    paymentWidget.requestPayment({
+      orderId: "AD8aZDpbzXs4EQa-UkIX6",
+      orderName: `${books[0]}외 ${books.length - 1}건`,
+      successUrl: "https://localhost:8443/success",
+      failUrl: "https://localhost:8443/fail",
+      customerEmail: userEmail,
+      customerName: userName,
+    });
+  };
+
+  const [isLoadingBooksInCart, setIsLoadingBooksInCart] = useState(true);
 
   useEffect(() => {
-    const fetchUserCurrentLoans = async () => {
+    const fetchBooksInCart = async () => {
       if (authState && authState.isAuthenticated) {
-        const url = `${process.env.REACT_APP_API}/books/secure/currentloans`;
+        const url = `${process.env.REACT_APP_API}/books/secure/currentcart`;
         const requestOptions = {
           methoe: "GET",
           headers: {
@@ -72,24 +105,29 @@ export const Purchase = () => {
             "Content-Type": "application/json",
           },
         };
-        const shelfCurrentLoansResponse = await fetch(url, requestOptions);
-        if (!shelfCurrentLoansResponse.ok) {
+        const booksInCartResponse = await fetch(url, requestOptions);
+        if (!booksInCartResponse.ok) {
           throw new Error("Something went wrong!");
         }
-        const shelfCurrentLoansResponseJson =
-          await shelfCurrentLoansResponse.json();
-        setShelfCurrentLoans(shelfCurrentLoansResponseJson);
+        const booksInCartResponseJson = await booksInCartResponse.json();
+        setBooksInCart(booksInCartResponseJson);
       }
-      setIsLoadingUserLoans(false);
+      setIsLoadingBooksInCart(false);
+      setDeleteBook(false);
     };
-    fetchUserCurrentLoans().catch((error: any) => {
-      setIsLoadingUserLoans(false);
+    fetchBooksInCart().catch((error: any) => {
+      setIsLoadingBooksInCart(false);
       setHttpError(error.message);
     });
     window.scrollTo(0, 0);
-  }, [authState, checkout]);
+  }, [authState, deleteBook]);
 
-  if (isLoadingUserLoans) {
+  const deleteFetchBook = async (bookId: number) => {
+    deleteBookInCart(bookId, authState);
+    setDeleteBook(true);
+  };
+
+  if (isLoadingBooksInCart) {
     return <SpinnerLoading />;
   }
 
@@ -103,6 +141,7 @@ export const Purchase = () => {
 
   return (
     <div>
+      <div id="payment-method"></div>
       {/* Desktop */}
       <div className="d-none d-lg-block mt-2">
         <h5>
@@ -114,23 +153,21 @@ export const Purchase = () => {
           />{" "}
           <label htmlFor="checkAll">전체선택</label>
         </h5>
-        {shelfCurrentLoans.length > 0 ? (
+        {booksInCart.length > 0 ? (
           <>
-            {shelfCurrentLoans.map((shelfCurrentLoan) => (
-              <div key={shelfCurrentLoan.book.id}>
+            {booksInCart.map((bookInCart) => (
+              <div key={bookInCart.book.id}>
                 <div className="row mt-3 mb-2">
                   <div className="d-flex col-md-8">
                     <input
                       id="selectedBook"
                       type="checkbox"
-                      onChange={() =>
-                        handleCheckboxChange(shelfCurrentLoan.book.id)
-                      }
-                      checked={selectedBooks.includes(shelfCurrentLoan.book.id)}
+                      onChange={() => handleCheckboxChange(bookInCart.book.id)}
+                      checked={selectedBooks.includes(bookInCart.book.id)}
                     />
                     <div className="col col-md-3">
                       <img
-                        src={shelfCurrentLoan.book?.img}
+                        src={bookInCart.book?.img}
                         width="150"
                         height="210"
                         alt="Book"
@@ -138,24 +175,51 @@ export const Purchase = () => {
                       />
                     </div>
                     <div className="card-body m-2">
-                      <div className="card-title">
+                      <div className="card-title d-flex justify-content-between">
                         <h4>
                           <Link
                             style={{ color: "black", textDecoration: "none" }}
-                            to={`/checkout/${shelfCurrentLoan.book.id}`}
+                            to={`/checkout/${bookInCart.book.id}`}
                           >
-                            {shelfCurrentLoan.book.title}
+                            {bookInCart.book.title}
                           </Link>
                         </h4>
+                        <p
+                          className="card-text"
+                          onClick={() => deleteFetchBook(bookInCart.book.id)}
+                        >
+                          삭제
+                        </p>
                       </div>
                       <div className="card-text">
-                        <h5>{shelfCurrentLoan.book.author}</h5>
+                        <h5>{bookInCart.book.author}</h5>
                       </div>
+
                       <div className="card-text">
                         <p>
-                          {shelfCurrentLoan.book.publisher} .
-                          {shelfCurrentLoan.book.publicationDate}
+                          {bookInCart.book.publisher} .
+                          {bookInCart.book.publicationDate}
                         </p>
+                      </div>
+                      <div className="cart-text input-group">
+                        <div className="input-group-prepend">
+                          <button className="btn btn-warning" type="button">
+                            <Remove />
+                          </button>
+                        </div>
+                        <div className="col-1">
+                          <input
+                            type="text"
+                            className="form-control text-center"
+                            value={bookInCart.amount}
+                            readOnly
+                          />
+                        </div>
+                        <div className="input-group-append">
+                          <button className="btn btn-warning" type="button">
+                            <Add />
+                          </button>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -165,12 +229,12 @@ export const Purchase = () => {
                   >
                     <div className="card-body">
                       <div className="mt-5">
-                        <h4>₩ {shelfCurrentLoan.book.price}</h4>
+                        <h4>₩ {bookInCart.book.price * bookInCart.amount}</h4>
                       </div>
                       <hr />
                       <Link
                         className="btn btn-primary"
-                        to={`/checkout/${shelfCurrentLoan.book.id}`}
+                        to={`/checkout/${bookInCart.book.id}`}
                       >
                         리뷰 쓰러 가기
                       </Link>
@@ -192,9 +256,11 @@ export const Purchase = () => {
         <div className="col-md-12 mb-3">
           <div className="d-flex justify-content-end p-3 total-price-container">
             <div className="d-flex align-items-center">
-              <h4 className="m-4">총 금액 | {calculateTotalPrice()} </h4>
+              <h4 className="m-4">총 금액 | ₩ {calculateTotalPrice()} </h4>
             </div>
-            <button className="btn btn-primary btn-lg m-2">결제하기</button>
+            <button className="btn btn-primary btn-lg m-2" onClick={tossPay}>
+              결제하기
+            </button>
           </div>
         </div>
       </div>
@@ -210,24 +276,19 @@ export const Purchase = () => {
           />{" "}
           <label htmlFor="checkAll">전체선택</label>
         </h5>
-        {shelfCurrentLoans.length > 0 ? (
+        {booksInCart.length > 0 ? (
           <>
-            {shelfCurrentLoans.map((shelfCurrentLoan) => (
-              <div
-                key={shelfCurrentLoan.book.id}
-                style={{ textAlign: "center" }}
-              >
+            {booksInCart.map((bookInCart) => (
+              <div key={bookInCart.book.id} style={{ textAlign: "center" }}>
                 <input
                   id="selectedBook"
                   type="checkbox"
-                  onChange={() =>
-                    handleCheckboxChange(shelfCurrentLoan.book.id)
-                  }
-                  checked={selectedBooks.includes(shelfCurrentLoan.book.id)}
+                  onChange={() => handleCheckboxChange(bookInCart.book.id)}
+                  checked={selectedBooks.includes(bookInCart.book.id)}
                 />
                 <div className="d-flex justify-content-center align-items-center">
                   <img
-                    src={shelfCurrentLoan.book?.img}
+                    src={bookInCart.book?.img}
                     width="150"
                     height="210"
                     alt="Book"
@@ -235,35 +296,42 @@ export const Purchase = () => {
                   />
                 </div>
                 <div className="card-body">
-                  <div className="card-title">
+                  <div className="card-title d-flex justify-content-between">
                     <h4>
                       <Link
                         style={{ color: "black", textDecoration: "none" }}
-                        to={`/checkout/${shelfCurrentLoan.book.id}`}
+                        to={`/checkout/${bookInCart.book.id}`}
                       >
-                        {shelfCurrentLoan.book.title}
+                        {bookInCart.book.title}
                       </Link>
                     </h4>
+                    <p
+                      className="card-text"
+                      onClick={() => deleteFetchBook(bookInCart.book.id)}
+                    >
+                      삭제
+                      <Clear />
+                    </p>
                   </div>
                   <div className="card-title">
-                    <h5>{shelfCurrentLoan.book.author}</h5>
+                    <h5>{bookInCart.book.author}</h5>
                   </div>
                   <div className="card-title">
                     <p>
-                      {shelfCurrentLoan.book.publisher} .{" "}
-                      {shelfCurrentLoan.book.publicationDate}
+                      {bookInCart.book.publisher} .{" "}
+                      {bookInCart.book.publicationDate}
                     </p>
                   </div>
                 </div>
                 <div className="card d-flex mt-5 mb-3">
                   <div className="card-body container">
                     <div className="mt-3">
-                      <h4>₩ {shelfCurrentLoan.book.price}</h4>
+                      <h4>₩ {bookInCart.book.price}</h4>
                     </div>
                     <hr />
                     <Link
                       className="btn btn-primary"
-                      to={`/checkout/${shelfCurrentLoan.book.id}`}
+                      to={`/checkout/${bookInCart.book.id}`}
                     >
                       리뷰 쓰러 가기
                     </Link>
@@ -275,7 +343,7 @@ export const Purchase = () => {
             <div className="col-md-12 mb-3">
               <div className="d-flex justify-content-end p-3 total-price-container">
                 <div className="d-flex align-items-center">
-                  <h4 className="m-4">총 금액 | {calculateTotalPrice()} </h4>
+                  <h4 className="m-4">총 금액 | ₩ {calculateTotalPrice()} </h4>
                 </div>
                 <button className="btn btn-primary btn-lg m-2">결제하기</button>
               </div>

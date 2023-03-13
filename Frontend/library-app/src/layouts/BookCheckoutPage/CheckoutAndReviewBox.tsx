@@ -1,4 +1,5 @@
-import { Link } from "react-router-dom";
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import BookModel from "../../models/BookModel";
 import { LeaveAReview } from "../Utils/LeaveAReview";
 
@@ -11,7 +12,51 @@ export const CheckOutAndReviewBox: React.FC<{
   checkoutBook: any;
   isReviewLeft: boolean;
   submitReview: any;
+  addBookInCart: any;
 }> = (props) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const navigate = useNavigate();
+  const confirm = () => {
+    setIsOpen(false);
+    navigate("/cart");
+  };
+
+  const cancel = () => {
+    setIsOpen(false);
+  };
+
+  const handleClick = () => {
+    props.addBookInCart();
+    setIsOpen(true);
+  };
+
+  const renderModal = () => {
+    return (
+      <div
+        className="modal fade show"
+        style={{ display: "block" }}
+        tabIndex={-1}
+        aria-modal="true"
+      >
+        <div className="modal-dialog">
+          <div className="modal-content">
+            <div className="modal-body">
+              장바구니에 추가되었습니다. 장바구니로 바로 이동하시겠습니까?
+            </div>
+            <div className="modal-footer">
+              <button className="btn btn-secondary" onClick={cancel}>
+                취소
+              </button>
+              <button className="btn btn-primary" onClick={confirm}>
+                이동
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   function buttonRender() {
     if (props.isAuthenticated) {
       if (!props.isCheckedOut && props.currentLoansCount < 5) {
@@ -92,7 +137,6 @@ export const CheckOutAndReviewBox: React.FC<{
           </div>
         </div>
         {buttonRender()}
-
         <hr />
         <h4 className="text-success">구매하기</h4>
         <div className="row">
@@ -100,8 +144,12 @@ export const CheckOutAndReviewBox: React.FC<{
             <b>가격 : {props.book?.price} 원</b>
           </p>
         </div>
+
         <button className="btn btn-info">바로구매</button>
-        <button className="btn btn-warning m-1">장바구니</button>
+        <button className="btn btn-warning m-1" onClick={handleClick}>
+          장바구니
+        </button>
+        {isOpen && renderModal()}
         <hr />
         <p className="mt-3">책의 수량은 변경될 수 있습니다.</p>
         {reviewRender()}

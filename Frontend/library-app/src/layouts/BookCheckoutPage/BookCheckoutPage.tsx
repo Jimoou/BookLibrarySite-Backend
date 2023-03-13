@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import BookModel from "../../models/BookModel";
 import ReviewModel from "../../models/ReviewModel";
 import ReviewRequestModel from "../../models/ReviewRequestModel";
+import { addBookInCart } from "../CartPage/components/PurchaseFunction";
 import { SpinnerLoading } from "../Utils/SpinnerLoading";
 import { StarsReview } from "../Utils/StarsReview";
 import { CheckOutAndReviewBox } from "./CheckoutAndReviewBox";
@@ -260,6 +261,17 @@ export const BookCheckoutPage = () => {
     setIsReviewLeft(true);
   }
 
+  const putBookInCart = () => {
+    let bookId: number = 0;
+    if (book?.id) {
+      bookId = book.id;
+    }
+    let userEmail: string = "";
+    if (authState?.accessToken?.claims.sub) {
+      userEmail = authState?.accessToken?.claims.sub;
+    }
+    return addBookInCart(bookId, authState, userEmail);
+  };
   return (
     <div>
       <div className="container d-none d-lg-block">
@@ -295,6 +307,7 @@ export const BookCheckoutPage = () => {
             checkoutBook={checkoutBook}
             isReviewLeft={isReviewLeft}
             submitReview={submitReview}
+            addBookInCart={() => putBookInCart()}
           />
         </div>
         <hr />
@@ -330,6 +343,7 @@ export const BookCheckoutPage = () => {
           checkoutBook={checkoutBook}
           isReviewLeft={isReviewLeft}
           submitReview={submitReview}
+          addBookInCart={() => putBookInCart()}
         />
         <hr />
         <LatestReviews reviews={reviews} bookId={book?.id} mobile={true} />

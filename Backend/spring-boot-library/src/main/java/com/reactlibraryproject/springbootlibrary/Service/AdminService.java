@@ -2,6 +2,7 @@ package com.reactlibraryproject.springbootlibrary.Service;
 
 import com.reactlibraryproject.springbootlibrary.DAO.BookRepository;
 import com.reactlibraryproject.springbootlibrary.DAO.CheckoutRepository;
+import com.reactlibraryproject.springbootlibrary.DAO.PurchaseRepository;
 import com.reactlibraryproject.springbootlibrary.DAO.ReviewRepository;
 import com.reactlibraryproject.springbootlibrary.Entity.Book;
 import com.reactlibraryproject.springbootlibrary.RequestModels.AddBookRequest;
@@ -19,6 +20,7 @@ public class AdminService {
     private BookRepository bookRepository;
     private ReviewRepository reviewRepository;
     private CheckoutRepository checkoutRepository;
+    private PurchaseRepository purchaseRepository;
 
     public void increaseBookQuantity(Long bookId) throws Exception {
         Optional<Book> book = bookRepository.findById(bookId);
@@ -73,6 +75,7 @@ public class AdminService {
         bookRepository.delete(book.get());
         checkoutRepository.deleteAllByBookId(bookId);
         reviewRepository.deleteAllByBookId(bookId);
+        purchaseRepository.deleteAllByBookId(bookId);
     }
 
 }
