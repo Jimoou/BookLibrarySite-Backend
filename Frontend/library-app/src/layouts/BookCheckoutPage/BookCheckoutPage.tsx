@@ -54,6 +54,10 @@ export const BookCheckoutPage = () => {
         copiesAvailable: responseJson.copiesAvailable,
         category: responseJson.category,
         img: responseJson.img,
+        publisher: responseJson.publisher,
+        price: responseJson.price,
+        coin: responseJson.coin,
+        publicationDate: responseJson.publicationDate,
       };
 
       setBook(loadedBook);

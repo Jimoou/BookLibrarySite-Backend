@@ -55,6 +55,10 @@ public class AdminService {
          .copiesAvailable(addBookRequest.getCopies())
          .category(addBookRequest.getCategory())
          .img(addBookRequest.getImg())
+         .publisher(addBookRequest.getPublisher())
+         .price(addBookRequest.getPrice())
+         .coin(addBookRequest.getCoin())
+         .publicationDate(addBookRequest.getPublicationDate())
          .build();
 
         bookRepository.save(book);

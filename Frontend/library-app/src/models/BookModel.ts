@@ -7,6 +7,10 @@ class BookModel {
   copiesAvailable?: number;
   category?: string;
   img?: string;
+  publisher?: string;
+  price: number;
+  coin: number;
+  publicationDate: string;
 
   constructor(
     id: number,
@@ -16,7 +20,11 @@ class BookModel {
     copies: number,
     copiesAvailable: number,
     category: string,
-    img: string
+    img: string,
+    publihser: string,
+    price: number,
+    coin: number,
+    publicationDate: string
   ) {
     this.id = id;
     this.title = title;
@@ -26,6 +34,10 @@ class BookModel {
     this.copiesAvailable = copiesAvailable;
     this.category = category;
     this.img = img;
+    this.publisher = publihser;
+    this.price = price;
+    this.coin = coin;
+    this.publicationDate = publicationDate;
   }
 }
 export default BookModel;

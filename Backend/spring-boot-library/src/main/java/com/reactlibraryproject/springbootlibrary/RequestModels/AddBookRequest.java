@@ -17,4 +17,12 @@ public class AddBookRequest {
 
     private String img;
 
+    private String publisher;
+
+    private int price;
+
+    private int coin;
+
+    private String publicationDate;
+
 }
