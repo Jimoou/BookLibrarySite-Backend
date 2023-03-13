@@ -12,7 +12,7 @@ import { ReviewListPage } from "./layouts/BookCheckoutPage/ReviewListPage/Review
 import { ShelfPage } from "./layouts/ShelfPage/ShelfPage";
 import { MessagesPage } from "./layouts/MessagesPage/MessagesPage";
 import { ManageLibraryPage } from "./layouts/ManageLibraryPage/ManageLibraryPage";
-import CartPage from "./layouts/CartPage/CartPage";
+import { CartPage } from "./layouts/CartPage/CartPage";
 
 function App() {
   const oktaAuth = new OktaAuth(oktaConfig);

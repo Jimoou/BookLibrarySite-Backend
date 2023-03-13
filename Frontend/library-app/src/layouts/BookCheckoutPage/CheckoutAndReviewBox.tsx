@@ -18,7 +18,7 @@ export const CheckOutAndReviewBox: React.FC<{
         return (
           <button
             onClick={() => props.checkoutBook()}
-            className="btn btn-success btn-lg"
+            className="btn btn-success"
           >
             대여하기
           </button>
@@ -30,7 +30,7 @@ export const CheckOutAndReviewBox: React.FC<{
           </p>
         );
       } else if (!props.isCheckedOut) {
-        return <p className="text-danger">대여한 책이 너무 많습니다.</p>;
+        return <p className="text-danger">더이상 대여할 수 없습니다.</p>;
       }
     }
     return (
@@ -92,6 +92,16 @@ export const CheckOutAndReviewBox: React.FC<{
           </div>
         </div>
         {buttonRender()}
+
+        <hr />
+        <h4 className="text-success">구매하기</h4>
+        <div className="row">
+          <p className="col-8 lead">
+            <b>가격 : {props.book?.price} 원</b>
+          </p>
+        </div>
+        <button className="btn btn-info">바로구매</button>
+        <button className="btn btn-warning m-1">장바구니</button>
         <hr />
         <p className="mt-3">책의 수량은 변경될 수 있습니다.</p>
         {reviewRender()}

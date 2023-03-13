@@ -1,4 +1,4 @@
-import { Add, Remove } from "@mui/icons-material";
+import { Add, Bolt, Book, Remove, Sell } from "@mui/icons-material";
 import { useOktaAuth } from "@okta/okta-react";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
@@ -128,6 +128,7 @@ export const SearchBook: React.FC<{ book: BookModel; deleteBook: any }> = (
               <h4>{props.book.title}</h4>
             </Link>
             <h5 className="card-title">{props.book.author}</h5>
+            <p className="card-text">{props.book.publisher}</p>
             <p className="card-text">{props.book.description}</p>
           </div>
         </div>
@@ -161,12 +162,32 @@ export const SearchBook: React.FC<{ book: BookModel; deleteBook: any }> = (
               </button>
             </>
           ) : (
-            <Link
-              className="btn btn-secondary text-white"
-              to={`/checkout/${props.book.id}`}
-            >
-              자세히 보기
-            </Link>
+            <>
+              <div>
+                <hr />
+                <h5 className="">
+                  구매
+                  <Sell /> : {props.book.price} 원
+                </h5>
+                <h5>
+                  대여
+                  <Book /> : {props.book.coin}{" "}
+                  <Bolt
+                    style={{
+                      color: "yellow",
+                      textShadow: "1px 1px 2px rgba(0, 0, 0, 0.5)",
+                    }}
+                  />
+                </h5>
+                <hr />
+              </div>
+              <Link
+                className="btn btn-secondary text-white"
+                to={`/checkout/${props.book.id}`}
+              >
+                자세히 보기
+              </Link>
+            </>
           )}
         </div>
       </div>
