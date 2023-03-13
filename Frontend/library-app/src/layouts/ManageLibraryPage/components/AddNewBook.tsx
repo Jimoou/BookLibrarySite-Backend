@@ -25,6 +25,10 @@ export const AddNewBook = () => {
   const [copies, setCopies] = useState(0);
   const [category, setCategory] = useState("분야");
   const [selectedImage, setSelectedImage] = useState<any>(null);
+  const [publisher, setPublisher] = useState("");
+  const [price, setPrice] = useState(0);
+  const [coin, setCoin] = useState(0);
+  const [publicationDate, setPublicationDate] = useState("");
 
   // Displays
   const [displayWarning, setDisplayWarning] = useState(false);
@@ -58,14 +62,22 @@ export const AddNewBook = () => {
       author !== "" &&
       category !== "Category" &&
       description !== "" &&
-      copies >= 0
+      copies >= 0 &&
+      publisher !== "" &&
+      price >= 0 &&
+      coin >= 0 &&
+      publicationDate !== ""
     ) {
       const book: AddBookRequest = new AddBookRequest(
         title,
         author,
         description,
         copies,
-        category
+        category,
+        publisher,
+        price,
+        coin,
+        publicationDate
       );
       book.img = selectedImage;
       const requestOptions = {
@@ -87,6 +99,10 @@ export const AddNewBook = () => {
       setCopies(0);
       setCategory("분야");
       setSelectedImage(null);
+      setPublisher("");
+      setPrice(0);
+      setCoin(0);
+      setPublicationDate("");
       setDisplayWarning(false);
       setDisplaySuccess(true);
     } else {
@@ -124,7 +140,7 @@ export const AddNewBook = () => {
                 />
               </div>
               <div className="col-md-3 mb-3">
-                <label className="form-label"> 저자 </label>
+                <label className="form-label">저자</label>
                 <input
                   type="text"
                   className="form-control"
@@ -132,6 +148,28 @@ export const AddNewBook = () => {
                   required
                   onChange={(e) => setAuthor(e.target.value)}
                   value={author}
+                />
+              </div>
+              <div className="col-md-3 mb-3">
+                <label className="form-label">출판사</label>
+                <input
+                  type="text"
+                  className="form-control"
+                  name="publisher"
+                  required
+                  onChange={(e) => setPublisher(e.target.value)}
+                  value={publisher}
+                />
+              </div>
+              <div className="col-md-3 mb-3">
+                <label className="form-label">출판일</label>
+                <input
+                  type="date"
+                  className="form-control"
+                  name="publisher"
+                  required
+                  onChange={(e) => setPublicationDate(e.target.value)}
+                  value={publicationDate}
                 />
               </div>
               <div className="col-md-3 mb-3">
@@ -166,6 +204,17 @@ export const AddNewBook = () => {
                 onChange={(e) => setDescription(e.target.value)}
                 value={description}
               ></textarea>
+            </div>
+            <div className="col-md-3 mb-3">
+              <label className="form-label">가격</label>
+              <input
+                type="number"
+                className="form-control"
+                name="price"
+                required
+                onChange={(e) => setPrice(Number(e.target.value))}
+                value={price}
+              />
             </div>
             <div className="col-md-3 mb-3">
               <label className="form-label">수량</label>

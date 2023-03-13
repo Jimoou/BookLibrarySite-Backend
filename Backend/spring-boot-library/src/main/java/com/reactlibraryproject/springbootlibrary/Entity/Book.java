@@ -33,5 +33,13 @@ public class Book {
     private String category;
 
     private String img;
+
+    private String publisher;
+
+    private int price;
+
+    private int coin;
+
+    private String publicationDate;
 }
 

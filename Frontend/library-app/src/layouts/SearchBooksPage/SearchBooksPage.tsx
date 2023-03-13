@@ -70,6 +70,10 @@ export const SearchBooksPage = () => {
           copiesAvailable: responseData[key].copiesAvailable,
           category: responseData[key].category,
           img: responseData[key].img,
+          publisher: responseData[key].publisher,
+          price: responseData[key].price,
+          coin: responseData[key].coin,
+          publicationDate: responseData[key].publicationDate,
         });
       }
       setBooks(loadedBooks);
