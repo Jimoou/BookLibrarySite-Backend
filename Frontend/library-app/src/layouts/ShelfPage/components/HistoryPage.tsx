@@ -66,8 +66,6 @@ export const HistoryPage = () => {
     <div className="mt-2">
       {histories.length > 0 ? (
         <>
-          <h5>최근 내역 :</h5>
-
           {histories.map((history) => (
             <div key={history.id}>
               <div className="card mt-3 shadow p-3 mb-3 bg-body rounded">
