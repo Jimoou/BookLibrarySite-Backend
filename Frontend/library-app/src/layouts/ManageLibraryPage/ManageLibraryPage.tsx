@@ -1,13 +1,27 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useOktaAuth } from "@okta/okta-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { AddNewBook } from "./components/AddNewBook";
 import { AdminMessages } from "./components/AdminMessages";
 import { ChangeQuantityOfBooks } from "./components/ChangeQuantityOfBooks";
 
 export const ManageLibraryPage = () => {
-  const { authState } = useOktaAuth();
+  const { authState, oktaAuth } = useOktaAuth();
   const navigate = useNavigate();
+  useEffect(() => {
+    async function authenticate() {
+      if (!authState) return;
+
+      if (
+        !authState.isAuthenticated ||
+        authState.accessToken?.claims?.userType !== "admin"
+      ) {
+        navigate("/");
+      }
+    }
+    authenticate();
+  }, [authState, oktaAuth]);
 
   const [changeQuantityOfBooksClick, setChangeQuantityOfBooksClick] =
     useState(false);
@@ -31,7 +45,16 @@ export const ManageLibraryPage = () => {
   if (authState?.accessToken?.claims.userType === undefined) {
     navigate("/home");
   }
-
+  if (
+    !authState?.isAuthenticated ||
+    authState?.accessToken?.claims?.userType !== "admin"
+  ) {
+    return (
+      <>
+        <div>잘못된 접근입니다.</div>
+      </>
+    );
+  }
   return (
     <div className="container">
       <div className="mt-5">
