@@ -6,7 +6,11 @@ import { Link } from "react-router-dom";
 import { tossConfig } from "../../../lib/tossConfig";
 import BooksInCart from "../../../models/BooksInCart";
 import { SpinnerLoading } from "../../Utils/SpinnerLoading";
-import { deleteBookInCart } from "./PurchaseFunction";
+import {
+  decreaseAmount,
+  deleteBookInCart,
+  increaseAmount,
+} from "./PurchaseFunction";
 
 export const Purchase = () => {
   const { authState } = useOktaAuth();
@@ -15,6 +19,7 @@ export const Purchase = () => {
   const [isCheckAll, setIsCheckAll] = useState(false);
 
   const [deleteBook, setDeleteBook] = useState(false);
+  const [changeAmount, setChangeAmount] = useState(false);
 
   // Current Cart
   const [booksInCart, setBooksInCart] = useState<BooksInCart[]>([]);
@@ -97,7 +102,7 @@ export const Purchase = () => {
   useEffect(() => {
     const fetchBooksInCart = async () => {
       if (authState && authState.isAuthenticated) {
-        const url = `${process.env.REACT_APP_API}/books/secure/currentcart`;
+        const url = `${process.env.REACT_APP_API}/books/secure/cart`;
         const requestOptions = {
           methoe: "GET",
           headers: {
@@ -114,13 +119,14 @@ export const Purchase = () => {
       }
       setIsLoadingBooksInCart(false);
       setDeleteBook(false);
+      setChangeAmount(false);
     };
     fetchBooksInCart().catch((error: any) => {
       setIsLoadingBooksInCart(false);
       setHttpError(error.message);
     });
     window.scrollTo(0, 0);
-  }, [authState, deleteBook]);
+  }, [authState, deleteBook, changeAmount]);
 
   const deleteFetchBook = async (bookId: number) => {
     deleteBookInCart(bookId, authState);
@@ -137,6 +143,14 @@ export const Purchase = () => {
         <p>{httpError}</p>
       </div>
     );
+  }
+  async function increaseBookAmount(bookId: number, amount: number) {
+    await increaseAmount(bookId, authState, amount);
+    setChangeAmount(true);
+  }
+  async function decreaseBookAmount(bookId: number, amount: number) {
+    await decreaseAmount(bookId, authState, amount);
+    setChangeAmount(true);
   }
 
   return (
@@ -203,7 +217,16 @@ export const Purchase = () => {
                       </div>
                       <div className="cart-text input-group">
                         <div className="input-group-prepend">
-                          <button className="btn btn-warning" type="button">
+                          <button
+                            className="btn btn-warning"
+                            type="button"
+                            onClick={() =>
+                              decreaseBookAmount(
+                                bookInCart.book.id,
+                                bookInCart.amount
+                              )
+                            }
+                          >
                             <Remove />
                           </button>
                         </div>
@@ -216,7 +239,16 @@ export const Purchase = () => {
                           />
                         </div>
                         <div className="input-group-append">
-                          <button className="btn btn-warning" type="button">
+                          <button
+                            className="btn btn-warning"
+                            type="button"
+                            onClick={() =>
+                              increaseBookAmount(
+                                bookInCart.book.id,
+                                bookInCart.amount
+                              )
+                            }
+                          >
                             <Add />
                           </button>
                         </div>

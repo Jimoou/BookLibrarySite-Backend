@@ -266,11 +266,7 @@ export const BookCheckoutPage = () => {
     if (book?.id) {
       bookId = book.id;
     }
-    let userEmail: string = "";
-    if (authState?.accessToken?.claims.sub) {
-      userEmail = authState?.accessToken?.claims.sub;
-    }
-    return addBookInCart(bookId, authState, userEmail);
+    return addBookInCart(bookId, authState);
   };
   return (
     <div>
