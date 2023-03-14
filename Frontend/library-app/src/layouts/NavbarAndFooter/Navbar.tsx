@@ -8,6 +8,7 @@ import {
   Home,
   Login,
   Logout,
+  PersonAdd,
   Search,
   ShoppingCart,
 } from "@mui/icons-material";
@@ -21,7 +22,10 @@ export const Navbar = () => {
   const handleLogout = async () => oktaAuth.signOut();
 
   return (
-    <nav className="navbar navbar-expand-lg py-3">
+    <nav
+      className="navbar navbar-expand-lg py-3"
+      style={{ borderBottom: "1px solid gainsboro" }}
+    >
       <div className="container-fluid">
         <NavLink className="navbar-brand" to="/">
           <AccountBalance />
@@ -107,6 +111,14 @@ export const Navbar = () => {
                   <Logout />
                   &nbsp;로그아웃
                 </span>
+              </li>
+            )}
+            {!authState.isAuthenticated && (
+              <li className="nav-item">
+                <NavLink className="nav-link" to="/register">
+                  <PersonAdd />
+                  &nbsp;회원가입
+                </NavLink>
               </li>
             )}
           </ul>

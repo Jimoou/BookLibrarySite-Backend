@@ -13,6 +13,7 @@ import { ShelfPage } from "./layouts/ShelfPage/ShelfPage";
 import { MessagesPage } from "./layouts/MessagesPage/MessagesPage";
 import { ManageLibraryPage } from "./layouts/ManageLibraryPage/ManageLibraryPage";
 import { CartPage } from "./layouts/CartPage/CartPage";
+import RegisterWidget from "./Auth/RegisterWidget";
 
 function App() {
   const oktaAuth = new OktaAuth(oktaConfig);
@@ -50,6 +51,7 @@ function App() {
               path="/login"
               element={<LoginWidget config={oktaConfig} />}
             />
+            <Route path="/register" element={<RegisterWidget />} />
             <Route path="/login/callback" element={<LoginCallback />} />
             <Route path="/shelf" element={<ShelfPage />} />
             <Route path="/messages" element={<MessagesPage />} />
