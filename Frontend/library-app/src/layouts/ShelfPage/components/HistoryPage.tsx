@@ -66,51 +66,53 @@ export const HistoryPage = () => {
     <div className="mt-2">
       {histories.length > 0 ? (
         <>
-          {histories.map((history) => (
-            <div key={history.id}>
-              <div className="card mt-3 shadow p-3 mb-3 bg-body rounded">
-                <div className="row g-0">
-                  <div className="col-md-2">
-                    <div className="d-none d-lg-block">
-                      <img
-                        src={history.img}
-                        width="195"
-                        height="268"
-                        alt="Book"
-                        className="shadow bg-body-tertiary"
-                      />
+          {histories
+            .sort((a, b) => b.returnedDate.localeCompare(a.returnedDate))
+            .map((history) => (
+              <div key={history.id}>
+                <div className="card mt-3 shadow p-3 mb-3 bg-body rounded">
+                  <div className="row g-0">
+                    <div className="col-md-2">
+                      <div className="d-none d-lg-block">
+                        <img
+                          src={history.img}
+                          width="195"
+                          height="268"
+                          alt="Book"
+                          className="shadow bg-body-tertiary"
+                        />
+                      </div>
+                      <div className="d-lg-none d-flex justify-content-center align-items-center">
+                        <img
+                          src={history.img}
+                          width="195"
+                          height="268"
+                          alt="Book"
+                          className="shadow bg-body-tertiary"
+                        />
+                      </div>
                     </div>
-                    <div className="d-lg-none d-flex justify-content-center align-items-center">
-                      <img
-                        src={history.img}
-                        width="195"
-                        height="268"
-                        alt="Book"
-                        className="shadow bg-body-tertiary"
-                      />
-                    </div>
-                  </div>
-                  <div className="col">
-                    <div className="card-body">
-                      <h4>{history.title}</h4>
-                      <h5 className="card-title"> {history.author} </h5>
-                      <p className="card-text">{history.description}</p>
-                      <hr />
-                      <p className="card-text">
-                        {" "}
-                        대여일 : {history.checkoutDate}
-                      </p>
-                      <p className="card-text">
-                        {" "}
-                        반납일 : {history.returnedDate}
-                      </p>
+                    <div className="col">
+                      <div className="card-body">
+                        <h4>{history.title}</h4>
+                        <h5 className="card-title"> {history.author} </h5>
+                        <p className="card-text">{history.description}</p>
+                        <hr />
+                        <p className="card-text">
+                          {" "}
+                          대여일 : {history.checkoutDate}
+                        </p>
+                        <p className="card-text">
+                          {" "}
+                          반납일 : {history.returnedDate}
+                        </p>
+                      </div>
                     </div>
                   </div>
                 </div>
+                <hr />
               </div>
-              <hr />
-            </div>
-          ))}
+            ))}
         </>
       ) : (
         <>
