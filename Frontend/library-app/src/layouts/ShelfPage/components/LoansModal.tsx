@@ -77,14 +77,12 @@ export const LoansModal: React.FC<{
                   </button>
                   <button
                     onClick={() =>
-                      props.shelfCurrentLoan.daysLeft < 0
-                        ? (event: any) => event.preventDefault()
-                        : () => props.renewLoan(props.shelfCurrentLoan.book.id)
+                      props.renewLoan(props.shelfCurrentLoan.book.id)
                     }
                     data-bs-dismiss="modal"
                     className={
                       props.shelfCurrentLoan.daysLeft < 0
-                        ? "list-group-item list-group-item-action inactiveLink"
+                        ? "list-group-item list-group-item-action disabled"
                         : "list-group-item list-group-item-action"
                     }
                   >

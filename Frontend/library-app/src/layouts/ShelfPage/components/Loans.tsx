@@ -1,7 +1,7 @@
 import { Bolt } from "@mui/icons-material";
 import { useOktaAuth } from "@okta/okta-react";
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import ShelfCurrentLoans from "../../../models/ShelfCurrentLoans";
 import { addBookInCart } from "../../CartPage/components/PurchaseFunction";
 import { SpinnerLoading } from "../../Utils/SpinnerLoading";
@@ -18,6 +18,49 @@ export const Loans = () => {
   const [checkout, setCheckout] = useState(false);
 
   const [isLoadingUserLoans, setIsLoadingUserLoans] = useState(true);
+
+  const [isOpen, setIsOpen] = useState(false);
+  const navigate = useNavigate();
+  const confirm = () => {
+    setIsOpen(false);
+    navigate("/cart");
+  };
+
+  const cancel = () => {
+    setIsOpen(false);
+  };
+
+  const handleClick = async (bookId: number) => {
+    await addBookInCart(bookId, authState);
+    setIsOpen(true);
+  };
+
+  const renderModal = () => {
+    return (
+      <div
+        className="modal fade show"
+        style={{ display: "block" }}
+        tabIndex={-1}
+        aria-modal="true"
+      >
+        <div className="modal-dialog">
+          <div className="modal-content">
+            <div className="modal-body">
+              장바구니에 추가되었습니다. 장바구니로 바로 이동하시겠습니까?
+            </div>
+            <div className="modal-footer">
+              <button className="btn btn-secondary" onClick={cancel}>
+                취소
+              </button>
+              <button className="btn btn-primary" onClick={confirm}>
+                이동
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
 
   useEffect(() => {
     const fetchUserCurrentLoans = async () => {
@@ -94,6 +137,7 @@ export const Loans = () => {
 
   return (
     <div>
+      {isOpen && renderModal()}
       {/* Desktop */}
       <div className="d-none d-lg-block mt-2">
         {shelfCurrentLoans.length > 0 ? (
@@ -172,9 +216,7 @@ export const Loans = () => {
                       </Link>
                       <button
                         className="btn btn-warning m-1"
-                        onClick={() =>
-                          addBookInCart(shelfCurrentLoan.book.id, authState)
-                        }
+                        onClick={() => handleClick(shelfCurrentLoan.book.id)}
                       >
                         장바구니에 담기
                       </button>
@@ -279,9 +321,7 @@ export const Loans = () => {
                     </Link>
                     <button
                       className="btn btn-warning m-1"
-                      onClick={() =>
-                        addBookInCart(shelfCurrentLoan.book.id, authState)
-                      }
+                      onClick={() => handleClick(shelfCurrentLoan.book.id)}
                     >
                       장바구니에 담기
                     </button>
