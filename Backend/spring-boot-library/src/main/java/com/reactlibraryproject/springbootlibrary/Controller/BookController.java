@@ -55,23 +55,37 @@ public class BookController {
         bookService.renewLoan(userEmail, bookId);
     }
 
-    @GetMapping("/secure/currentcart")
+    @GetMapping("/secure/cart")
     public List<BooksInCartResponse> currentCart(@RequestHeader(value = "Authorization") String token) throws Exception {
         String userEmail = ExtractJWT.payloadJWTExtraction(token, "\"sub\"");
         return bookService.currentCart(userEmail);
     }
 
-    @PutMapping("/secure/add/bookincart")
+    @PutMapping("/secure/cart/add/book")
     public void addBookInCart(@RequestHeader(value = "Authorization") String token,
                          @RequestParam Long bookId) throws Exception {
         String userEmail = ExtractJWT.payloadJWTExtraction(token, "\"sub\"");
         bookService.addBookInCart(userEmail, bookId);
     }
 
-    @PutMapping("/secure/delete/bookincart")
+    @PutMapping("/secure/cart/delete/book")
     public void deleteBookInCart(@RequestHeader(value = "Authorization") String token,
                               @RequestParam Long bookId) throws Exception {
         String userEmail = ExtractJWT.payloadJWTExtraction(token, "\"sub\"");
         bookService.deleteBookInCart(userEmail, bookId);
+    }
+
+    @PutMapping("/secure/cart/increase/book/amount")
+    public void increaseAmount(@RequestHeader(value = "Authorization") String token,
+                              @RequestParam Long bookId) throws Exception {
+        String userEmail = ExtractJWT.payloadJWTExtraction(token, "\"sub\"");
+        bookService.increaseAmount(userEmail, bookId);
+    }
+
+    @PutMapping("/secure/cart/decrease/book/amount")
+    public void decreaseAmount(@RequestHeader(value = "Authorization") String token,
+                                 @RequestParam Long bookId) throws Exception {
+        String userEmail = ExtractJWT.payloadJWTExtraction(token, "\"sub\"");
+        bookService.decreaseAmount(userEmail, bookId);
     }
 }

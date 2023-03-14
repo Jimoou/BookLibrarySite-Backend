@@ -173,11 +173,7 @@ export const Loans = () => {
                       <button
                         className="btn btn-warning m-1"
                         onClick={() =>
-                          addBookInCart(
-                            shelfCurrentLoan.book.id,
-                            authState,
-                            authState?.accessToken?.claims.sub || ""
-                          )
+                          addBookInCart(shelfCurrentLoan.book.id, authState)
                         }
                       >
                         장바구니에 담기
@@ -281,7 +277,12 @@ export const Loans = () => {
                     >
                       리뷰 쓰러 가기
                     </Link>
-                    <button className="btn btn-warning m-1">
+                    <button
+                      className="btn btn-warning m-1"
+                      onClick={() =>
+                        addBookInCart(shelfCurrentLoan.book.id, authState)
+                      }
+                    >
                       장바구니에 담기
                     </button>
                   </div>

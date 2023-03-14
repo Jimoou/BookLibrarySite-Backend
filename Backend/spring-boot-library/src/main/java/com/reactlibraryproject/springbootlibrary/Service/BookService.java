@@ -136,6 +136,7 @@ public class BookService {
             checkoutRepository.save(validateCheckout);
         }
     }
+
     public void addBookInCart(String userEmail, Long bookId) throws Exception {
         Book book = bookRepository.findById(bookId).orElseThrow(() -> new Exception("It was wrong bookId"));
 
@@ -181,5 +182,34 @@ public class BookService {
             }
         }
         return booksInCartResponses;
+    }
+
+    public void increaseAmount(String userEmail, Long bookId) throws Exception {
+        Purchase purchase = purchaseRepository.findByUserEmailAndBookId(userEmail, bookId);
+
+        if (purchase == null) {
+            throw new Exception("Book is not in the shopping cart.");
+        }
+        int amount = purchase.getAmount() + 1;
+
+        purchase.setAmount(amount);
+        purchaseRepository.save(purchase);
+
+    }
+
+    public void decreaseAmount(String userEmail, Long bookId) throws Exception {
+        Purchase purchase = purchaseRepository.findByUserEmailAndBookId(userEmail, bookId);
+
+        if (purchase == null) {
+            throw new Exception("Book is not in the shopping cart.");
+        }
+        int amount = 1;
+
+        if (purchase.getAmount() > 1) {
+            amount = purchase.getAmount() - 1;
+        }
+
+        purchase.setAmount(amount);
+        purchaseRepository.save(purchase);
     }
 }
