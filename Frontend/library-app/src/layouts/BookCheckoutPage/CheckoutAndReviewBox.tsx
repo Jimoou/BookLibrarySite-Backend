@@ -1,3 +1,4 @@
+import { useOktaAuth } from "@okta/okta-react";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import BookModel from "../../models/BookModel";
@@ -16,6 +17,7 @@ export const CheckOutAndReviewBox: React.FC<{
 }> = (props) => {
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
+  const { authState } = useOktaAuth();
   const confirm = () => {
     setIsOpen(false);
     navigate("/cart");
@@ -145,10 +147,15 @@ export const CheckOutAndReviewBox: React.FC<{
           </p>
         </div>
 
-        <button className="btn btn-info">바로구매</button>
-        <button className="btn btn-warning m-1" onClick={handleClick}>
-          장바구니
-        </button>
+        {authState?.isAuthenticated && (
+          <>
+            <button className="btn btn-info">바로구매</button>
+            <button className="btn btn-warning m-1" onClick={handleClick}>
+              장바구니
+            </button>
+          </>
+        )}
+
         {isOpen && renderModal()}
         <hr />
         <p className="mt-3">책의 수량은 변경될 수 있습니다.</p>
