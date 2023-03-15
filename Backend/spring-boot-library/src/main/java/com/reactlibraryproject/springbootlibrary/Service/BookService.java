@@ -2,11 +2,11 @@ package com.reactlibraryproject.springbootlibrary.Service;
 
 import com.reactlibraryproject.springbootlibrary.DAO.BookRepository;
 import com.reactlibraryproject.springbootlibrary.DAO.CheckoutRepository;
-import com.reactlibraryproject.springbootlibrary.DAO.HistoryRepository;
+import com.reactlibraryproject.springbootlibrary.DAO.CheckoutHistoryRepository;
 import com.reactlibraryproject.springbootlibrary.DAO.PurchaseRepository;
 import com.reactlibraryproject.springbootlibrary.Entity.Book;
 import com.reactlibraryproject.springbootlibrary.Entity.Checkout;
-import com.reactlibraryproject.springbootlibrary.Entity.History;
+import com.reactlibraryproject.springbootlibrary.Entity.CheckoutHistory;
 import com.reactlibraryproject.springbootlibrary.Entity.Purchase;
 import com.reactlibraryproject.springbootlibrary.ReponseModels.BooksInCartResponse;
 import com.reactlibraryproject.springbootlibrary.ReponseModels.ShelfCurrentLoansResponse;
@@ -28,7 +28,7 @@ public class BookService {
 
     private final CheckoutRepository checkoutRepository;
 
-    private final HistoryRepository historyRepository;
+    private final CheckoutHistoryRepository checkoutHistoryRepository;
 
     private final PurchaseRepository purchaseRepository;
 
@@ -107,7 +107,7 @@ public class BookService {
         bookRepository.save(book.get());
         checkoutRepository.deleteById(validateCheckout.getId());
 
-        History history = History.builder()
+        CheckoutHistory checkoutHistory = CheckoutHistory.builder()
          .userEmail(validateCheckout.getUserEmail())
          .checkoutDate(validateCheckout.getCheckoutDate())
          .returnedDate(LocalDate.now().toString())
@@ -117,7 +117,7 @@ public class BookService {
          .img(book.get().getImg())
          .build();
 
-        historyRepository.save(history);
+        checkoutHistoryRepository.save(checkoutHistory);
     }
 
     public void renewLoan(String userEmail, Long bookId) throws Exception {

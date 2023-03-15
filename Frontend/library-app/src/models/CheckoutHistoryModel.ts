@@ -1,4 +1,4 @@
-class HistoryModel {
+class CheckoutHistoryModel {
   id: number;
   userEmail: string;
   checkoutDate: string;
@@ -28,4 +28,4 @@ class HistoryModel {
     this.img = img;
   }
 }
-export default HistoryModel;
+export default CheckoutHistoryModel;
