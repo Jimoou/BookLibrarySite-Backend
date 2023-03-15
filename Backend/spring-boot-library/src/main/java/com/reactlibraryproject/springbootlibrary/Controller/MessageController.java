@@ -4,6 +4,8 @@ import com.reactlibraryproject.springbootlibrary.Entity.Message;
 import com.reactlibraryproject.springbootlibrary.RequestModels.AdminQuestionRequest;
 import com.reactlibraryproject.springbootlibrary.Service.MessageService;
 import com.reactlibraryproject.springbootlibrary.Utils.ExtractJWT;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -11,10 +13,12 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @AllArgsConstructor
 @RequestMapping("/api/messages")
+@Tag(name="문의", description="문의 API")
 public class MessageController {
 
     private MessageService messageService;
 
+    @Operation(summary = "유저의 문의 작성")
     @PostMapping("/secure/add/message")
     public void postMessage(@RequestHeader(value = "Authorization") String token,
                             @RequestBody Message messageRequest) {
@@ -22,6 +26,7 @@ public class MessageController {
         messageService.postMessage(messageRequest, userEmail);
     }
 
+    @Operation(summary = "관리자의 답변 작성")
     @PutMapping("/secure/admin/message")
     public void putMessage(@RequestHeader(value = "Authorization") String token,
                            @RequestBody AdminQuestionRequest adminQuestionRequest) throws Exception {
