@@ -2,7 +2,7 @@ import { useOktaAuth } from "@okta/okta-react";
 import { useEffect, useState } from "react";
 import BookModel from "../../models/BookModel";
 import ReviewModel from "../../models/ReviewModel";
-import ReviewRequestModel from "../../models/ReviewRequestModel";
+import ReviewRequest from "../../models/ReviewRequest";
 import { addBookInCart } from "../CartPage/components/PurchaseFunction";
 import { SpinnerLoading } from "../Utils/SpinnerLoading";
 import { StarsReview } from "../Utils/StarsReview";
@@ -240,7 +240,7 @@ export const BookCheckoutPage = () => {
       bookId = book.id;
     }
 
-    const reviewRequestModel = new ReviewRequestModel(
+    const reviewRequestModel = new ReviewRequest(
       starInput,
       bookId,
       reviewDescription
