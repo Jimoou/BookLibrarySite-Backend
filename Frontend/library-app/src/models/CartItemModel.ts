@@ -1,4 +1,4 @@
-class PurchaseModel {
+class CartItemModel {
   id?: number;
   userEmail?: string;
   amount: number;
@@ -9,4 +9,4 @@ class PurchaseModel {
     this.book_id = book_id;
   }
 }
-export default PurchaseModel;
+export default CartItemModel;

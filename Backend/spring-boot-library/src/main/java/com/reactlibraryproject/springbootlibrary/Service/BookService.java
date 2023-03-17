@@ -3,12 +3,12 @@ package com.reactlibraryproject.springbootlibrary.Service;
 import com.reactlibraryproject.springbootlibrary.DAO.BookRepository;
 import com.reactlibraryproject.springbootlibrary.DAO.CheckoutRepository;
 import com.reactlibraryproject.springbootlibrary.DAO.CheckoutHistoryRepository;
-import com.reactlibraryproject.springbootlibrary.DAO.PurchaseRepository;
+import com.reactlibraryproject.springbootlibrary.DAO.CartItemRepository;
 import com.reactlibraryproject.springbootlibrary.Entity.Book;
 import com.reactlibraryproject.springbootlibrary.Entity.Checkout;
 import com.reactlibraryproject.springbootlibrary.Entity.CheckoutHistory;
-import com.reactlibraryproject.springbootlibrary.Entity.Purchase;
-import com.reactlibraryproject.springbootlibrary.ReponseModels.BooksInCartResponse;
+import com.reactlibraryproject.springbootlibrary.Entity.CartItem;
+import com.reactlibraryproject.springbootlibrary.ReponseModels.CurrentCartItemResponse;
 import com.reactlibraryproject.springbootlibrary.ReponseModels.ShelfCurrentLoansResponse;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -30,7 +30,7 @@ public class BookService {
 
     private final CheckoutHistoryRepository checkoutHistoryRepository;
 
-    private final PurchaseRepository purchaseRepository;
+    private final CartItemRepository cartItemRepository;
 
     public Book checkoutBook(String userEmail, Long bookId) throws Exception {
         Optional<Book> book = bookRepository.findById(bookId);
@@ -140,76 +140,76 @@ public class BookService {
     public void addBookInCart(String userEmail, Long bookId) throws Exception {
         Book book = bookRepository.findById(bookId).orElseThrow(() -> new Exception("It was wrong bookId"));
 
-        Purchase purchase = purchaseRepository.findByUserEmailAndBookId(userEmail, bookId);
-        int amount = purchase == null ? 1 : purchase.getAmount() + 1;
+        CartItem cartItem = cartItemRepository.findByUserEmailAndBookId(userEmail, bookId);
+        int amount = cartItem == null ? 1 : cartItem.getAmount() + 1;
 
-        if (purchase == null) {
-            purchase = Purchase.builder().userEmail(userEmail).bookId(bookId).build();
+        if (cartItem == null) {
+            cartItem = CartItem.builder().userEmail(userEmail).bookId(bookId).build();
         }
 
-        purchase.setAmount(amount);
-        purchaseRepository.save(purchase);
+        cartItem.setAmount(amount);
+        cartItemRepository.save(cartItem);
     }
 
 
     public void deleteBookInCart(String userEmail, Long bookId) throws Exception {
         Book book = bookRepository.findById(bookId).orElseThrow(() -> new Exception("It was wrong bookId"));
-        Purchase validatePurchase = purchaseRepository.findByUserEmailAndBookId(userEmail, bookId);
+        CartItem validateCartItem = cartItemRepository.findByUserEmailAndBookId(userEmail, bookId);
 
-        if (validatePurchase == null) {
+        if (validateCartItem == null) {
             throw new Exception("Book does not exist or not added in cart by user");
         }
-        purchaseRepository.deleteById(validatePurchase.getId());
+        cartItemRepository.deleteById(validateCartItem.getId());
     }
 
-    public List<BooksInCartResponse> currentCart(String userEmail) throws Exception {
-        List<BooksInCartResponse> booksInCartResponses = new ArrayList<>();
+    public List<CurrentCartItemResponse> currentCart(String userEmail) throws Exception {
+        List<CurrentCartItemResponse> currentCartItemResponse = new ArrayList<>();
 
-        List<Purchase> purchaseList = purchaseRepository.findBooksByUserEmail(userEmail);
+        List<CartItem> cartItemList = cartItemRepository.findBooksByUserEmail(userEmail);
 
-        Map<Long, Purchase> purchaseMap = new HashMap<>();
-        for (Purchase purchase : purchaseList) {
-            purchaseMap.put(purchase.getBookId(), purchase);
+        Map<Long, CartItem> purchaseMap = new HashMap<>();
+        for (CartItem cartItem : cartItemList) {
+            purchaseMap.put(cartItem.getBookId(), cartItem);
         }
 
         List<Book> booksInCart = bookRepository.findBooksByBookIds(new ArrayList<>(purchaseMap.keySet()));
 
         for (Book book : booksInCart) {
-            Purchase purchase = purchaseMap.get(book.getId());
+            CartItem cartItem = purchaseMap.get(book.getId());
 
-            if (purchase != null) {
-                booksInCartResponses.add(new BooksInCartResponse(book, purchase.getAmount()));
+            if (cartItem != null) {
+                currentCartItemResponse.add(new CurrentCartItemResponse(book, cartItem.getAmount()));
             }
         }
-        return booksInCartResponses;
+        return currentCartItemResponse;
     }
 
     public void increaseAmount(String userEmail, Long bookId) throws Exception {
-        Purchase purchase = purchaseRepository.findByUserEmailAndBookId(userEmail, bookId);
+        CartItem cartItem = cartItemRepository.findByUserEmailAndBookId(userEmail, bookId);
 
-        if (purchase == null) {
+        if (cartItem == null) {
             throw new Exception("Book is not in the shopping cart.");
         }
-        int amount = purchase.getAmount() + 1;
+        int amount = cartItem.getAmount() + 1;
 
-        purchase.setAmount(amount);
-        purchaseRepository.save(purchase);
+        cartItem.setAmount(amount);
+        cartItemRepository.save(cartItem);
 
     }
 
     public void decreaseAmount(String userEmail, Long bookId) throws Exception {
-        Purchase purchase = purchaseRepository.findByUserEmailAndBookId(userEmail, bookId);
+        CartItem cartItem = cartItemRepository.findByUserEmailAndBookId(userEmail, bookId);
 
-        if (purchase == null) {
+        if (cartItem == null) {
             throw new Exception("Book is not in the shopping cart.");
         }
         int amount = 1;
 
-        if (purchase.getAmount() > 1) {
-            amount = purchase.getAmount() - 1;
+        if (cartItem.getAmount() > 1) {
+            amount = cartItem.getAmount() - 1;
         }
 
-        purchase.setAmount(amount);
-        purchaseRepository.save(purchase);
+        cartItem.setAmount(amount);
+        cartItemRepository.save(cartItem);
     }
 }
