@@ -1,6 +1,6 @@
 import BookModel from "./BookModel";
 
-class BooksInCart {
+class CurrentCartItems {
   book: BookModel;
   amount: number;
 
@@ -9,4 +9,4 @@ class BooksInCart {
     this.amount = amount;
   }
 }
-export default BooksInCart;
+export default CurrentCartItems;

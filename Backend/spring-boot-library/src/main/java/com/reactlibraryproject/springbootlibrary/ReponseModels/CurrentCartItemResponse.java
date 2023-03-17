@@ -6,7 +6,7 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class BooksInCartResponse {
+public class CurrentCartItemResponse {
     private Book book;
     private int amount;
 }
