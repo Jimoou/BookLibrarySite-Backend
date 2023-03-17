@@ -1,4 +1,4 @@
-class ReviewRequestModel {
+class ReviewRequest {
   rating: number;
   bookId: number;
   reviewDescription?: string;
@@ -9,4 +9,4 @@ class ReviewRequestModel {
     this.reviewDescription = reviewDescription;
   }
 }
-export default ReviewRequestModel;
+export default ReviewRequest;
