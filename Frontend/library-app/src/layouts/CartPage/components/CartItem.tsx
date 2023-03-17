@@ -4,13 +4,14 @@ import { loadPaymentWidget } from "@tosspayments/payment-widget-sdk";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { tossConfig } from "../../../lib/tossConfig";
+import AddPurchaseHistoryRequest from "../../../models/AddPurchaseHistoryRequest";
+import CurrentCartItems from "../../../models/CurrentCartItems";
 import { SpinnerLoading } from "../../Utils/SpinnerLoading";
 import {
   decreaseAmount,
   deleteBookInCart,
   increaseAmount,
 } from "./PurchaseFunction";
-import CurrentCartItems from "../../../models/CurrentCartItems";
 
 export const CartItem = () => {
   const { authState } = useOktaAuth();
@@ -25,8 +26,9 @@ export const CartItem = () => {
   const [isLoadingCartItems, setIsLoadingCartItems] = useState(true);
 
   const [purchaseBooks, setPurchaseBooks] = useState<
-    { bookId: number; amount: number }[]
+    AddPurchaseHistoryRequest[]
   >([]);
+  const [selectedBooksArr, setSelectedBooksArr] = useState<string[]>([]);
 
   const handleCheckboxChange = (bookId: number) => {
     if (selectedBooks.includes(bookId)) {
@@ -66,24 +68,65 @@ export const CartItem = () => {
     return total;
   };
 
-  const selectedBooksArr = () => {
+  useEffect(() => {
     let booksArr: string[] = [];
-    let booksObjArr: { bookId: number; amount: number }[] = [];
+    let booksObjArr: AddPurchaseHistoryRequest[] = [];
+
     selectedBooks.forEach((bookId) => {
       const selectedBook = cartItems.find(
         (cartItem) => cartItem.book.id === bookId
       );
       if (selectedBook) {
         booksArr.push(selectedBook.book.title);
-        booksObjArr.push({ bookId, amount: selectedBook.amount });
+        booksObjArr.push(
+          new AddPurchaseHistoryRequest(
+            selectedBook.book.id,
+            selectedBook.amount
+          )
+        );
       }
-      setPurchaseBooks(booksObjArr);
     });
-    return booksArr;
+    setPurchaseBooks(booksObjArr);
+    setSelectedBooksArr(booksArr);
+  }, [cartItems, selectedBooks]);
+
+  const addPurchaseHistory = async (
+    addPurchaseHistoryRequest: AddPurchaseHistoryRequest[]
+  ) => {
+    if (authState && authState.isAuthenticated) {
+      const url = `${process.env.REACT_APP_API}/purchase/secure`;
+      const requestOptions = {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${authState.accessToken?.accessToken}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(addPurchaseHistoryRequest),
+      };
+      const response = await fetch(url, requestOptions);
+      if (!response.ok) {
+        throw new Error("Something went wrong!");
+      }
+    }
   };
-  const addPurchaseHistory = async () => {
-    const url = "";
+
+  const deleteFailPurchase = async () => {
+    if (authState && authState.isAuthenticated) {
+      const url = `${process.env.REACT_APP_API}/purchase/secure/delete/fail`;
+      const requestOptions = {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${authState.accessToken?.accessToken}`,
+          "Content-Type": "application/json",
+        },
+      };
+      const response = await fetch(url, requestOptions);
+      if (!response.ok) {
+        throw new Error("Something went wrong!");
+      }
+    }
   };
+
   const generateOrderId = () => {
     const characters =
       "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_=";
@@ -109,18 +152,27 @@ export const CartItem = () => {
 
     const userEmail = authState?.accessToken?.claims.sub;
     const userName = authState?.accessToken?.claims.name;
-    let books = selectedBooksArr();
+
+    addPurchaseHistory(purchaseBooks);
+
     let orderName =
-      books.length > 1 ? `${books[0]}외 ${books.length - 1}건` : books[0];
+      selectedBooksArr.length > 1
+        ? `${selectedBooksArr[0]}외 ${selectedBooksArr.length - 1}건`
+        : selectedBooksArr[0];
     const generatedOrderId = generateOrderId();
-    paymentWidget.requestPayment({
-      orderId: generatedOrderId,
-      orderName: orderName,
-      successUrl: "https://localhost:3000/success",
-      failUrl: "https://localhost:3000/fail",
-      customerEmail: userEmail,
-      customerName: userName,
-    });
+    paymentWidget
+      .requestPayment({
+        orderId: generatedOrderId,
+        orderName: orderName,
+        successUrl: "https://localhost:3000/success",
+        failUrl: "https://localhost:3000/fail",
+        customerEmail: userEmail,
+        customerName: userName,
+      })
+      .catch((error) => {
+        setHttpError(error.message);
+        deleteFailPurchase();
+      });
   };
 
   useEffect(() => {
@@ -128,7 +180,7 @@ export const CartItem = () => {
       if (authState && authState.isAuthenticated) {
         const url = `${process.env.REACT_APP_API}/cart/secure`;
         const requestOptions = {
-          methoe: "GET",
+          method: "GET",
           headers: {
             Authorization: `Bearer ${authState.accessToken?.accessToken}`,
             "Content-Type": "application/json",
@@ -163,8 +215,25 @@ export const CartItem = () => {
 
   if (httpError) {
     return (
-      <div className="container m-5">
-        <p>{httpError}</p>
+      <div
+        className="modal fade show"
+        style={{ display: "block" }}
+        tabIndex={-1}
+        aria-modal="true"
+      >
+        <div className="modal-dialog" style={{ textAlign: "center" }}>
+          <div className="modal-content">
+            <div className="modal-body">{httpError}</div>
+            <div className="modal-footer">
+              <button
+                className="btn btn-primary"
+                onClick={() => window.location.reload()}
+              >
+                확인
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
     );
   }

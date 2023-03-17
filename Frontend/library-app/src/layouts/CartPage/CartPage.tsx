@@ -1,12 +1,8 @@
 import { useOktaAuth } from "@okta/okta-react";
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Purchase } from "./components/Purchase";
-// import { HistoryPage } from "./components/HistoryPage";
-// import { Loans } from "./components/Loans";
+import { CartItem } from "./components/CartItem";
 
 export const CartPage = () => {
-  // const [historyClick, setHistoryClick] = useState(false);
   const navigate = useNavigate();
   const { authState } = useOktaAuth();
 
@@ -20,7 +16,6 @@ export const CartPage = () => {
         <nav>
           <div className="nav nav-tabs" id="nav-tab" role="tablist">
             <button
-              // onClick={() => setHistoryClick(false)}
               className="nav-link active"
               id="nav-loans-tab"
               data-bs-toggle="tab"
@@ -33,7 +28,6 @@ export const CartPage = () => {
               내 장바구니
             </button>
             <button
-              // onClick={() => setHistoryClick(true)}
               className="nav-link"
               id="nav-history-tab"
               data-bs-toggle="tab"
@@ -54,16 +48,14 @@ export const CartPage = () => {
             role="tabpanel"
             aria-labelledby="nav-loans-tab"
           >
-            <Purchase />
+            <CartItem />
           </div>
           <div
             className="tab-pane fade"
             id="nav-history"
             role="tabpanel"
             aria-labelledby="nav-history-tab"
-          >
-            {/* {historyClick ? <HistoryPage /> : <></>} */}
-          </div>
+          ></div>
         </div>
       </div>
     </div>

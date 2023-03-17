@@ -14,6 +14,8 @@ import { MessagesPage } from "./layouts/MessagesPage/MessagesPage";
 import { ManageLibraryPage } from "./layouts/ManageLibraryPage/ManageLibraryPage";
 import { CartPage } from "./layouts/CartPage/CartPage";
 import RegisterWidget from "./Auth/RegisterWidget";
+import { Success } from "./layouts/CartPage/components/Success";
+import { SuccessPage } from "./layouts/CartPage/components/SuccessPage";
 
 function App() {
   const oktaAuth = new OktaAuth(oktaConfig);
@@ -57,6 +59,8 @@ function App() {
             <Route path="/messages" element={<MessagesPage />} />
             <Route path="/admin" element={<ManageLibraryPage />} />
             <Route path="/cart" element={<CartPage />} />
+            <Route path="/success" element={<Success />} />
+            <Route path="/success-complete" element={<SuccessPage />} />
           </Routes>
         </div>
       </Security>

@@ -1,10 +1,19 @@
 import { useEffect, useState } from "react";
 import BookModel from "../../models/BookModel";
-import { Pagination } from "../Utils/Pagination";
+import { Pagination, PaginationItem } from "@mui/material";
 import { SpinnerLoading } from "../Utils/SpinnerLoading";
 import { SearchBook } from "./components/SearchBook";
 import SearchIcon from "@mui/icons-material/Search";
 import CategoryList from "../ManageLibraryPage/components/CategoryList";
+import {
+  Box,
+  Button,
+  Container,
+  Grid,
+  InputAdornment,
+  TextField,
+  Typography,
+} from "@mui/material";
 
 export const SearchBooksPage = () => {
   // Categories
@@ -134,84 +143,71 @@ export const SearchBooksPage = () => {
   const deleteBook = () => setBookDelete(!bookDelete);
 
   return (
-    <div>
-      <div className="container">
-        <div>
-          <div className="row mt-5">
-            <div className="col-6">
-              <div className="d-flex">
-                <input
-                  className="form-control me-2"
-                  type="search"
-                  placeholder="책 검색하기..."
-                  aria-labelledby="Search"
-                  onChange={(e) => setSearch(e.target.value)}
-                />
-                <button
-                  className="btn btn-outline-success"
-                  onClick={() => searchHandleChange()}
-                >
-                  <SearchIcon />
-                </button>
-              </div>
-            </div>
-            <div className="col-4">
-              <div className="dropdown">
-                <button
-                  className="btn btn-secondary dropdown-toggle"
-                  type="button"
-                  id="dropdownMenuButton1"
-                  data-bs-toggle="dropdown"
-                  aria-expanded="false"
-                >
-                  {categorySelection}
-                </button>
-                <ul
-                  className="dropdown-menu"
-                  aria-labelledby="dropdownMenuButton1"
-                >
-                  <CategoryList
-                    categories={categories}
-                    onSelect={categoryField}
-                  />
-                </ul>
-              </div>
-            </div>
-            {totalAmountOfBooks > 0 ? (
-              <>
-                <div className="mt-3">
-                  <h5>모든 책 수: {totalAmountOfBooks} 권</h5>
-                </div>
-                {books.map((book) => (
-                  <SearchBook
-                    book={book}
-                    key={book.id}
-                    deleteBook={deleteBook}
-                  />
-                ))}
-              </>
-            ) : (
-              <div className="m-5">
-                <h3>찾는 책이 없으신가요?</h3>
-                <a
-                  type="button"
-                  className="btn btn-primary btn-md px-4 me-md-2 fw-bold text-white"
-                  href="/messages"
-                >
-                  문의 하기
-                </a>
-              </div>
-            )}
-            {totalPages > 1 && (
-              <Pagination
-                currentPage={currentPage}
-                totalPages={totalPages}
-                paginate={paginate}
-              />
-            )}
-          </div>
-        </div>
-      </div>
-    </div>
+    <Box>
+      <Container>
+        <Grid container spacing={3} mt={5}>
+          <Grid item xs={12} md={6}>
+            <TextField
+              fullWidth
+              label="책 검색하기..."
+              onChange={(e) => setSearch(e.target.value)}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <Button onClick={() => searchHandleChange()}>
+                      <SearchIcon />
+                    </Button>
+                  </InputAdornment>
+                ),
+              }}
+            />
+          </Grid>
+          <Grid item xs={10} md={2} sx={{ my: 1 }}>
+            <CategoryList categories={categories} onSelect={categoryField} />
+          </Grid>
+        </Grid>
+        {totalAmountOfBooks > 0 ? (
+          <>
+            <Box mt={3}>
+              <Typography variant="h5">
+                모든 책 수: {totalAmountOfBooks} 권
+              </Typography>
+            </Box>
+            {books.map((book) => (
+              <SearchBook book={book} key={book.id} deleteBook={deleteBook} />
+            ))}
+          </>
+        ) : (
+          <Box m={5}>
+            <Typography variant="h3">찾는 책이 없으신가요?</Typography>
+            <Button
+              variant="contained"
+              color="primary"
+              size="medium"
+              sx={{ mt: 2 }}
+              href="/messages"
+            >
+              문의 하기
+            </Button>
+          </Box>
+        )}
+        {totalPages > 1 && (
+          <Box mt={3}>
+            <Pagination
+              count={totalPages}
+              onChange={(event, value) => paginate(value)}
+              page={currentPage}
+              boundaryCount={1}
+              siblingCount={0}
+              size="large"
+              sx={{ my: 4 }}
+              renderItem={(item) => (
+                <PaginationItem {...item} component="button" />
+              )}
+            />
+          </Box>
+        )}
+      </Container>
+    </Box>
   );
 };

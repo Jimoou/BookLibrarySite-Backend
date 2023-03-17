@@ -1,4 +1,13 @@
 import { Add, Bolt, Book, Remove, Sell } from "@mui/icons-material";
+import {
+  Box,
+  Card,
+  CardContent,
+  CardMedia,
+  Grid,
+  Typography,
+  Button,
+} from "@mui/material";
 import { useOktaAuth } from "@okta/okta-react";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
@@ -75,49 +84,26 @@ export const SearchBook: React.FC<{ book: BookModel; deleteBook: any }> = (
   }
 
   return (
-    <div className="card mt-3 shadow p-3 mb-3 bg-body rounded">
-      <div className="row g-0">
-        <div
-          className="col-md-2"
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "center",
-          }}
-        >
-          <div className="d-none d-lg-block" style={{ textAlign: "center" }}>
-            <Link to={`/checkout/${props.book.id}`}>
-              <img
-                src={props.book.img}
-                width="195"
-                height="268"
-                alt="Book"
-                className="shadow bg-body-tertiary"
-              />
-            </Link>
-          </div>
-          <div
-            className="d-lg-none d-flex justify-content-center 
-                        align-items-center"
-          >
-            <Link to={`/checkout/${props.book.id}`}>
-              <img
-                src={props.book.img}
-                width="195"
-                height="268"
-                alt="Book"
-                className="shadow bg-body-tertiary"
-              />
-            </Link>
-          </div>
-        </div>
-        <div className="col-md-6">
-          <div
-            className="card-body"
+    <Card sx={{ mt: 3, p: 3, boxShadow: 3 }}>
+      <Grid container>
+        <Grid item xs={12} md={2} container alignItems="center">
+          <Link to={`/checkout/${props.book.id}`}>
+            <CardMedia
+              component="img"
+              width="195"
+              height="268"
+              image={props.book.img}
+              alt="Book"
+              sx={{ boxShadow: "0 3px 5px rgba(0, 0, 0, 0.3)" }}
+            />
+          </Link>
+        </Grid>
+        <Grid item xs={12} md={6} container ml={4}>
+          <CardContent
             style={{
               whiteSpace: "normal",
               overflow: "hidden",
-              height: "350px",
+              maxHeight: "300px",
               textOverflow: "ellipsis",
             }}
           >
@@ -125,72 +111,95 @@ export const SearchBook: React.FC<{ book: BookModel; deleteBook: any }> = (
               to={`/checkout/${props.book.id}`}
               style={{ color: "black", textDecoration: "none" }}
             >
-              <h4>{props.book.title}</h4>
+              <Typography variant="h4" gutterBottom>
+                {props.book.title}
+              </Typography>
             </Link>
-            <h5 className="card-title">{props.book.author}</h5>
-            <p className="card-text">{props.book.publisher}</p>
-            <p className="card-text">{props.book.description}</p>
-          </div>
-        </div>
-        <div
-          className="col-md-4 d-flex justify-content-center align-items-center"
-          style={{ flexDirection: "column" }}
+            <Typography variant="h5" gutterBottom>
+              {props.book.author}
+            </Typography>
+            <Typography variant="body1" gutterBottom>
+              {props.book.publisher}
+            </Typography>
+            <Typography variant="body2" gutterBottom>
+              {props.book.description}
+            </Typography>
+          </CardContent>
+        </Grid>
+        <Grid
+          item
+          xs={12}
+          md={3}
+          ml={3}
+          container
+          justifyContent="center"
+          alignItems="center"
+          flexDirection="column"
         >
           {authState?.isAuthenticated &&
           authState.accessToken?.claims?.userType === "admin" ? (
             <>
-              <p>
+              <Typography>
                 총 수량 : <b>{quantity}</b>
-              </p>
-              <p>
+              </Typography>
+              <Typography>
                 남은 책 : <b>{remaining}</b>
-              </p>
-              <button onClick={deleteBook} className="btn mt-1 btn-danger">
+              </Typography>
+              <Button
+                onClick={deleteBook}
+                variant="contained"
+                color="error"
+                className="mt-2"
+              >
                 삭제
-              </button>
-              <button
+              </Button>
+              <Button
                 onClick={increaseQuantity}
-                className="btn mt-1 btn-primary main-color text-white"
+                variant="contained"
+                color="primary"
+                className="mt-2"
               >
                 수량 <Add />
-              </button>
-              <button
+              </Button>
+              <Button
                 onClick={decreaseQuantity}
-                className="btn mt-1 btn-warning"
+                variant="contained"
+                color="warning"
+                className="mt-2"
               >
                 수량 <Remove />
-              </button>
+              </Button>
             </>
           ) : (
             <>
-              <div>
+              <Box>
                 <hr />
-                <h5 className="">
-                  구매
-                  <Sell /> : {props.book.price} 원
-                </h5>
-                <h5>
-                  대여
-                  <Book /> : {props.book.coin}{" "}
+                <Typography variant="h5">
+                  구매 <Sell /> : {props.book.price} 원
+                </Typography>
+                <Typography variant="h5">
+                  대여 <Book /> : {props.book.coin}{" "}
                   <Bolt
                     style={{
                       color: "yellow",
                       textShadow: "1px 1px 2px rgba(0, 0, 0, 0.5)",
                     }}
                   />
-                </h5>
+                </Typography>
                 <hr />
-              </div>
+              </Box>
               <Link
-                className="btn btn-secondary text-white"
                 to={`/checkout/${props.book.id}`}
+                style={{ textDecoration: "none" }}
               >
-                자세히 보기
+                <Button variant="contained" color="secondary">
+                  자세히 보기
+                </Button>
               </Link>
             </>
           )}
-        </div>
-      </div>
-    </div>
+        </Grid>
+      </Grid>
+    </Card>
   );
 };
