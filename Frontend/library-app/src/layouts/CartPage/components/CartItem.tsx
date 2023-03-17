@@ -4,15 +4,15 @@ import { loadPaymentWidget } from "@tosspayments/payment-widget-sdk";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { tossConfig } from "../../../lib/tossConfig";
-import BooksInCart from "../../../models/BooksInCart";
 import { SpinnerLoading } from "../../Utils/SpinnerLoading";
 import {
   decreaseAmount,
   deleteBookInCart,
   increaseAmount,
 } from "./PurchaseFunction";
+import CurrentCartItems from "../../../models/CurrentCartItems";
 
-export const Purchase = () => {
+export const CartItem = () => {
   const { authState } = useOktaAuth();
   const [httpError, setHttpError] = useState(null);
   const [selectedBooks, setSelectedBooks] = useState<number[]>([]);
@@ -21,8 +21,12 @@ export const Purchase = () => {
   const [deleteBook, setDeleteBook] = useState(false);
   const [changeAmount, setChangeAmount] = useState(false);
 
-  // Current Cart
-  const [booksInCart, setBooksInCart] = useState<BooksInCart[]>([]);
+  const [cartItems, setCartItems] = useState<CurrentCartItems[]>([]);
+  const [isLoadingCartItems, setIsLoadingCartItems] = useState(true);
+
+  const [purchaseBooks, setPurchaseBooks] = useState<
+    { bookId: number; amount: number }[]
+  >([]);
 
   const handleCheckboxChange = (bookId: number) => {
     if (selectedBooks.includes(bookId)) {
@@ -30,7 +34,7 @@ export const Purchase = () => {
       setIsCheckAll(false);
     } else {
       setSelectedBooks([...selectedBooks, bookId]);
-      if (selectedBooks.length + 1 === BooksInCart.length) {
+      if (selectedBooks.length + 1 === cartItems.length) {
         setIsCheckAll(true);
       }
     }
@@ -41,7 +45,7 @@ export const Purchase = () => {
     if (e.target.checked) {
       setIsCheckAll(true);
 
-      setSelectedBooks(booksInCart.map((bookInCart) => bookInCart.book.id));
+      setSelectedBooks(cartItems.map((cartItem) => cartItem.book.id));
     } else {
       setIsCheckAll(false);
 
@@ -52,8 +56,8 @@ export const Purchase = () => {
   const calculateTotalPrice = () => {
     let total = 0;
     selectedBooks.forEach((bookId) => {
-      const selectedBook = booksInCart.find(
-        (bookInCart) => bookInCart.book.id === bookId
+      const selectedBook = cartItems.find(
+        (cartItem) => cartItem.book.id === bookId
       );
       if (selectedBook) {
         total += selectedBook.book.price * selectedBook.amount;
@@ -61,17 +65,36 @@ export const Purchase = () => {
     });
     return total;
   };
+
   const selectedBooksArr = () => {
     let booksArr: string[] = [];
+    let booksObjArr: { bookId: number; amount: number }[] = [];
     selectedBooks.forEach((bookId) => {
-      const selectedBook = booksInCart.find(
-        (bookInCart) => bookInCart.book.id === bookId
+      const selectedBook = cartItems.find(
+        (cartItem) => cartItem.book.id === bookId
       );
       if (selectedBook) {
         booksArr.push(selectedBook.book.title);
+        booksObjArr.push({ bookId, amount: selectedBook.amount });
       }
+      setPurchaseBooks(booksObjArr);
     });
     return booksArr;
+  };
+  const addPurchaseHistory = async () => {
+    const url = "";
+  };
+  const generateOrderId = () => {
+    const characters =
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_=";
+    const charactersLength = characters.length;
+    let result = "";
+
+    for (let i = 0; i < 15; i++) {
+      result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+
+    return result;
   };
 
   const tossPay = async () => {
@@ -87,22 +110,23 @@ export const Purchase = () => {
     const userEmail = authState?.accessToken?.claims.sub;
     const userName = authState?.accessToken?.claims.name;
     let books = selectedBooksArr();
+    let orderName =
+      books.length > 1 ? `${books[0]}외 ${books.length - 1}건` : books[0];
+    const generatedOrderId = generateOrderId();
     paymentWidget.requestPayment({
-      orderId: "AD8aZDpbzXs4EQa-UkIX6",
-      orderName: `${books[0]}외 ${books.length - 1}건`,
-      successUrl: "https://localhost:8443/success",
-      failUrl: "https://localhost:8443/fail",
+      orderId: generatedOrderId,
+      orderName: orderName,
+      successUrl: "https://localhost:3000/success",
+      failUrl: "https://localhost:3000/fail",
       customerEmail: userEmail,
       customerName: userName,
     });
   };
 
-  const [isLoadingBooksInCart, setIsLoadingBooksInCart] = useState(true);
-
   useEffect(() => {
-    const fetchBooksInCart = async () => {
+    const fetchCartItems = async () => {
       if (authState && authState.isAuthenticated) {
-        const url = `${process.env.REACT_APP_API}/books/secure/cart`;
+        const url = `${process.env.REACT_APP_API}/cart/secure`;
         const requestOptions = {
           methoe: "GET",
           headers: {
@@ -110,22 +134,22 @@ export const Purchase = () => {
             "Content-Type": "application/json",
           },
         };
-        const booksInCartResponse = await fetch(url, requestOptions);
-        if (!booksInCartResponse.ok) {
+        const CurrentCartItemResponse = await fetch(url, requestOptions);
+        if (!CurrentCartItemResponse.ok) {
           throw new Error("Something went wrong!");
         }
-        const booksInCartResponseJson = await booksInCartResponse.json();
-        setBooksInCart(booksInCartResponseJson);
+        const CurrentCartItemResponseJson =
+          await CurrentCartItemResponse.json();
+        setCartItems(CurrentCartItemResponseJson);
       }
-      setIsLoadingBooksInCart(false);
+      setIsLoadingCartItems(false);
       setDeleteBook(false);
       setChangeAmount(false);
     };
-    fetchBooksInCart().catch((error: any) => {
-      setIsLoadingBooksInCart(false);
+    fetchCartItems().catch((error: any) => {
+      setIsLoadingCartItems(false);
       setHttpError(error.message);
     });
-    window.scrollTo(0, 0);
   }, [authState, deleteBook, changeAmount]);
 
   const deleteFetchBook = async (bookId: number) => {
@@ -133,7 +157,7 @@ export const Purchase = () => {
     setDeleteBook(true);
   };
 
-  if (isLoadingBooksInCart) {
+  if (isLoadingCartItems) {
     return <SpinnerLoading />;
   }
 
@@ -167,21 +191,21 @@ export const Purchase = () => {
           />{" "}
           <label htmlFor="checkAll">전체선택</label>
         </h5>
-        {booksInCart.length > 0 ? (
+        {cartItems.length > 0 ? (
           <>
-            {booksInCart.map((bookInCart) => (
-              <div key={bookInCart.book.id}>
+            {cartItems.map((cartItem) => (
+              <div key={cartItem.book.id}>
                 <div className="row mt-3 mb-2">
                   <div className="d-flex col-md-8">
                     <input
                       id="selectedBook"
                       type="checkbox"
-                      onChange={() => handleCheckboxChange(bookInCart.book.id)}
-                      checked={selectedBooks.includes(bookInCart.book.id)}
+                      onChange={() => handleCheckboxChange(cartItem.book.id)}
+                      checked={selectedBooks.includes(cartItem.book.id)}
                     />
                     <div className="col col-md-3">
                       <img
-                        src={bookInCart.book?.img}
+                        src={cartItem.book?.img}
                         width="150"
                         height="210"
                         alt="Book"
@@ -193,26 +217,26 @@ export const Purchase = () => {
                         <h4>
                           <Link
                             style={{ color: "black", textDecoration: "none" }}
-                            to={`/checkout/${bookInCart.book.id}`}
+                            to={`/checkout/${cartItem.book.id}`}
                           >
-                            {bookInCart.book.title}
+                            {cartItem.book.title}
                           </Link>
                         </h4>
                         <p
                           className="card-text"
-                          onClick={() => deleteFetchBook(bookInCart.book.id)}
+                          onClick={() => deleteFetchBook(cartItem.book.id)}
                         >
                           삭제
                         </p>
                       </div>
                       <div className="card-text">
-                        <h5>{bookInCart.book.author}</h5>
+                        <h5>{cartItem.book.author}</h5>
                       </div>
 
                       <div className="card-text">
                         <p>
-                          {bookInCart.book.publisher} .
-                          {bookInCart.book.publicationDate}
+                          {cartItem.book.publisher} .
+                          {cartItem.book.publicationDate}
                         </p>
                       </div>
                       <div className="cart-text input-group">
@@ -222,8 +246,8 @@ export const Purchase = () => {
                             type="button"
                             onClick={() =>
                               decreaseBookAmount(
-                                bookInCart.book.id,
-                                bookInCart.amount
+                                cartItem.book.id,
+                                cartItem.amount
                               )
                             }
                           >
@@ -234,7 +258,7 @@ export const Purchase = () => {
                           <input
                             type="text"
                             className="form-control text-center"
-                            value={bookInCart.amount}
+                            value={cartItem.amount}
                             readOnly
                           />
                         </div>
@@ -244,8 +268,8 @@ export const Purchase = () => {
                             type="button"
                             onClick={() =>
                               increaseBookAmount(
-                                bookInCart.book.id,
-                                bookInCart.amount
+                                cartItem.book.id,
+                                cartItem.amount
                               )
                             }
                           >
@@ -261,12 +285,12 @@ export const Purchase = () => {
                   >
                     <div className="card-body">
                       <div className="mt-5">
-                        <h4>₩ {bookInCart.book.price * bookInCart.amount}</h4>
+                        <h4>₩ {cartItem.book.price * cartItem.amount}</h4>
                       </div>
                       <hr />
                       <Link
                         className="btn btn-primary"
-                        to={`/checkout/${bookInCart.book.id}`}
+                        to={`/checkout/${cartItem.book.id}`}
                       >
                         리뷰 쓰러 가기
                       </Link>
@@ -308,19 +332,19 @@ export const Purchase = () => {
           />{" "}
           <label htmlFor="checkAll">전체선택</label>
         </h5>
-        {booksInCart.length > 0 ? (
+        {cartItems.length > 0 ? (
           <>
-            {booksInCart.map((bookInCart) => (
-              <div key={bookInCart.book.id} style={{ textAlign: "center" }}>
+            {cartItems.map((cartItem) => (
+              <div key={cartItem.book.id} style={{ textAlign: "center" }}>
                 <input
                   id="selectedBook"
                   type="checkbox"
-                  onChange={() => handleCheckboxChange(bookInCart.book.id)}
-                  checked={selectedBooks.includes(bookInCart.book.id)}
+                  onChange={() => handleCheckboxChange(cartItem.book.id)}
+                  checked={selectedBooks.includes(cartItem.book.id)}
                 />
                 <div className="d-flex justify-content-center align-items-center">
                   <img
-                    src={bookInCart.book?.img}
+                    src={cartItem.book?.img}
                     width="150"
                     height="210"
                     alt="Book"
@@ -332,38 +356,38 @@ export const Purchase = () => {
                     <h4>
                       <Link
                         style={{ color: "black", textDecoration: "none" }}
-                        to={`/checkout/${bookInCart.book.id}`}
+                        to={`/checkout/${cartItem.book.id}`}
                       >
-                        {bookInCart.book.title}
+                        {cartItem.book.title}
                       </Link>
                     </h4>
                     <p
                       className="card-text"
-                      onClick={() => deleteFetchBook(bookInCart.book.id)}
+                      onClick={() => deleteFetchBook(cartItem.book.id)}
                     >
                       삭제
                       <Clear />
                     </p>
                   </div>
                   <div className="card-title">
-                    <h5>{bookInCart.book.author}</h5>
+                    <h5>{cartItem.book.author}</h5>
                   </div>
                   <div className="card-title">
                     <p>
-                      {bookInCart.book.publisher} .{" "}
-                      {bookInCart.book.publicationDate}
+                      {cartItem.book.publisher} .{" "}
+                      {cartItem.book.publicationDate}
                     </p>
                   </div>
                 </div>
                 <div className="card d-flex mt-5 mb-3">
                   <div className="card-body container">
                     <div className="mt-3">
-                      <h4>₩ {bookInCart.book.price}</h4>
+                      <h4>₩ {cartItem.book.price}</h4>
                     </div>
                     <hr />
                     <Link
                       className="btn btn-primary"
-                      to={`/checkout/${bookInCart.book.id}`}
+                      to={`/checkout/${cartItem.book.id}`}
                     >
                       리뷰 쓰러 가기
                     </Link>

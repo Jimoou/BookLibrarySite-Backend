@@ -8,12 +8,12 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "purchase")
+@Table(name = "cart_item")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Purchase {
+public class CartItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
