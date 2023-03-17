@@ -1,7 +1,6 @@
 package com.reactlibraryproject.springbootlibrary.Controller;
 
 import com.reactlibraryproject.springbootlibrary.Entity.Book;
-import com.reactlibraryproject.springbootlibrary.ReponseModels.BooksInCartResponse;
 import com.reactlibraryproject.springbootlibrary.ReponseModels.ShelfCurrentLoansResponse;
 import com.reactlibraryproject.springbootlibrary.Service.BookService;
 import com.reactlibraryproject.springbootlibrary.Utils.ExtractJWT;
@@ -61,44 +60,5 @@ public class BookController {
     public void renewLoan(@RequestHeader(value = "Authorization") String token, @RequestParam Long bookId) throws Exception {
         String userEmail = ExtractJWT.payloadJWTExtraction(token, "\"sub\"");
         bookService.renewLoan(userEmail, bookId);
-    }
-
-    @Operation(summary = "유저의 장바구니 목록")
-    @GetMapping("/secure/cart")
-    public List<BooksInCartResponse> currentCart(@RequestHeader(value = "Authorization") String token) throws Exception {
-        String userEmail = ExtractJWT.payloadJWTExtraction(token, "\"sub\"");
-        return bookService.currentCart(userEmail);
-    }
-
-    @Operation(summary = "장바구니에 책 추가")
-    @PutMapping("/secure/cart/add/book")
-    public void addBookInCart(@RequestHeader(value = "Authorization") String token,
-                         @RequestParam Long bookId) throws Exception {
-        String userEmail = ExtractJWT.payloadJWTExtraction(token, "\"sub\"");
-        bookService.addBookInCart(userEmail, bookId);
-    }
-
-    @Operation(summary = "장바구니에서 책 삭제")
-    @PutMapping("/secure/cart/delete/book")
-    public void deleteBookInCart(@RequestHeader(value = "Authorization") String token,
-                              @RequestParam Long bookId) throws Exception {
-        String userEmail = ExtractJWT.payloadJWTExtraction(token, "\"sub\"");
-        bookService.deleteBookInCart(userEmail, bookId);
-    }
-
-    @Operation(summary = "장바구니에서 책 수량 +")
-    @PutMapping("/secure/cart/increase/book/amount")
-    public void increaseAmount(@RequestHeader(value = "Authorization") String token,
-                              @RequestParam Long bookId) throws Exception {
-        String userEmail = ExtractJWT.payloadJWTExtraction(token, "\"sub\"");
-        bookService.increaseAmount(userEmail, bookId);
-    }
-
-    @Operation(summary = "장바구니에서 책 수량 -")
-    @PutMapping("/secure/cart/decrease/book/amount")
-    public void decreaseAmount(@RequestHeader(value = "Authorization") String token,
-                                 @RequestParam Long bookId) throws Exception {
-        String userEmail = ExtractJWT.payloadJWTExtraction(token, "\"sub\"");
-        bookService.decreaseAmount(userEmail, bookId);
     }
 }

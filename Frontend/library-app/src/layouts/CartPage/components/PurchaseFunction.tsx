@@ -1,7 +1,7 @@
-import PurchaseModel from "../../../models/PurchaseModel";
+import PurchaseModel from "../../../models/CartItemModel";
 
 export async function deleteBookInCart(bookId: number, authState: any) {
-  const url = `${process.env.REACT_APP_API}/books/secure/cart/delete/book/?bookId=${bookId}`;
+  const url = `${process.env.REACT_APP_API}/cart/secure/delete/book?bookId=${bookId}`;
   const requestOptions = {
     method: "PUT",
     headers: {
@@ -15,7 +15,7 @@ export async function deleteBookInCart(bookId: number, authState: any) {
   }
 }
 export async function addBookInCart(bookId: number, authState: any) {
-  const url = `${process.env.REACT_APP_API}/books/secure/cart/add/book/?bookId=${bookId}`;
+  const url = `${process.env.REACT_APP_API}/cart/secure/add/book?bookId=${bookId}`;
   const purchaseModel: PurchaseModel = new PurchaseModel(1, bookId);
   const requestOptions = {
     method: "PUT",
@@ -35,7 +35,7 @@ export async function increaseAmount(
   authState: any,
   amount: number
 ) {
-  const url = `${process.env.REACT_APP_API}/books/secure/cart/increase/book/amount/?bookId=${bookId}`;
+  const url = `${process.env.REACT_APP_API}/cart/secure/increase/book/amount?bookId=${bookId}`;
   const purchaseModel: PurchaseModel = new PurchaseModel(amount, bookId);
   const requestOptions = {
     method: "PUT",
@@ -56,7 +56,7 @@ export async function decreaseAmount(
   authState: any,
   amount: number
 ) {
-  const url = `${process.env.REACT_APP_API}/books/secure/cart/decrease/book/amount/?bookId=${bookId}`;
+  const url = `${process.env.REACT_APP_API}/cart/secure/decrease/book/amount?bookId=${bookId}`;
   const purchaseModel: PurchaseModel = new PurchaseModel(amount, bookId);
   const requestOptions = {
     method: "PUT",
