@@ -9,4 +9,5 @@ import lombok.Data;
 public class CurrentCartItemResponse {
     private Book book;
     private int amount;
+    private Long cartItemId;
 }
