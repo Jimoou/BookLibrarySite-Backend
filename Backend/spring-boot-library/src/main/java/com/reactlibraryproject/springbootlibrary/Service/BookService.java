@@ -178,7 +178,7 @@ public class BookService {
             CartItem cartItem = purchaseMap.get(book.getId());
 
             if (cartItem != null) {
-                currentCartItemResponse.add(new CurrentCartItemResponse(book, cartItem.getAmount()));
+                currentCartItemResponse.add(new CurrentCartItemResponse(book, cartItem.getAmount(), cartItem.getId()));
             }
         }
         return currentCartItemResponse;
