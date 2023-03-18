@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import ReviewModel from "../../../models/ReviewModel";
-import { Pagination } from "../../Utils/Pagination";
+import { Container, Box, Typography, Grid, Pagination } from "@mui/material";
 import { Review } from "../../Utils/Review";
 import { SpinnerLoading } from "../../Utils/SpinnerLoading";
 
@@ -56,7 +56,7 @@ export const ReviewListPage = () => {
       setIsLoading(false);
       setHttpError(error.message);
     });
-  }, [currentPage]);
+  }, [currentPage, reviewsPerPage]);
 
   if (isLoading) {
     return <SpinnerLoading />;
@@ -68,38 +68,30 @@ export const ReviewListPage = () => {
       </div>
     );
   }
-
-  const indexOfLastReview: number = currentPage * reviewsPerPage;
-  const indexOfFirstReview: number = indexOfLastReview - reviewsPerPage;
-
-  let lastItem =
-    reviewsPerPage * currentPage <= totalAmountOfReviews
-      ? reviewsPerPage * currentPage
-      : totalAmountOfReviews;
-
   const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
 
   return (
-    <div className="container mt-5">
-      <div>
-        <h3>리뷰: ({reviews.length})</h3>
-      </div>
-      <p>
-        {indexOfFirstReview + 1} to {lastItem} of {totalAmountOfReviews} items:
-      </p>
-      <div className="row">
-        {reviews.map((review) => (
-          <Review review={review} key={review.id} />
-        ))}
-      </div>
-
-      {totalPages > 1 && (
-        <Pagination
-          currentPage={currentPage}
-          totalPages={totalPages}
-          paginate={paginate}
-        />
-      )}
-    </div>
+    <Container maxWidth="lg">
+      <Box sx={{ mt: 5 }}>
+        <Typography variant="h3">리뷰: ({reviews.length})</Typography>
+        <Grid container spacing={3}>
+          {reviews.map((review) => (
+            <Grid item xs={12} sm={6} md={4} key={review.id}>
+              <Review review={review} />
+            </Grid>
+          ))}
+        </Grid>
+        {totalPages > 1 && (
+          <Box sx={{ mt: 3 }}>
+            <Pagination
+              count={totalPages}
+              page={currentPage}
+              onChange={(event, value) => paginate(value)}
+              color="primary"
+            />
+          </Box>
+        )}
+      </Box>
+    </Container>
   );
 };
