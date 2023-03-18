@@ -8,6 +8,7 @@ import { SpinnerLoading } from "../Utils/SpinnerLoading";
 import { StarsReview } from "../Utils/StarsReview";
 import { CheckOutAndReviewBox } from "./CheckoutAndReviewBox";
 import { LatestReviews } from "./LatestReviews";
+import { Box, Container, Grid, Typography, Divider } from "@mui/material";
 
 export const BookCheckoutPage = () => {
   const { authState } = useOktaAuth();
@@ -269,31 +270,32 @@ export const BookCheckoutPage = () => {
     return addBookInCart(bookId, authState);
   };
   return (
-    <div>
-      <div className="container d-none d-lg-block">
-        {/* Screen */}
-        <div className="row mt-5">
-          <div className="col-sm-2 col-md-2">
-            <img
-              src={book?.img}
-              width="226"
-              height="349"
-              alt="Book"
-              className="shadow bg-body-tertiary"
-            />
-          </div>
-          <div className="col-4 col-md-4 container">
-            <div className="ml-2">
-              <h2>{book?.title}</h2>
-              <h5 className="text-primary">{book?.author}</h5>
-              <div style={{ width: "130%" }}>
-                <p className="lead" style={{ whiteSpace: "pre-wrap" }}>
-                  {book?.description}
-                </p>
-              </div>
-              <StarsReview rating={totalStars} size={32} />
-            </div>
-          </div>
+    <Container>
+      <Grid container spacing={2} sx={{ mt: 5 }}>
+        <Grid item xs={10} sm={6} md={3}>
+          <img
+            src={book?.img}
+            width="250"
+            height="380"
+            alt="Book"
+            style={{
+              boxShadow: "rgba(0, 0, 0, 0.1) 0px 4px 6px",
+            }}
+          />
+        </Grid>
+        <Grid item xs={12} sm={6} md={5}>
+          <Box>
+            <Typography variant="h4">{book?.title}</Typography>
+            <Typography variant="h6" color="primary">
+              {book?.author}
+            </Typography>
+            <Typography variant="body1" sx={{ whiteSpace: "pre-wrap" }}>
+              {book?.description}
+            </Typography>
+            <StarsReview rating={totalStars} size={32} />
+          </Box>
+        </Grid>
+        <Grid item xs={12} sm={12} md={4}>
           <CheckOutAndReviewBox
             book={book}
             mobile={false}
@@ -305,45 +307,10 @@ export const BookCheckoutPage = () => {
             submitReview={submitReview}
             addBookInCart={() => putBookInCart()}
           />
-        </div>
-        <hr />
-        <LatestReviews reviews={reviews} bookId={book?.id} mobile={false} />
-      </div>
-      {/* Mobile */}
-      <div className="container d-lg-none mt-5">
-        <div className="d-flex justify-content-center align-items-center">
-          <img
-            src={book?.img}
-            width="226"
-            height="349"
-            alt="Book"
-            className="shadow bg-body-tertiary"
-          />
-        </div>
-        <div className="mt-4">
-          <div className="ml-2">
-            <h2>{book?.title}</h2>
-            <h5 className="text-primary">{book?.author}</h5>
-            <p className="lead" style={{ whiteSpace: "pre-wrap" }}>
-              {book?.description}
-            </p>
-            <StarsReview rating={totalStars} size={32} />
-          </div>
-        </div>
-        <CheckOutAndReviewBox
-          book={book}
-          mobile={true}
-          currentLoansCount={currentLoansCount}
-          isAuthenticated={authState?.isAuthenticated}
-          isCheckedOut={isCheckedOut}
-          checkoutBook={checkoutBook}
-          isReviewLeft={isReviewLeft}
-          submitReview={submitReview}
-          addBookInCart={() => putBookInCart()}
-        />
-        <hr />
-        <LatestReviews reviews={reviews} bookId={book?.id} mobile={true} />
-      </div>
-    </div>
+        </Grid>
+      </Grid>
+      <Divider sx={{ my: 4 }} />
+      <LatestReviews reviews={reviews} bookId={book?.id} mobile={false} />
+    </Container>
   );
 };

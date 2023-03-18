@@ -3,6 +3,17 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import BookModel from "../../models/BookModel";
 import { LeaveAReview } from "../Utils/LeaveAReview";
+import {
+  Button,
+  Card,
+  CardContent,
+  Typography,
+  Grid,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+} from "@mui/material";
 
 export const CheckOutAndReviewBox: React.FC<{
   book: BookModel | undefined;
@@ -34,133 +45,150 @@ export const CheckOutAndReviewBox: React.FC<{
 
   const renderModal = () => {
     return (
-      <div
-        className="modal fade show"
-        style={{ display: "block" }}
-        tabIndex={-1}
-        aria-modal="true"
-      >
-        <div className="modal-dialog">
-          <div className="modal-content">
-            <div className="modal-body">
-              장바구니에 추가되었습니다. 장바구니로 바로 이동하시겠습니까?
-            </div>
-            <div className="modal-footer">
-              <button className="btn btn-secondary" onClick={cancel}>
-                취소
-              </button>
-              <button className="btn btn-primary" onClick={confirm}>
-                이동
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
+      <Dialog open={isOpen} onClose={cancel}>
+        <DialogContent>
+          <DialogContentText>
+            장바구니에 추가되었습니다. 장바구니로 바로 이동하시겠습니까?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={cancel} color="secondary">
+            취소
+          </Button>
+          <Button onClick={confirm} color="primary">
+            이동
+          </Button>
+        </DialogActions>
+      </Dialog>
     );
   };
 
-  function buttonRender() {
+  const buttonRender = () => {
     if (props.isAuthenticated) {
       if (!props.isCheckedOut && props.currentLoansCount < 5) {
         return (
-          <button
+          <Button
             onClick={() => props.checkoutBook()}
-            className="btn btn-success"
+            variant="contained"
+            color="success"
           >
             대여하기
-          </button>
+          </Button>
         );
       } else if (props.isCheckedOut) {
         return (
-          <p>
+          <Typography variant="body1">
             <b>책을 대여했습니다.</b>
-          </p>
+          </Typography>
         );
       } else if (!props.isCheckedOut) {
-        return <p className="text-danger">더이상 대여할 수 없습니다.</p>;
+        return (
+          <Typography variant="body1" color="error">
+            더이상 대여할 수 없습니다.
+          </Typography>
+        );
       }
     }
     return (
-      <Link to={"/login"} className="btn btn-success btn-lg">
-        로그인
+      <Link to={"/login"} style={{ textDecoration: "none" }}>
+        <Button variant="contained" color="success" size="large">
+          로그인
+        </Button>
       </Link>
     );
-  }
+  };
 
-  function reviewRender() {
+  const reviewRender = () => {
     if (props.isAuthenticated && !props.isReviewLeft) {
-      return (
-        <>
-          <LeaveAReview submitReview={props.submitReview} />
-        </>
-      );
+      return <LeaveAReview submitReview={props.submitReview} />;
     } else if (props.isAuthenticated && props.isReviewLeft) {
       return (
-        <p>
+        <Typography variant="body1">
           <b>리뷰를 남긴 도서입니다.</b>
-        </p>
+        </Typography>
       );
     }
     return (
       <div>
         <hr />
-        <p>로그인 후 리뷰를 남겨보세요!</p>
+        <Typography variant="body1">로그인 후 리뷰를 남겨보세요!</Typography>
       </div>
     );
-  }
+  };
 
   return (
-    <div
-      className={
-        props.mobile ? "card d-flex mt-5" : "card col-3 container d-flex mb-5"
-      }
+    <Card
+      sx={{
+        mt: props.mobile ? 5 : 1,
+        mb: props.mobile ? 0 : 5,
+        maxWidth: 350,
+        maxHeight: 720,
+      }}
     >
-      <div className="card-body container">
-        <div className="mt-3">
-          <p>
-            <b>{props.currentLoansCount}/5</b>
-            나의 대여 권 수
-          </p>
-          <hr />
-          {props.book &&
-          props.book.copiesAvailable &&
-          props.book.copiesAvailable > 0 ? (
-            <h4 className="text-success">대여 가능함</h4>
-          ) : (
-            <h4 className="text-danger">대여 불가능</h4>
-          )}
-          <div className="row">
-            <p className="col-6 lead">
+      <CardContent>
+        <Typography variant="body1">
+          <b>{props.currentLoansCount}/5</b> 나의 대여 권 수
+        </Typography>
+        <hr />
+        {props.book &&
+        props.book.copiesAvailable &&
+        props.book.copiesAvailable > 0 ? (
+          <Typography variant="h4" color="success">
+            대여 가능함
+          </Typography>
+        ) : (
+          <Typography variant="h4" color="error">
+            대여 불가능
+          </Typography>
+        )}
+        <Grid container spacing={2}>
+          <Grid item xs={6}>
+            <Typography variant="h6">
               <b>대여 권 수 : {props.book?.copies}</b>
-            </p>
-            <p className="col-6 lead">
+            </Typography>
+          </Grid>
+          <Grid item xs={6}>
+            <Typography variant="h6">
               <b>남은 권 수 : {props.book?.copiesAvailable}</b>
-            </p>
-          </div>
-        </div>
+            </Typography>
+          </Grid>
+        </Grid>
         {buttonRender()}
         <hr />
-        <h4 className="text-success">구매하기</h4>
-        <div className="row">
-          <p className="col-8 lead">
-            <b>가격 : {props.book?.price} 원</b>
-          </p>
-        </div>
+        <Typography variant="h4" color="success">
+          구매하기
+        </Typography>
+        <Grid container spacing={2}>
+          <Grid item xs={8}>
+            <Typography variant="h6">
+              <b>가격 : {props.book?.price} 원</b>
+            </Typography>
+          </Grid>
+        </Grid>
 
         {authState?.isAuthenticated && (
           <>
-            <button className="btn btn-info">바로구매</button>
-            <button className="btn btn-warning m-1" onClick={handleClick}>
+            <Button variant="contained" color="info">
+              바로구매
+            </Button>
+            <Button
+              variant="contained"
+              color="warning"
+              sx={{ m: 1 }}
+              onClick={handleClick}
+            >
               장바구니
-            </button>
+            </Button>
           </>
         )}
 
         {isOpen && renderModal()}
         <hr />
-        <p className="mt-3">책의 수량은 변경될 수 있습니다.</p>
+        <Typography variant="body1" sx={{ mt: 3 }}>
+          책의 수량은 변경될 수 있습니다.
+        </Typography>
         {reviewRender()}
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   );
 };
