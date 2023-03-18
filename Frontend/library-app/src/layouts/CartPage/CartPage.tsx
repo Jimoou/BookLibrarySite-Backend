@@ -1,6 +1,7 @@
 import { useOktaAuth } from "@okta/okta-react";
 import { useNavigate } from "react-router-dom";
 import { CartItem } from "./components/CartItem";
+import { PurchaseHistoryPage } from "./components/PurchaseHistoryPage";
 
 export const CartPage = () => {
   const navigate = useNavigate();
@@ -55,7 +56,9 @@ export const CartPage = () => {
             id="nav-history"
             role="tabpanel"
             aria-labelledby="nav-history-tab"
-          ></div>
+          >
+            <PurchaseHistoryPage />
+          </div>
         </div>
       </div>
     </div>

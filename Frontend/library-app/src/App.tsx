@@ -16,6 +16,7 @@ import { CartPage } from "./layouts/CartPage/CartPage";
 import RegisterWidget from "./Auth/RegisterWidget";
 import { Success } from "./layouts/CartPage/components/Success";
 import { SuccessPage } from "./layouts/CartPage/components/SuccessPage";
+import { PurchaseHistoryPage } from "./layouts/CartPage/components/PurchaseHistoryPage";
 
 function App() {
   const oktaAuth = new OktaAuth(oktaConfig);
@@ -61,6 +62,10 @@ function App() {
             <Route path="/cart" element={<CartPage />} />
             <Route path="/success" element={<Success />} />
             <Route path="/success-complete" element={<SuccessPage />} />
+            <Route
+              path="/purchase-histories"
+              element={<PurchaseHistoryPage />}
+            />
           </Routes>
         </div>
       </Security>

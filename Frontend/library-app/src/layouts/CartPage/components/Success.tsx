@@ -7,7 +7,7 @@ import { SpinnerLoading } from "../../Utils/SpinnerLoading";
 
 export const Success = () => {
   const { authState } = useOktaAuth();
-  const [isLoading, setIsLoading] = useState(false);
+  const isLoading = true;
 
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);

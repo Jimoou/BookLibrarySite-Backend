@@ -81,7 +81,8 @@ export const CartItem = () => {
         booksObjArr.push(
           new AddPurchaseHistoryRequest(
             selectedBook.book.id,
-            selectedBook.amount
+            selectedBook.amount,
+            selectedBook.cartItemId
           )
         );
       }
