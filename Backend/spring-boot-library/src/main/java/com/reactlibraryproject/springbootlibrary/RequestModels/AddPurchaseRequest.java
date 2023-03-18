@@ -9,5 +9,6 @@ public class AddPurchaseRequest {
 
     private Long bookId;
     private int amount;
+    private Long cartItemId;
 
 }

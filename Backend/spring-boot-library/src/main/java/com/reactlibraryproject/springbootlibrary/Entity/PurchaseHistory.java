@@ -42,4 +42,6 @@ public class PurchaseHistory {
     private String orderId;
 
     private String status;
+
+    private Long cartItemId;
 }
