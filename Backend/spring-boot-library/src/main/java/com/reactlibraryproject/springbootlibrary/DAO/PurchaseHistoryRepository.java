@@ -10,11 +10,14 @@ import java.util.List;
 @RepositoryRestResource(path = "purchase-history")
 public interface PurchaseHistoryRepository extends JpaRepository<PurchaseHistory, Long> {
 
-    PurchaseHistory findByUserEmail(String userEmail);
+  PurchaseHistory findByUserEmail(String userEmail);
 
-    List<PurchaseHistory> findPurchaseByUserEmail(String userEmail);
+  List<PurchaseHistory> findPurchaseByUserEmail(String userEmail);
 
-    List<PurchaseHistory> findByUserEmailAndPaymentKey(
-     @RequestParam("email") String userEmail
-    ,@RequestParam("paymentKey") String paymentKey);
+  List<PurchaseHistory> findByUserEmailAndStatusIsNull(String userEmail);
+
+  void deleteByUserEmailAndStatusIsNull(String userEmail);
+
+  List<PurchaseHistory> findByUserEmailAndOrderId(
+      @RequestParam("email") String userEmail, @RequestParam("orderId") String paymentKey);
 }
