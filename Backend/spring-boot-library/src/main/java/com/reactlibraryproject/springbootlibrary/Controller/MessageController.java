@@ -7,7 +7,13 @@ import com.reactlibraryproject.springbootlibrary.Utils.ExtractJWT;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @CrossOrigin("https://localhost:3000")
 @RestController
@@ -30,11 +36,11 @@ public class MessageController {
     @PutMapping("/secure/admin/message")
     public void putMessage(@RequestHeader(value = "Authorization") String token,
                            @RequestBody AdminQuestionRequest adminQuestionRequest) throws Exception {
-        String userEmail = ExtractJWT.payloadJWTExtraction(token, "\"sub\"");
+        String adminEmail = ExtractJWT.payloadJWTExtraction(token, "\"sub\"");
         String admin = ExtractJWT.payloadJWTExtraction(token, "\"userType\"");
         if (admin == null || !admin.equals("admin")) {
             throw new Exception("Administration page only.");
         }
-        messageService.putMessage(adminQuestionRequest, userEmail);
+        messageService.putMessage(adminQuestionRequest, adminEmail);
     }
 }

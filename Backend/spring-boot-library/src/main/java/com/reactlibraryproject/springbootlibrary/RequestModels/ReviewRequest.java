@@ -1,12 +1,12 @@
 package com.reactlibraryproject.springbootlibrary.RequestModels;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
-import java.util.Optional;
-
 @Data
+@AllArgsConstructor
 public class ReviewRequest {
     private double rating;
     private Long bookId;
-    private Optional<String> reviewDescription;
+    private String reviewDescription;
 }

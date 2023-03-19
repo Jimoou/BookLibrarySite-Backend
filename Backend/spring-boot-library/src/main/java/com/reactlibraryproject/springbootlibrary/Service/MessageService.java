@@ -25,17 +25,17 @@ public class MessageService {
         messageRepository.save(message);
     }
 
-    public void putMessage(AdminQuestionRequest adminQuestionRequest, String useremail) throws Exception {
-        Optional<Message> findedMessage = messageRepository.findById(adminQuestionRequest.getId());
-        if (findedMessage.isEmpty()) {
+    public void putMessage(AdminQuestionRequest adminQuestionRequest, String adminEmail) throws Exception {
+        Optional<Message> foundMessage = messageRepository.findById(adminQuestionRequest.getId());
+        if (foundMessage.isEmpty()) {
             throw new Exception("Message not found");
         }
         Message message = Message.builder()
-         .id(findedMessage.get().getId())
-         .userEmail(findedMessage.get().getUserEmail())
-         .title(findedMessage.get().getTitle())
-         .question(findedMessage.get().getQuestion())
-         .adminEmail(useremail)
+         .id(foundMessage.get().getId())
+         .userEmail(foundMessage.get().getUserEmail())
+         .title(foundMessage.get().getTitle())
+         .question(foundMessage.get().getQuestion())
+         .adminEmail(adminEmail)
          .response(adminQuestionRequest.getResponse())
          .closed(true)
          .build();
