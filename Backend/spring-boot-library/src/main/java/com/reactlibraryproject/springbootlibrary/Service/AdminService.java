@@ -1,5 +1,6 @@
 package com.reactlibraryproject.springbootlibrary.Service;
 
+import com.reactlibraryproject.springbootlibrary.CustomExceptions.CopiesAvailableException;
 import com.reactlibraryproject.springbootlibrary.DAO.BookRepository;
 import com.reactlibraryproject.springbootlibrary.DAO.CartItemRepository;
 import com.reactlibraryproject.springbootlibrary.DAO.CheckoutRepository;
@@ -23,21 +24,25 @@ public class AdminService {
   private CartItemRepository cartItemRepository;
 
   public void increaseBookQuantity(Long bookId) {
+    // Exception
     Book book = bookFinder.bookFinder(bookId);
 
+    // Function
     book.setCopiesAvailable(book.getCopiesAvailable() + 1);
     book.setCopies(book.getCopies() + 1);
 
     bookRepository.save(book);
   }
 
-  public void decreaseBookQuantity(Long bookId) throws Exception {
+  public void decreaseBookQuantity(Long bookId) {
+    // Exception
     Book book = bookFinder.bookFinder(bookId);
 
     if (book.getCopies() <= 0 || book.getCopiesAvailable() <= 0) {
-      throw new Exception("더 이상 감소시킬 수 없습니다.");
+      throw new CopiesAvailableException();
     }
 
+    // Function
     book.setCopiesAvailable(book.getCopiesAvailable() - 1);
     book.setCopies(book.getCopies() - 1);
 
@@ -64,8 +69,10 @@ public class AdminService {
   }
 
   public void deleteBook(Long bookId) {
+    // Exception
     Book book = bookFinder.bookFinder(bookId);
 
+    // Function
     try {
       bookRepository.delete(book);
       checkoutRepository.deleteAllByBookId(bookId);
