@@ -80,7 +80,7 @@ class BookServiceTest {
 
   @Test
   @DisplayName("책 대여 테스트")
-  void checkoutBook() throws Exception {
+  void checkoutBook(){
     // Given
     given(bookRepository.findById(bookId)).willReturn(Optional.of(testBook));
     given(checkoutRepository.findByUserEmailAndBookId(userEmail, bookId)).willReturn(null);
@@ -95,7 +95,7 @@ class BookServiceTest {
 
   @Test
   @DisplayName("책 대여 여부 테스트")
-  void checkoutBookByUser() throws Exception {
+  void checkoutBookByUser(){
     // Given
     given(checkoutRepository.findByUserEmailAndBookId(userEmail, bookId)).willReturn(null);
 
@@ -122,7 +122,7 @@ class BookServiceTest {
 
   @Test
   @DisplayName("현재 대여중인 책 목록 테스트")
-  void currentLoans() throws Exception {
+  void currentLoans(){
     // Given
     List<Checkout> checkoutList = Collections.singletonList(checkout);
     given(checkoutRepository.findBooksByUserEmail(userEmail)).willReturn(checkoutList);
@@ -149,7 +149,7 @@ class BookServiceTest {
 
   @Test
   @DisplayName("책 반납 테스트")
-  void returnBook() throws Exception {
+  void returnBook(){
     // Given
     given(bookRepository.findById(bookId)).willReturn(Optional.of(testBook));
     given(checkoutRepository.findByUserEmailAndBookId(userEmail, bookId)).willReturn(checkout);
@@ -166,7 +166,7 @@ class BookServiceTest {
 
   @Test
   @DisplayName("대출 기간 초기화 테스트")
-  void renewLoan() throws Exception {
+  void renewLoan() {
     // Given
     LocalDate currentDate = LocalDate.now();
     given(checkoutRepository.findByUserEmailAndBookId(userEmail, bookId)).willReturn(checkout);
