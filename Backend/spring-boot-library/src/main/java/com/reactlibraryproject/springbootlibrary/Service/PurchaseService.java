@@ -25,7 +25,7 @@ public class PurchaseService {
   private final BookRepository bookRepository;
   private final CartItemService cartItemService;
 
-  public List<PurchaseHistoryResponse> purchaseHistories(String userEmail) throws Exception {
+  public List<PurchaseHistoryResponse> purchaseHistories(String userEmail) {
     List<PurchaseHistory> purchaseHistory =
         purchaseHistoryRepository.findPurchaseByUserEmail(userEmail);
     Map<String, List<PurchaseHistory>> purchaseHistoryMap =
@@ -52,8 +52,10 @@ public class PurchaseService {
     String orderName = getOrderName(purchaseHistories);
     int totalPrice = getTotalPrice(purchaseHistories);
     String purchaseDate = purchaseHistories.get(0).getPurchaseDate();
+    String orderId = purchaseHistories.get(0).getOrderId();
+    String status = purchaseHistories.get(0).getStatus();
 
-    return new PurchaseHistoryResponse(entry.getKey(), orderName, totalPrice, purchaseDate);
+    return new PurchaseHistoryResponse(entry.getKey(), orderName, totalPrice, purchaseDate, orderId, status);
   }
 
   private String getOrderName(List<PurchaseHistory> purchaseHistories) {
@@ -102,9 +104,14 @@ public class PurchaseService {
   }
 
   public void updateSuccessPurchase(
-      String userEmail, SuccessPurchaseRequest successPurchaseRequest) {
+      String userEmail, SuccessPurchaseRequest successPurchaseRequest)throws Exception {
     List<PurchaseHistory> pendingPurchases =
         purchaseHistoryRepository.findByUserEmailAndStatusIsNull(userEmail);
+
+    if (successPurchaseRequest.getTotalAmount() != getTotalPrice(pendingPurchases)) {
+      deleteFailPurchase(userEmail);
+      throw new Exception("잘못된 결제 요청입니다.");
+    }
 
     pendingPurchases.stream()
         .filter(purchase -> successPurchaseRequest.getStatus() != null)
