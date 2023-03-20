@@ -1,9 +1,7 @@
 package com.reactlibraryproject.springbootlibrary.Service;
 
-import com.reactlibraryproject.springbootlibrary.DAO.BookRepository;
+import com.reactlibraryproject.springbootlibrary.CustomExceptions.CartItemNotFoundException;import com.reactlibraryproject.springbootlibrary.DAO.BookRepository;
 import com.reactlibraryproject.springbootlibrary.DAO.CartItemRepository;
-import com.reactlibraryproject.springbootlibrary.DAO.CheckoutHistoryRepository;
-import com.reactlibraryproject.springbootlibrary.DAO.CheckoutRepository;
 import com.reactlibraryproject.springbootlibrary.Entity.Book;
 import com.reactlibraryproject.springbootlibrary.Entity.CartItem;
 import com.reactlibraryproject.springbootlibrary.ReponseModels.CurrentCartItemResponse;
@@ -12,9 +10,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -23,7 +22,7 @@ public class CartItemService {
   private CartItemRepository cartItemRepository;
   private final BookRepository bookRepository;
 
-  public void addBookInCart(String userEmail, Long bookId) throws Exception {
+  public void addBookInCart(String userEmail, Long bookId) {
     CartItem cartItem = cartItemRepository.findByUserEmailAndBookId(userEmail, bookId);
     int amount = cartItem == null ? 1 : cartItem.getAmount() + 1;
 
@@ -35,64 +34,52 @@ public class CartItemService {
     cartItemRepository.save(cartItem);
   }
 
-  public void deleteBookInCart(String userEmail, Long bookId) throws Exception {
-    CartItem validateCartItem = cartItemRepository.findByUserEmailAndBookId(userEmail, bookId);
-
-    if (validateCartItem == null) {
-      throw new Exception("Book does not exist or not added in cart by user");
-    }
-    cartItemRepository.deleteById(validateCartItem.getId());
+  public void deleteCartItem(String userEmail, Long cartItemId) {
+    CartItem cartItem = cartItemRepository.findByUserEmailAndId(userEmail, cartItemId);
+    cartItemRepository.delete(cartItem);
   }
 
-  public List<CurrentCartItemResponse> currentCart(String userEmail) throws Exception {
-    List<CurrentCartItemResponse> currentCartItemResponse = new ArrayList<>();
-
+  public List<CurrentCartItemResponse> currentCart(String userEmail) {
     List<CartItem> cartItemList = cartItemRepository.findBooksByUserEmail(userEmail);
-
-    Map<Long, CartItem> purchaseMap = new HashMap<>();
-    for (CartItem cartItem : cartItemList) {
-      purchaseMap.put(cartItem.getBookId(), cartItem);
-    }
+    Map<Long, CartItem> cartItemMap = createCartItemMap(cartItemList);
 
     List<Book> booksInCart =
-        bookRepository.findBooksByBookIds(new ArrayList<>(purchaseMap.keySet()));
+        bookRepository.findBooksByBookIds(new ArrayList<>(cartItemMap.keySet()));
 
-    for (Book book : booksInCart) {
-      CartItem cartItem = purchaseMap.get(book.getId());
-
-      if (cartItem != null) {
-        currentCartItemResponse.add(
-            new CurrentCartItemResponse(book, cartItem.getAmount(), cartItem.getId()));
-      }
-    }
-    return currentCartItemResponse;
+    return generateCurrentCartItemResponseList(cartItemMap, booksInCart);
   }
-
-  public void increaseAmount(String userEmail, Long bookId) throws Exception {
+  private Map<Long, CartItem> createCartItemMap(List<CartItem> cartItemList) {
+    return cartItemList.stream()
+        .collect(Collectors.toMap(CartItem::getBookId, Function.identity()));
+  }
+  private List<CurrentCartItemResponse> generateCurrentCartItemResponseList(Map<Long, CartItem> purchaseMap, List<Book> booksInCart) {
+    return booksInCart.stream()
+        .map(
+            book ->
+                new CurrentCartItemResponse(
+                    book,
+                    purchaseMap.get(book.getId()).getAmount(),
+                    purchaseMap.get(book.getId()).getId()))
+        .collect(Collectors.toList());
+  }
+  public void increaseAmount(String userEmail, Long bookId){
     CartItem cartItem = cartItemRepository.findByUserEmailAndBookId(userEmail, bookId);
-
     if (cartItem == null) {
-      throw new Exception("Book is not in the shopping cart.");
+      throw new CartItemNotFoundException();
     }
-    int amount = cartItem.getAmount() + 1;
 
-    cartItem.setAmount(amount);
+    cartItem.setAmount(cartItem.getAmount() + 1);
     cartItemRepository.save(cartItem);
   }
 
-  public void decreaseAmount(String userEmail, Long bookId) throws Exception {
+  public void decreaseAmount(String userEmail, Long bookId) {
     CartItem cartItem = cartItemRepository.findByUserEmailAndBookId(userEmail, bookId);
 
     if (cartItem == null) {
-      throw new Exception("Book is not in the shopping cart.");
-    }
-    int amount = 1;
-
-    if (cartItem.getAmount() > 1) {
-      amount = cartItem.getAmount() - 1;
+      throw new CartItemNotFoundException();
     }
 
-    cartItem.setAmount(amount);
+    cartItem.setAmount(Math.max(1, cartItem.getAmount() - 1));
     cartItemRepository.save(cartItem);
   }
 }
