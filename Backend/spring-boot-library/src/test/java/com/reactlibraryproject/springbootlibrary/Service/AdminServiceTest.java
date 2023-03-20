@@ -62,7 +62,7 @@ class AdminServiceTest {
 
   @Test
   @DisplayName("대여 가능한 책 수량 + 테스트")
-  void increaseBookQuantity(){
+  void increaseBookQuantity() {
     // Given
     given(bookRepository.findById(bookId)).willReturn(Optional.of(testBook));
 
@@ -77,7 +77,7 @@ class AdminServiceTest {
 
   @Test
   @DisplayName("대여 가능한 책 수량 - 테스트")
-  void decreaseBookQuantity() throws Exception {
+  void decreaseBookQuantity() {
     // Given
     when(bookRepository.findById(bookId)).thenReturn(Optional.of(testBook));
 
@@ -116,7 +116,7 @@ class AdminServiceTest {
 
   @Test
   @DisplayName("책 삭제 테스트")
-  void deleteBook(){
+  void deleteBook() {
     // Given
     when(bookRepository.findById((bookId))).thenReturn(Optional.of(testBook));
 
