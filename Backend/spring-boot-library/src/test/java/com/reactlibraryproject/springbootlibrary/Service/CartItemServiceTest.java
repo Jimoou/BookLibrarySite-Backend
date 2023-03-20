@@ -64,7 +64,7 @@ class CartItemServiceTest {
 
   @Test
   @DisplayName("장바구니에 추가 테스트")
-  void addBookInCart() throws Exception {
+  void addBookInCart() {
     // Given
     given(cartItemRepository.findByUserEmailAndBookId(userEmail, bookId)).willReturn(null);
 
@@ -78,24 +78,25 @@ class CartItemServiceTest {
 
   @Test
   @DisplayName("장바구니에서 삭제 테스트")
-  void deleteBookInCart() throws Exception {
+  void deleteBookInCart() {
     // Given
-    given(cartItemRepository.findByUserEmailAndBookId(userEmail, bookId)).willReturn(cartItem);
+    given(cartItemRepository.findByUserEmailAndId(userEmail, 1L)).willReturn(cartItem);
 
     // When
-    cartItemService.deleteBookInCart(userEmail, bookId);
+    cartItemService.deleteCartItem(userEmail, 1L);
 
     // Then
-    verify(cartItemRepository).deleteById(bookId);
+    verify(cartItemRepository).delete(cartItem);
   }
 
   @Test
-  void currentCart() throws Exception {
+  void currentCart() {
     // Given
     List<CartItem> cartItemList = Collections.singletonList(cartItem);
     List<Book> booksInCart = Collections.singletonList(testBook);
     given(cartItemRepository.findBooksByUserEmail(userEmail)).willReturn(cartItemList);
-    given(bookRepository.findBooksByBookIds(Collections.singletonList(bookId))).willReturn(booksInCart);
+    given(bookRepository.findBooksByBookIds(Collections.singletonList(bookId)))
+        .willReturn(booksInCart);
 
     // When
     List<CurrentCartItemResponse> result = cartItemService.currentCart(userEmail);
@@ -109,27 +110,27 @@ class CartItemServiceTest {
 
   @Test
   @DisplayName("장바구니 수량 테스트")
-  void increaseAmount()throws Exception {
-    //Given
+  void increaseAmount() {
+    // Given
     given(cartItemRepository.findByUserEmailAndBookId(userEmail, bookId)).willReturn(cartItem);
 
-    //When
+    // When
     cartItemService.increaseAmount(userEmail, bookId);
 
-    //Then
+    // Then
     assertEquals(cartItem.getAmount(), 2);
   }
 
   @Test
   @DisplayName("장바구니 수량 테스트")
-  void decreaseAmount()throws Exception {
-    //Given
+  void decreaseAmount() {
+    // Given
     given(cartItemRepository.findByUserEmailAndBookId(userEmail, bookId)).willReturn(cartItem);
 
-    //When
+    // When
     cartItemService.decreaseAmount(userEmail, bookId);
 
-    //Then
+    // Then
     assertEquals(cartItem.getAmount(), 1);
   }
 }
