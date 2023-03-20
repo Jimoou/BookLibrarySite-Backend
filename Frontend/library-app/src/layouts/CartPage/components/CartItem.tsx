@@ -205,8 +205,8 @@ export const CartItem = () => {
     });
   }, [authState, deleteBook, changeAmount]);
 
-  const deleteFetchBook = async (bookId: number) => {
-    deleteBookInCart(bookId, authState);
+  const deleteFetchBook = async (id: number) => {
+    deleteBookInCart(id, authState);
     setDeleteBook(true);
   };
 
@@ -238,12 +238,12 @@ export const CartItem = () => {
       </div>
     );
   }
-  async function increaseBookAmount(bookId: number, amount: number) {
-    await increaseAmount(bookId, authState, amount);
+  async function increaseBookAmount(id: number, amount: number) {
+    await increaseAmount(id, authState, amount);
     setChangeAmount(true);
   }
-  async function decreaseBookAmount(bookId: number, amount: number) {
-    await decreaseAmount(bookId, authState, amount);
+  async function decreaseBookAmount(id: number, amount: number) {
+    await decreaseAmount(id, authState, amount);
     setChangeAmount(true);
   }
 
@@ -264,7 +264,7 @@ export const CartItem = () => {
         {cartItems.length > 0 ? (
           <>
             {cartItems.map((cartItem) => (
-              <div key={cartItem.book.id}>
+              <div key={cartItem.cartItemId}>
                 <div className="row mt-3 mb-2">
                   <div className="d-flex col-md-8">
                     <input
@@ -294,7 +294,7 @@ export const CartItem = () => {
                         </h4>
                         <p
                           className="card-text"
-                          onClick={() => deleteFetchBook(cartItem.book.id)}
+                          onClick={() => deleteFetchBook(cartItem.cartItemId)}
                         >
                           삭제
                         </p>
@@ -316,7 +316,7 @@ export const CartItem = () => {
                             type="button"
                             onClick={() =>
                               decreaseBookAmount(
-                                cartItem.book.id,
+                                cartItem.cartItemId,
                                 cartItem.amount
                               )
                             }
@@ -338,7 +338,7 @@ export const CartItem = () => {
                             type="button"
                             onClick={() =>
                               increaseBookAmount(
-                                cartItem.book.id,
+                                cartItem.cartItemId,
                                 cartItem.amount
                               )
                             }
@@ -405,7 +405,7 @@ export const CartItem = () => {
         {cartItems.length > 0 ? (
           <>
             {cartItems.map((cartItem) => (
-              <div key={cartItem.book.id} style={{ textAlign: "center" }}>
+              <div key={cartItem.cartItemId} style={{ textAlign: "center" }}>
                 <input
                   id="selectedBook"
                   type="checkbox"
@@ -433,7 +433,7 @@ export const CartItem = () => {
                     </h4>
                     <p
                       className="card-text"
-                      onClick={() => deleteFetchBook(cartItem.book.id)}
+                      onClick={() => deleteFetchBook(cartItem.cartItemId)}
                     >
                       삭제
                       <Clear />

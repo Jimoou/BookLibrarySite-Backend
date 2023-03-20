@@ -62,8 +62,8 @@ public class CartItemService {
                     purchaseMap.get(book.getId()).getId()))
         .collect(Collectors.toList());
   }
-  public void increaseAmount(String userEmail, Long bookId){
-    CartItem cartItem = cartItemRepository.findByUserEmailAndBookId(userEmail, bookId);
+  public void increaseAmount(String userEmail, Long id){
+    CartItem cartItem = cartItemRepository.findByUserEmailAndId(userEmail, id);
     if (cartItem == null) {
       throw new CartItemNotFoundException();
     }
@@ -72,8 +72,8 @@ public class CartItemService {
     cartItemRepository.save(cartItem);
   }
 
-  public void decreaseAmount(String userEmail, Long bookId) {
-    CartItem cartItem = cartItemRepository.findByUserEmailAndBookId(userEmail, bookId);
+  public void decreaseAmount(String userEmail, Long id) {
+    CartItem cartItem = cartItemRepository.findByUserEmailAndId(userEmail, id);
 
     if (cartItem == null) {
       throw new CartItemNotFoundException();
