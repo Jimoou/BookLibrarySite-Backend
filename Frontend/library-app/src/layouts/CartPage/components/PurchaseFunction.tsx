@@ -1,7 +1,7 @@
 import PurchaseModel from "../../../models/CartItemModel";
 
-export async function deleteBookInCart(bookId: number, authState: any) {
-  const url = `${process.env.REACT_APP_API}/cart/secure/delete/book?bookId=${bookId}`;
+export async function deleteBookInCart(id: number, authState: any) {
+  const url = `${process.env.REACT_APP_API}/cart/secure/delete/item?id=${id}`;
   const requestOptions = {
     method: "PUT",
     headers: {
@@ -15,7 +15,7 @@ export async function deleteBookInCart(bookId: number, authState: any) {
   }
 }
 export async function addBookInCart(bookId: number, authState: any) {
-  const url = `${process.env.REACT_APP_API}/cart/secure/add/book?bookId=${bookId}`;
+  const url = `${process.env.REACT_APP_API}/cart/secure/add/item?bookId=${bookId}`;
   const purchaseModel: PurchaseModel = new PurchaseModel(1, bookId);
   const requestOptions = {
     method: "PUT",
@@ -31,12 +31,12 @@ export async function addBookInCart(bookId: number, authState: any) {
   }
 }
 export async function increaseAmount(
-  bookId: number,
+  id: number,
   authState: any,
   amount: number
 ) {
-  const url = `${process.env.REACT_APP_API}/cart/secure/increase/book/amount?bookId=${bookId}`;
-  const purchaseModel: PurchaseModel = new PurchaseModel(amount, bookId);
+  const url = `${process.env.REACT_APP_API}/cart/secure/increase/item/amount?id=${id}`;
+  const purchaseModel: PurchaseModel = new PurchaseModel(amount, id);
   const requestOptions = {
     method: "PUT",
     headers: {
@@ -52,12 +52,12 @@ export async function increaseAmount(
 }
 
 export async function decreaseAmount(
-  bookId: number,
+  id: number,
   authState: any,
   amount: number
 ) {
-  const url = `${process.env.REACT_APP_API}/cart/secure/decrease/book/amount?bookId=${bookId}`;
-  const purchaseModel: PurchaseModel = new PurchaseModel(amount, bookId);
+  const url = `${process.env.REACT_APP_API}/cart/secure/decrease/item/amount?id=${id}`;
+  const purchaseModel: PurchaseModel = new PurchaseModel(amount, id);
   const requestOptions = {
     method: "PUT",
     headers: {

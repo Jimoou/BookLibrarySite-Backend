@@ -112,10 +112,10 @@ class CartItemServiceTest {
   @DisplayName("장바구니 수량 테스트")
   void increaseAmount() {
     // Given
-    given(cartItemRepository.findByUserEmailAndBookId(userEmail, bookId)).willReturn(cartItem);
+    given(cartItemRepository.findByUserEmailAndId(userEmail, 1L)).willReturn(cartItem);
 
     // When
-    cartItemService.increaseAmount(userEmail, bookId);
+    cartItemService.increaseAmount(userEmail, 1L);
 
     // Then
     assertEquals(cartItem.getAmount(), 2);
@@ -125,10 +125,10 @@ class CartItemServiceTest {
   @DisplayName("장바구니 수량 테스트")
   void decreaseAmount() {
     // Given
-    given(cartItemRepository.findByUserEmailAndBookId(userEmail, bookId)).willReturn(cartItem);
+    given(cartItemRepository.findByUserEmailAndId(userEmail, 1L)).willReturn(cartItem);
 
     // When
-    cartItemService.decreaseAmount(userEmail, bookId);
+    cartItemService.decreaseAmount(userEmail, 1L);
 
     // Then
     assertEquals(cartItem.getAmount(), 1);

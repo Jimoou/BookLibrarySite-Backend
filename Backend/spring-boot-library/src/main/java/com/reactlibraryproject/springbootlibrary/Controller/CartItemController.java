@@ -52,16 +52,16 @@ public class CartItemController {
   @Operation(summary = "장바구니에서 책 수량 +")
   @PutMapping("/secure/increase/item/amount")
   public void increaseAmount(
-      @RequestHeader(value = "Authorization") String token, @RequestParam Long bookId) {
+      @RequestHeader(value = "Authorization") String token, @RequestParam Long id) {
     String userEmail = ExtractJWT.payloadJWTExtraction(token, "\"sub\"");
-    cartItemService.increaseAmount(userEmail, bookId);
+    cartItemService.increaseAmount(userEmail, id);
   }
 
   @Operation(summary = "장바구니에서 책 수량 -")
   @PutMapping("/secure/decrease/item/amount")
   public void decreaseAmount(
-      @RequestHeader(value = "Authorization") String token, @RequestParam Long bookId) {
+      @RequestHeader(value = "Authorization") String token, @RequestParam Long id) {
     String userEmail = ExtractJWT.payloadJWTExtraction(token, "\"sub\"");
-    cartItemService.decreaseAmount(userEmail, bookId);
+    cartItemService.decreaseAmount(userEmail, id);
   }
 }
