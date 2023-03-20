@@ -7,6 +7,8 @@ import com.reactlibraryproject.springbootlibrary.Entity.Book;
 import com.reactlibraryproject.springbootlibrary.Entity.Checkout;
 import com.reactlibraryproject.springbootlibrary.Entity.CheckoutHistory;
 import com.reactlibraryproject.springbootlibrary.ReponseModels.ShelfCurrentLoansResponse;
+import com.reactlibraryproject.springbootlibrary.Utils.BookFinder;
+import com.reactlibraryproject.springbootlibrary.Utils.ValidateCheckout;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,7 +19,6 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -26,23 +27,29 @@ import java.util.stream.Collectors;
 @Transactional
 public class BookService {
 
-  private final BookRepository bookRepository;
+  private BookRepository bookRepository;
 
-  private final CheckoutRepository checkoutRepository;
+  private CheckoutRepository checkoutRepository;
 
-  private final CheckoutHistoryRepository checkoutHistoryRepository;
+  private CheckoutHistoryRepository checkoutHistoryRepository;
 
-  public Book checkoutBook(String userEmail, Long bookId) throws Exception {
-    Optional<Book> book = bookRepository.findById(bookId);
+  private BookFinder bookFinder;
+  private ValidateCheckout validateCheckout;
 
-    Checkout validateCheckout = checkoutRepository.findByUserEmailAndBookId(userEmail, bookId);
+  public Book checkoutBook(String userEmail, Long bookId) {
+    // Exception
+    Book book = bookFinder.bookFinder(bookId);
+    validateCheckout.validate(book, userEmail, bookId);
 
-    if (book.isEmpty() || validateCheckout != null || book.get().getCopiesAvailable() <= 0) {
-      throw new Exception("Book doesn't exist or already checked out by user");
-    }
-    book.get().setCopiesAvailable(book.get().getCopiesAvailable() - 1);
-    bookRepository.save(book.get());
+    // Function
+    book.setCopiesAvailable(book.getCopiesAvailable() - 1);
+    bookRepository.save(book);
+    createCheckout(userEmail, bookId);
 
+    return book;
+  }
+
+  private void createCheckout(String userEmail, Long bookId) {
     Checkout checkout =
         Checkout.builder()
             .userEmail(userEmail)
@@ -52,13 +59,6 @@ public class BookService {
             .build();
 
     checkoutRepository.save(checkout);
-
-    return book.get();
-  }
-
-  public boolean checkoutBookByUser(String userEmail, Long bookId) {
-    Checkout validateCheckout = checkoutRepository.findByUserEmailAndBookId(userEmail, bookId);
-    return validateCheckout != null;
   }
 
   public int currentLoansCount(String userEmail) {
@@ -97,23 +97,26 @@ public class BookService {
     Checkout checkout = checkoutMap.get(book.getId());
     LocalDate returnDate = LocalDate.parse(checkout.getReturnedDate(), formatter);
     long differenceInDays = ChronoUnit.DAYS.between(currentDate, returnDate);
+
     return new ShelfCurrentLoansResponse(book, (int) differenceInDays);
   }
 
-  public void returnBook(String userEmail, Long bookId) throws Exception {
-    Optional<Book> book = bookRepository.findById(bookId);
-    Checkout validateCheckout = checkoutRepository.findByUserEmailAndBookId(userEmail, bookId);
+  public boolean checkoutBookByUser(String userEmail, Long bookId) {
+    return validateCheckout.checkoutBookByUser(userEmail, bookId);
+  }
 
-    if (book.isEmpty() || validateCheckout == null) {
-      throw new Exception("Book does not exist or not checked out by user");
-    }
+  public void returnBook(String userEmail, Long bookId) {
+    // Exception
+    Book book = bookFinder.bookFinder(bookId);
+    Checkout checkout = validateCheckout.validatedCheckout(userEmail, bookId);
 
-    book.get().setCopiesAvailable(book.get().getCopiesAvailable() + 1);
+    // Function
+    book.setCopiesAvailable(book.getCopiesAvailable() + 1);
 
-    bookRepository.save(book.get());
-    checkoutRepository.deleteById(validateCheckout.getId());
+    bookRepository.save(book);
+    checkoutRepository.deleteById(checkout.getId());
 
-    saveCheckoutHistory(validateCheckout, book.get());
+    saveCheckoutHistory(checkout, book);
   }
 
   private void saveCheckoutHistory(Checkout validateCheckout, Book book) {
@@ -131,22 +134,22 @@ public class BookService {
     checkoutHistoryRepository.save(checkoutHistory);
   }
 
-  public void renewLoan(String userEmail, Long bookId) throws Exception {
-    Checkout validateCheckout = checkoutRepository.findByUserEmailAndBookId(userEmail, bookId);
-    if (validateCheckout == null) {
-      throw new Exception("Book is not checked out by user");
-    }
-    extendLoan(validateCheckout);
+  public void renewLoan(String userEmail, Long bookId) {
+    // Exception
+    Checkout checkout = validateCheckout.validatedCheckout(userEmail, bookId);
+
+    // Function
+    extendLoan(checkout);
   }
 
-  private void extendLoan(Checkout validateCheckout) {
+  private void extendLoan(Checkout checkout) {
     LocalDate currentDate = LocalDate.now();
-    LocalDate returnDate = LocalDate.parse(validateCheckout.getReturnedDate());
+    LocalDate returnDate = LocalDate.parse(checkout.getReturnedDate());
 
     if (!returnDate.isBefore(currentDate)) {
       int renewalPeriod = 7;
-      validateCheckout.setReturnedDate(currentDate.plusDays(renewalPeriod).toString());
-      checkoutRepository.save(validateCheckout);
+      checkout.setReturnedDate(currentDate.plusDays(renewalPeriod).toString());
+      checkoutRepository.save(checkout);
     }
   }
 }
