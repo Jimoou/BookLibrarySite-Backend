@@ -10,4 +10,5 @@ public class SuccessPurchaseRequest {
     private String orderId;
     private String purchaseDate;
     private String status;
+    private int totalAmount;
 }

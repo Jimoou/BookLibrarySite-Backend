@@ -15,4 +15,8 @@ public class PurchaseHistoryResponse {
 
     private String purchaseDate;
 
+    private String orderId;
+
+    private String status;
+
 }

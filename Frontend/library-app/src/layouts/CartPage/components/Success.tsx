@@ -61,7 +61,8 @@ export const Success = () => {
       paymentKey,
       orderId,
       purchaseDate,
-      status
+      status,
+      amount
     );
     if (authState && authState.isAuthenticated) {
       const url = `${process.env.REACT_APP_API}/purchase/secure/update`;

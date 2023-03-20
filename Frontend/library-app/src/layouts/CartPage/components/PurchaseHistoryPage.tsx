@@ -43,6 +43,7 @@ export const PurchaseHistoryPage = () => {
             <li>{purchaseHistory.orderName}</li>
             <li>{purchaseHistory.totalPrice}</li>
             <li>{purchaseHistory.purchaseDate}</li>
+            <li>{purchaseHistory.orderId}</li>
           </ul>
         ))
       ) : (
