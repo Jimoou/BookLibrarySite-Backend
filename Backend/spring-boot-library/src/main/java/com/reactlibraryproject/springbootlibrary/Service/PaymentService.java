@@ -1,19 +1,27 @@
 package com.reactlibraryproject.springbootlibrary.Service;
 
-import com.reactlibraryproject.springbootlibrary.DAO.BookRepository;
+import com.reactlibraryproject.springbootlibrary.CustomExceptions.DifferentAmountRequestException;
+import com.reactlibraryproject.springbootlibrary.CustomExceptions.PaymentResponseException;
 import com.reactlibraryproject.springbootlibrary.DAO.PaymentHistoryRepository;
 import com.reactlibraryproject.springbootlibrary.Entity.Book;
 import com.reactlibraryproject.springbootlibrary.Entity.PaymentHistory;
 import com.reactlibraryproject.springbootlibrary.ReponseModels.PaymentHistoryResponse;
-import com.reactlibraryproject.springbootlibrary.RequestModels.AddPaymentRequest;
+import com.reactlibraryproject.springbootlibrary.RequestModels.PendingPaymentRequest;
 import com.reactlibraryproject.springbootlibrary.RequestModels.SuccessPaymentRequest;
+import com.reactlibraryproject.springbootlibrary.Utils.BookFinder;
 import lombok.AllArgsConstructor;
+import org.json.JSONObject;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -21,116 +29,120 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class PaymentService {
 
-  private final PaymentHistoryRepository paymentHistoryRepository;
-  private final BookRepository bookRepository;
-  private final CartItemService cartItemService;
+  private PaymentHistoryRepository paymentHistoryRepository;
+  private CartItemService cartItemService;
+  private BookFinder bookFinder;
+  private String tossSecretKey;
 
-  public List<PaymentHistoryResponse> paymentHistories(String userEmail) {
-    List<PaymentHistory> paymentHistory =
+  public Map<String, List<PaymentHistoryResponse>> paymentHistoryResponses(String userEmail) {
+    List<PaymentHistory> paymentHistories =
         paymentHistoryRepository.findPaymentByUserEmail(userEmail);
-    Map<String, List<PaymentHistory>> paymentHistoryMap =
-        groupPaymentHistoryByOrderId(paymentHistory);
 
-    return createPaymentHistoryResponses(paymentHistoryMap);
+    return paymentHistories.stream()
+        .map(
+            paymentHistory ->
+                new PaymentHistoryResponse(
+                    paymentHistory.getTitle(),
+                    paymentHistory.getAuthor(),
+                    paymentHistory.getCategory(),
+                    paymentHistory.getImg(),
+                    paymentHistory.getPublisher(),
+                    paymentHistory.getAmount(),
+                    paymentHistory.getPrice(),
+                    paymentHistory.getPaymentDate(),
+                    paymentHistory.getOrderId()))
+        .collect(Collectors.groupingBy(PaymentHistoryResponse::getPaymentDate));
   }
 
-  private Map<String, List<PaymentHistory>> groupPaymentHistoryByOrderId(
-      List<PaymentHistory> paymentHistory) {
-    return paymentHistory.stream().collect(Collectors.groupingBy(PaymentHistory::getOrderId));
-  }
+  public ResponseEntity<String> successPayment(
+      String userEmail, SuccessPaymentRequest paymentRequests)
+      throws IOException, InterruptedException {
 
-  private List<PaymentHistoryResponse> createPaymentHistoryResponses(
-      Map<String, List<PaymentHistory>> paymentHistoryMap) {
-    return paymentHistoryMap.entrySet().stream()
-        .map(this::createPaymentHistoryResponse)
-        .collect(Collectors.toList());
-  }
+    String requestBody = createPaymentConfirmRequestBody(paymentRequests);
 
-  private PaymentHistoryResponse createPaymentHistoryResponse(
-      Map.Entry<String, List<PaymentHistory>> entry) {
-    List<PaymentHistory> paymentHistories = entry.getValue();
-    String orderName = getOrderName(paymentHistories);
-    int totalPrice = getTotalPrice(paymentHistories);
-    String paymentDate = paymentHistories.get(0).getPaymentDate();
-    String orderId = paymentHistories.get(0).getOrderId();
-    String status = paymentHistories.get(0).getStatus();
+    HttpRequest request =
+        HttpRequest.newBuilder()
+            .uri(URI.create("https://api.tosspayments.com/v1/payments/confirm"))
+            .header("Authorization", "Basic " + tossSecretKey)
+            .header("Content-Type", "application/json")
+            .method("POST", HttpRequest.BodyPublishers.ofString(requestBody))
+            .build();
 
-    return new PaymentHistoryResponse(
-        entry.getKey(), orderName, totalPrice, paymentDate, orderId, status);
-  }
+    HttpResponse<String> response =
+        HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
 
-  private String getOrderName(List<PaymentHistory> paymentHistories) {
-    String orderName = paymentHistories.get(0).getTitle();
-    if (paymentHistories.size() > 1) {
-      orderName = orderName + "외" + (paymentHistories.size() - 1) + "건";
+    if (response.statusCode() == 200) {
+      updatePayments(userEmail, response);
+    } else {
+      failPayment(userEmail);
+      throw new PaymentResponseException(response);
     }
-    return orderName;
+    return ResponseEntity.status(response.statusCode()).build();
   }
 
-  private int getTotalPrice(List<PaymentHistory> paymentHistories) {
-    return paymentHistories.stream().mapToInt(PaymentHistory::getPrice).sum();
-  }
-
-  public void addPendingPayments(String userEmail, List<AddPaymentRequest> paymentRequests) {
-    paymentRequests.forEach(paymentRequest -> processPaymentRequest(userEmail, paymentRequest));
-  }
-
-  private void processPaymentRequest(String userEmail, AddPaymentRequest paymentRequest) {
-    try {
-      Optional<Book> book = bookRepository.findById(paymentRequest.getBookId());
-      PaymentHistory newPayment = createPaymentHistory(userEmail, paymentRequest, book.get());
-      paymentHistoryRepository.save(newPayment);
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-  }
-
-  private PaymentHistory createPaymentHistory(
-      String userEmail, AddPaymentRequest paymentRequest, Book book) {
-    return PaymentHistory.builder()
-        .userEmail(userEmail)
-        .title(book.getTitle())
-        .author(book.getAuthor())
-        .category(book.getCategory())
-        .img(book.getImg())
-        .publisher(book.getPublisher())
-        .amount(paymentRequest.getAmount())
-        .price(book.getPrice() * paymentRequest.getAmount())
-        .cartItemId(paymentRequest.getCartItemId())
-        .build();
-  }
-
-  public void deleteFailPayment(String userEmail) {
+  public void failPayment(String userEmail) {
     paymentHistoryRepository.deleteByUserEmailAndStatusIsNull(userEmail);
   }
 
-  public void updateSuccessPayment(String userEmail, SuccessPaymentRequest successPaymentRequest)
-      throws Exception {
-    List<PaymentHistory> pendingPayments =
+  private String createPaymentConfirmRequestBody(SuccessPaymentRequest paymentRequests) {
+    String paymentKey = paymentRequests.getPaymentKey();
+    String orderId = paymentRequests.getOrderId();
+    int amount = paymentRequests.getAmount();
+    return String.format(
+        "{\"paymentKey\":\"%s\",\"amount\":%d,\"orderId\":\"%s\"}", paymentKey, amount, orderId);
+  }
+
+  public void addPendingPayments(String userEmail, List<PendingPaymentRequest> paymentRequests) {
+    paymentRequests.forEach(
+        paymentRequest -> {
+          Book book = bookFinder.bookFinder(paymentRequest.getBookId());
+          addPendingPayment(userEmail, book, paymentRequest);
+        });
+  }
+
+  private void addPendingPayment(
+      String userEmail, Book book, PendingPaymentRequest paymentRequest) {
+    PaymentHistory paymentHistory =
+        PaymentHistory.builder()
+            .userEmail(userEmail)
+            .title(book.getTitle())
+            .author(book.getAuthor())
+            .category(book.getCategory())
+            .img(book.getImg())
+            .publisher(book.getPublisher())
+            .amount(paymentRequest.getAmount())
+            .price(paymentRequest.getAmount() * book.getPrice())
+            .cartItemId(paymentRequest.getCartItemId())
+            .build();
+    paymentHistoryRepository.save(paymentHistory);
+  }
+
+  private void updatePayments(String userEmail, HttpResponse<String> response) {
+    JSONObject jsonObject = new JSONObject(response.body());
+    String paymentKey = jsonObject.getString("paymentKey");
+    String orderId = jsonObject.getString("orderId");
+    String paymentDate = jsonObject.getString("approvedAt");
+    String status = jsonObject.getString("status");
+
+    List<PaymentHistory> pendingPaymentHistories =
         paymentHistoryRepository.findByUserEmailAndStatusIsNull(userEmail);
 
-    if (successPaymentRequest.getTotalAmount() != getTotalPrice(pendingPayments)) {
-      deleteFailPayment(userEmail);
-      throw new Exception("잘못된 결제 요청입니다.");
+    int responseTotalPrice = jsonObject.getInt("totalAmount");
+    int getTotalPrice = pendingPaymentHistories.stream().mapToInt(PaymentHistory::getPrice).sum();
+
+    if (responseTotalPrice == getTotalPrice) {
+      pendingPaymentHistories.forEach(
+          pendingPayment -> {
+            pendingPayment.setPaymentKey(paymentKey);
+            pendingPayment.setPaymentDate(paymentDate);
+            pendingPayment.setOrderId(orderId);
+            pendingPayment.setStatus(status);
+            paymentHistoryRepository.save(pendingPayment);
+            cartItemService.deleteCartItem(userEmail, pendingPayment.getCartItemId());
+          });
+    } else {
+      failPayment(userEmail);
+      throw new DifferentAmountRequestException();
     }
-
-    pendingPayments.stream()
-        .filter(payment -> successPaymentRequest.getStatus() != null)
-        .forEach(
-            payment -> updatePaymentAndDeleteCartItem(userEmail, successPaymentRequest, payment));
-  }
-
-  private void updatePaymentAndDeleteCartItem(
-      String userEmail, SuccessPaymentRequest successPaymentRequest, PaymentHistory payment) {
-    updatePayment(payment, successPaymentRequest);
-    cartItemService.deleteCartItem(userEmail, payment.getCartItemId());
-  }
-
-  private void updatePayment(PaymentHistory payment, SuccessPaymentRequest successPaymentRequest) {
-    payment.setPaymentKey(successPaymentRequest.getPaymentKey());
-    payment.setOrderId(successPaymentRequest.getOrderId());
-    payment.setPaymentDate(successPaymentRequest.getPaymentDate());
-    payment.setStatus(successPaymentRequest.getStatus());
-    paymentHistoryRepository.save(payment);
   }
 }
