@@ -7,7 +7,9 @@ import com.reactlibraryproject.springbootlibrary.DAO.CheckoutRepository;
 import com.reactlibraryproject.springbootlibrary.Entity.Book;
 import com.reactlibraryproject.springbootlibrary.Entity.Checkout;
 import lombok.AllArgsConstructor;
+import org.springframework.stereotype.Service;
 
+@Service
 @AllArgsConstructor
 public class ValidateCheckout {
   private CheckoutRepository checkoutRepository;

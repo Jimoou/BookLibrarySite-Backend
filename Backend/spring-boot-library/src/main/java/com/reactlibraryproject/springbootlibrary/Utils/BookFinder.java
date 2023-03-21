@@ -4,8 +4,10 @@ import com.reactlibraryproject.springbootlibrary.CustomExceptions.BookNotFoundEx
 import com.reactlibraryproject.springbootlibrary.DAO.BookRepository;
 import com.reactlibraryproject.springbootlibrary.Entity.Book;
 import lombok.AllArgsConstructor;
+import org.springframework.stereotype.Service;
 import java.util.Optional;
 
+@Service
 @AllArgsConstructor
 public class BookFinder {
     private BookRepository bookRepository;

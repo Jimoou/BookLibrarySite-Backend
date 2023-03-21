@@ -6,6 +6,7 @@ import com.reactlibraryproject.springbootlibrary.DAO.CheckoutRepository;
 import com.reactlibraryproject.springbootlibrary.DAO.ReviewRepository;
 import com.reactlibraryproject.springbootlibrary.Entity.Book;
 import com.reactlibraryproject.springbootlibrary.RequestModels.AddBookRequest;
+import com.reactlibraryproject.springbootlibrary.Utils.BookFinder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -14,14 +15,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.Optional;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("관리자 서비스 테스트")
@@ -31,6 +29,8 @@ class AdminServiceTest {
   public Book testBook;
 
   public Long bookId;
+
+  @Mock private BookFinder bookFinder;
 
   @Mock private BookRepository bookRepository;
 
@@ -64,7 +64,7 @@ class AdminServiceTest {
   @DisplayName("대여 가능한 책 수량 + 테스트")
   void increaseBookQuantity() {
     // Given
-    given(bookRepository.findById(bookId)).willReturn(Optional.of(testBook));
+    given(bookFinder.bookFinder(bookId)).willReturn(testBook);
 
     // When
     adminService.increaseBookQuantity(bookId);
@@ -79,7 +79,7 @@ class AdminServiceTest {
   @DisplayName("대여 가능한 책 수량 - 테스트")
   void decreaseBookQuantity() {
     // Given
-    when(bookRepository.findById(bookId)).thenReturn(Optional.of(testBook));
+    given(bookFinder.bookFinder(bookId)).willReturn(testBook);
 
     // When
     adminService.decreaseBookQuantity(bookId);
@@ -118,7 +118,7 @@ class AdminServiceTest {
   @DisplayName("책 삭제 테스트")
   void deleteBook() {
     // Given
-    when(bookRepository.findById((bookId))).thenReturn(Optional.of(testBook));
+    given(bookFinder.bookFinder(bookId)).willReturn(testBook);
 
     // When
     adminService.deleteBook(bookId);
