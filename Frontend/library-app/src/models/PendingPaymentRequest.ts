@@ -1,4 +1,4 @@
-class AddPaymentHistoryRequest {
+class PendingPaymentRequest {
   bookId: number;
   amount: number;
   cartItemId: number;
@@ -9,4 +9,4 @@ class AddPaymentHistoryRequest {
     this.cartItemId = cartItemId;
   }
 }
-export default AddPaymentHistoryRequest;
+export default PendingPaymentRequest;

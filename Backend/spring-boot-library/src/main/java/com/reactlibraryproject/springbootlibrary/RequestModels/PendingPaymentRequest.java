@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class AddPaymentRequest {
+public class PendingPaymentRequest {
 
   private Long bookId;
   private int amount;
