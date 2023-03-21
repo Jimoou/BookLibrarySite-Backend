@@ -4,7 +4,7 @@ import { loadPaymentWidget } from "@tosspayments/payment-widget-sdk";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { tossConfig } from "../../../lib/tossConfig";
-import AddPaymentHistoryRequest from "../../../models/AddPaymentHistoryRequest";
+import PendingPaymentRequest from "../../../models/PendingPaymentRequest";
 import CurrentCartItems from "../../../models/CurrentCartItems";
 import { SpinnerLoading } from "../../Utils/SpinnerLoading";
 import {
@@ -25,9 +25,7 @@ export const CartItem = () => {
   const [cartItems, setCartItems] = useState<CurrentCartItems[]>([]);
   const [isLoadingCartItems, setIsLoadingCartItems] = useState(true);
 
-  const [paymentBooks, setPaymentBooks] = useState<AddPaymentHistoryRequest[]>(
-    []
-  );
+  const [paymentBooks, setPaymentBooks] = useState<PendingPaymentRequest[]>([]);
   const [selectedBooksArr, setSelectedBooksArr] = useState<string[]>([]);
 
   const handleCheckboxChange = (bookId: number) => {
@@ -70,7 +68,7 @@ export const CartItem = () => {
 
   useEffect(() => {
     let booksArr: string[] = [];
-    let booksObjArr: AddPaymentHistoryRequest[] = [];
+    let booksObjArr: PendingPaymentRequest[] = [];
 
     selectedBooks.forEach((bookId) => {
       const selectedBook = cartItems.find(
@@ -79,7 +77,7 @@ export const CartItem = () => {
       if (selectedBook) {
         booksArr.push(selectedBook.book.title);
         booksObjArr.push(
-          new AddPaymentHistoryRequest(
+          new PendingPaymentRequest(
             selectedBook.book.id,
             selectedBook.amount,
             selectedBook.cartItemId
@@ -92,7 +90,7 @@ export const CartItem = () => {
   }, [cartItems, selectedBooks]);
 
   const addPaymentHistory = async (
-    addPaymentHistoryRequest: AddPaymentHistoryRequest[]
+    addPaymentHistoryRequest: PendingPaymentRequest[]
   ) => {
     if (authState && authState.isAuthenticated) {
       const url = `${process.env.REACT_APP_API}/payment/secure`;
