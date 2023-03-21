@@ -7,15 +7,22 @@ import lombok.Data;
 @AllArgsConstructor
 public class PaymentHistoryResponse {
 
-  private String paymentKey;
+  private String title;
 
-  private String orderName;
+  private String author;
 
-  private int totalPrice;
+  private String category;
 
-  private String purchaseDate;
+  private String img;
+
+  private String publisher;
+
+  private int amount;
+
+  private int price;
+
+  private String paymentDate;
 
   private String orderId;
 
-  private String status;
 }

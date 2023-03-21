@@ -6,9 +6,7 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class SuccessPaymentRequest {
-  private String paymentKey;
-  private String orderId;
-  private String paymentDate;
-  private String status;
-  private int totalAmount;
+    private String paymentKey;
+    private int amount;
+    private String orderId;
 }
