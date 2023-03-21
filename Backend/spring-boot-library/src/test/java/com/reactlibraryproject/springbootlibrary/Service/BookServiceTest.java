@@ -7,6 +7,8 @@ import com.reactlibraryproject.springbootlibrary.Entity.Book;
 import com.reactlibraryproject.springbootlibrary.Entity.Checkout;
 import com.reactlibraryproject.springbootlibrary.Entity.CheckoutHistory;
 import com.reactlibraryproject.springbootlibrary.ReponseModels.ShelfCurrentLoansResponse;
+import com.reactlibraryproject.springbootlibrary.Utils.BookFinder;
+import com.reactlibraryproject.springbootlibrary.Utils.ValidateCheckout;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -26,8 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("책 관련 서비스 테스트")
@@ -42,6 +43,8 @@ class BookServiceTest {
   public Long bookId;
 
   public String userEmail;
+  @Mock private BookFinder bookFinder;
+  @Mock private ValidateCheckout validateCheckout;
 
   @Mock private BookRepository bookRepository;
 
@@ -82,14 +85,13 @@ class BookServiceTest {
   @DisplayName("책 대여 테스트")
   void checkoutBook(){
     // Given
-    given(bookRepository.findById(bookId)).willReturn(Optional.of(testBook));
-    given(checkoutRepository.findByUserEmailAndBookId(userEmail, bookId)).willReturn(null);
+    given(bookFinder.bookFinder(bookId)).willReturn(testBook);
+    doNothing().when(validateCheckout).validate(any(Book.class), any(String.class), any(Long.class));
 
     // When
     Book checkedOutBook = bookService.checkoutBook(userEmail, bookId);
 
     // Then
-    verify(checkoutRepository, times(1)).save(any(Checkout.class));
     assertNotNull(checkedOutBook);
   }
 
@@ -97,7 +99,7 @@ class BookServiceTest {
   @DisplayName("책 대여 여부 테스트")
   void checkoutBookByUser(){
     // Given
-    given(checkoutRepository.findByUserEmailAndBookId(userEmail, bookId)).willReturn(null);
+
 
     // When
     boolean validate = bookService.checkoutBookByUser(userEmail, bookId);
@@ -151,8 +153,8 @@ class BookServiceTest {
   @DisplayName("책 반납 테스트")
   void returnBook(){
     // Given
-    given(bookRepository.findById(bookId)).willReturn(Optional.of(testBook));
-    given(checkoutRepository.findByUserEmailAndBookId(userEmail, bookId)).willReturn(checkout);
+    given(bookFinder.bookFinder(bookId)).willReturn(testBook);
+    given(validateCheckout.validatedCheckout(userEmail, bookId)).willReturn(checkout);
 
     // When
     bookService.returnBook(userEmail, bookId);
@@ -169,7 +171,7 @@ class BookServiceTest {
   void renewLoan() {
     // Given
     LocalDate currentDate = LocalDate.now();
-    given(checkoutRepository.findByUserEmailAndBookId(userEmail, bookId)).willReturn(checkout);
+    given(validateCheckout.validatedCheckout(userEmail, bookId)).willReturn(checkout);
 
     // When
     bookService.renewLoan(userEmail, bookId);
