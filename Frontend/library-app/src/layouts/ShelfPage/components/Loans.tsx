@@ -3,7 +3,7 @@ import { useOktaAuth } from "@okta/okta-react";
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import ShelfCurrentLoans from "../../../models/ShelfCurrentLoans";
-import { addBookInCart } from "../../CartPage/components/PurchaseFunction";
+import { addBookInCart } from "../../CartPage/components/PaymentFunction";
 import { SpinnerLoading } from "../../Utils/SpinnerLoading";
 import { LoansModal } from "./LoansModal";
 

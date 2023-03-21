@@ -1,8 +1,8 @@
 import { useOktaAuth } from "@okta/okta-react";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { tossConfig } from "../../../lib/tossConfig";
-import SuccessPurchaseRequest from "../../../models/SuccessPurchaseRequest";
+import SuccessPaymentRequest from "../../../models/SuccessPaymentRequest";
 import { SpinnerLoading } from "../../Utils/SpinnerLoading";
 
 export const Success = () => {
@@ -56,23 +56,23 @@ export const Success = () => {
     return { approvedAt: responseJson.approvedAt, status: responseJson.status };
   };
 
-  const successHandler = async (purchaseDate: string, status: string) => {
-    const successPurchase = new SuccessPurchaseRequest(
+  const successHandler = async (paymentDate: string, status: string) => {
+    const successPayment = new SuccessPaymentRequest(
       paymentKey,
       orderId,
-      purchaseDate,
+      paymentDate,
       status,
       amount
     );
     if (authState && authState.isAuthenticated) {
-      const url = `${process.env.REACT_APP_API}/purchase/secure/update`;
+      const url = `${process.env.REACT_APP_API}/payment/secure/update`;
       const requestOptions = {
         method: "PUT",
         headers: {
           Authorization: `Bearer ${authState.accessToken?.accessToken}`,
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(successPurchase),
+        body: JSON.stringify(successPayment),
       };
       const response = await fetch(url, requestOptions);
       if (!response.ok) {

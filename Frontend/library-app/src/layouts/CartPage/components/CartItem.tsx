@@ -4,14 +4,14 @@ import { loadPaymentWidget } from "@tosspayments/payment-widget-sdk";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { tossConfig } from "../../../lib/tossConfig";
-import AddPurchaseHistoryRequest from "../../../models/AddPurchaseHistoryRequest";
+import AddPaymentHistoryRequest from "../../../models/AddPaymentHistoryRequest";
 import CurrentCartItems from "../../../models/CurrentCartItems";
 import { SpinnerLoading } from "../../Utils/SpinnerLoading";
 import {
   decreaseAmount,
   deleteBookInCart,
   increaseAmount,
-} from "./PurchaseFunction";
+} from "./PaymentFunction";
 
 export const CartItem = () => {
   const { authState } = useOktaAuth();
@@ -25,9 +25,9 @@ export const CartItem = () => {
   const [cartItems, setCartItems] = useState<CurrentCartItems[]>([]);
   const [isLoadingCartItems, setIsLoadingCartItems] = useState(true);
 
-  const [purchaseBooks, setPurchaseBooks] = useState<
-    AddPurchaseHistoryRequest[]
-  >([]);
+  const [paymentBooks, setPaymentBooks] = useState<AddPaymentHistoryRequest[]>(
+    []
+  );
   const [selectedBooksArr, setSelectedBooksArr] = useState<string[]>([]);
 
   const handleCheckboxChange = (bookId: number) => {
@@ -70,7 +70,7 @@ export const CartItem = () => {
 
   useEffect(() => {
     let booksArr: string[] = [];
-    let booksObjArr: AddPurchaseHistoryRequest[] = [];
+    let booksObjArr: AddPaymentHistoryRequest[] = [];
 
     selectedBooks.forEach((bookId) => {
       const selectedBook = cartItems.find(
@@ -79,7 +79,7 @@ export const CartItem = () => {
       if (selectedBook) {
         booksArr.push(selectedBook.book.title);
         booksObjArr.push(
-          new AddPurchaseHistoryRequest(
+          new AddPaymentHistoryRequest(
             selectedBook.book.id,
             selectedBook.amount,
             selectedBook.cartItemId
@@ -87,22 +87,22 @@ export const CartItem = () => {
         );
       }
     });
-    setPurchaseBooks(booksObjArr);
+    setPaymentBooks(booksObjArr);
     setSelectedBooksArr(booksArr);
   }, [cartItems, selectedBooks]);
 
-  const addPurchaseHistory = async (
-    addPurchaseHistoryRequest: AddPurchaseHistoryRequest[]
+  const addPaymentHistory = async (
+    addPaymentHistoryRequest: AddPaymentHistoryRequest[]
   ) => {
     if (authState && authState.isAuthenticated) {
-      const url = `${process.env.REACT_APP_API}/purchase/secure`;
+      const url = `${process.env.REACT_APP_API}/payment/secure`;
       const requestOptions = {
         method: "POST",
         headers: {
           Authorization: `Bearer ${authState.accessToken?.accessToken}`,
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(addPurchaseHistoryRequest),
+        body: JSON.stringify(addPaymentHistoryRequest),
       };
       const response = await fetch(url, requestOptions);
       if (!response.ok) {
@@ -111,9 +111,9 @@ export const CartItem = () => {
     }
   };
 
-  const deleteFailPurchase = async () => {
+  const deleteFailPayment = async () => {
     if (authState && authState.isAuthenticated) {
-      const url = `${process.env.REACT_APP_API}/purchase/secure/delete/fail`;
+      const url = `${process.env.REACT_APP_API}/payment/secure/delete/fail`;
       const requestOptions = {
         method: "DELETE",
         headers: {
@@ -154,7 +154,7 @@ export const CartItem = () => {
     const userEmail = authState?.accessToken?.claims.sub;
     const userName = authState?.accessToken?.claims.name;
 
-    addPurchaseHistory(purchaseBooks);
+    addPaymentHistory(paymentBooks);
 
     let orderName =
       selectedBooksArr.length > 1
@@ -172,7 +172,7 @@ export const CartItem = () => {
       })
       .catch((error) => {
         setHttpError(error.message);
-        deleteFailPurchase();
+        deleteFailPayment();
       });
   };
 

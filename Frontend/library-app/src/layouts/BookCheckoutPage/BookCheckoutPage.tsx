@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import BookModel from "../../models/BookModel";
 import ReviewModel from "../../models/ReviewModel";
 import ReviewRequest from "../../models/ReviewRequest";
-import { addBookInCart } from "../CartPage/components/PurchaseFunction";
+import { addBookInCart } from "../CartPage/components/PaymentFunction";
 import { SpinnerLoading } from "../Utils/SpinnerLoading";
 import { StarsReview } from "../Utils/StarsReview";
 import { CheckOutAndReviewBox } from "./CheckoutAndReviewBox";
