@@ -5,10 +5,9 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class AddPurchaseRequest {
+public class AddPaymentRequest {
 
-    private Long bookId;
-    private int amount;
-    private Long cartItemId;
-
+  private Long bookId;
+  private int amount;
+  private Long cartItemId;
 }
