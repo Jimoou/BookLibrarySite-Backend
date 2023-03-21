@@ -1,19 +1,19 @@
 import { useOktaAuth } from "@okta/okta-react";
 import { useEffect, useState } from "react";
-import PurchaseHistory from "../../../models/PurchaseHistory";
+import PaymentHistory from "../../../models/PaymentHistory";
 
-export const PurchaseHistoryPage = () => {
+export const PaymentHistoryPage = () => {
   const { authState } = useOktaAuth();
   const [httpError, setHttpError] = useState("");
 
-  const [purchaseHistories, setPurchaseHistories] = useState<PurchaseHistory[]>(
+  const [paymentHistories, setPaymentHistories] = useState<PaymentHistory[]>(
     []
   );
 
   useEffect(() => {
-    const getPurchaseHistory = async () => {
+    const getPaymentHistory = async () => {
       if (authState && authState.isAuthenticated) {
-        const url = `${process.env.REACT_APP_API}/purchase/secure/histories`;
+        const url = `${process.env.REACT_APP_API}/payment/secure/histories`;
         const requestOptions = {
           method: "GET",
           headers: {
@@ -23,27 +23,27 @@ export const PurchaseHistoryPage = () => {
         };
         const response = await fetch(url, requestOptions);
         const responseJson = await response.json();
-        setPurchaseHistories(responseJson);
+        setPaymentHistories(responseJson);
         if (!response.ok) {
           throw new Error("Something went wrong!");
         }
       }
     };
 
-    getPurchaseHistory().catch((error: any) => {
+    getPaymentHistory().catch((error: any) => {
       setHttpError(error.message);
     });
   }, [authState]);
 
   return (
     <>
-      {purchaseHistories.length > 0 ? (
-        purchaseHistories.map((purchaseHistory) => (
-          <ul key={purchaseHistory.paymentKey}>
-            <li>{purchaseHistory.orderName}</li>
-            <li>{purchaseHistory.totalPrice}</li>
-            <li>{purchaseHistory.purchaseDate}</li>
-            <li>{purchaseHistory.orderId}</li>
+      {paymentHistories.length > 0 ? (
+        paymentHistories.map((paymentHistory) => (
+          <ul key={paymentHistory.paymentKey}>
+            <li>{paymentHistory.orderName}</li>
+            <li>{paymentHistory.totalPrice}</li>
+            <li>{paymentHistory.paymentDate}</li>
+            <li>{paymentHistory.orderId}</li>
           </ul>
         ))
       ) : (

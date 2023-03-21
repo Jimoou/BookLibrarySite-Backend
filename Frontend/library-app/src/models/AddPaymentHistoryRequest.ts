@@ -1,4 +1,4 @@
-class AddPurchaseHistoryRequest {
+class AddPaymentHistoryRequest {
   bookId: number;
   amount: number;
   cartItemId: number;
@@ -9,4 +9,4 @@ class AddPurchaseHistoryRequest {
     this.cartItemId = cartItemId;
   }
 }
-export default AddPurchaseHistoryRequest;
+export default AddPaymentHistoryRequest;
