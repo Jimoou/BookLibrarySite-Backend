@@ -1,5 +1,6 @@
 package com.reactlibraryproject.springbootlibrary.Service;
 
+import com.reactlibraryproject.springbootlibrary.CustomExceptions.MessageNotFoundException;
 import com.reactlibraryproject.springbootlibrary.DAO.MessageRepository;
 import com.reactlibraryproject.springbootlibrary.Entity.Message;
 import com.reactlibraryproject.springbootlibrary.RequestModels.AdminQuestionRequest;
@@ -25,10 +26,10 @@ public class MessageService {
         messageRepository.save(message);
     }
 
-    public void putMessage(AdminQuestionRequest adminQuestionRequest, String adminEmail) throws Exception {
+    public void putMessage(AdminQuestionRequest adminQuestionRequest, String adminEmail) {
         Optional<Message> foundMessage = messageRepository.findById(adminQuestionRequest.getId());
         if (foundMessage.isEmpty()) {
-            throw new Exception("Message not found");
+            throw new MessageNotFoundException();
         }
         Message message = Message.builder()
          .id(foundMessage.get().getId())

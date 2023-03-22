@@ -17,8 +17,8 @@ import org.mockito.quality.Strictness;
 import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("문의게시판 테스트")
@@ -38,7 +38,7 @@ class MessageServiceTest {
   void setUp() {
     userEmail = "user@email.com";
     message =
-        Message.builder().id(1L).userEmail(userEmail).title("Title").question("question").build();
+        Message.builder().userEmail(userEmail).title("Title").question("question").build();
   }
 
   @Test
@@ -55,13 +55,13 @@ class MessageServiceTest {
 
   @Test
   @DisplayName("관리자 - 응답하기")
-  void putMessage() throws Exception {
+  void putMessage() {
     // Given
     String adminEmail = "admin@email.com";
     String response = "response";
     AdminQuestionRequest adminQuestionRequest = new AdminQuestionRequest(1L, response);
-    given(messageRepository.findById(adminQuestionRequest.getId()))
-        .willReturn(Optional.of(message));
+    when(messageRepository.findById(adminQuestionRequest.getId()))
+        .thenReturn(Optional.of(message));
 
     // When
     messageService.putMessage(adminQuestionRequest, adminEmail);
