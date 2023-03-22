@@ -8,7 +8,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
 import java.util.List;
-@RepositoryRestResource(path = "cart-item")
+@RepositoryRestResource(path = "cart-items")
 public interface CartItemRepository extends JpaRepository<CartItem, Long> {
     CartItem findByUserEmailAndBookId(String userEmail, Long bookId);
     CartItem findByUserEmailAndId(String userEmail, Long id);

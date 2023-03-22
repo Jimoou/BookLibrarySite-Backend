@@ -6,7 +6,7 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
 import java.util.List;
 
-@RepositoryRestResource(path = "payment-history")
+@RepositoryRestResource(path = "payment-histories")
 public interface PaymentHistoryRepository extends JpaRepository<PaymentHistory, Long> {
 
   PaymentHistory findByUserEmail(String userEmail);

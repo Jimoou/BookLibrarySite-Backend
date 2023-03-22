@@ -17,14 +17,14 @@ import java.util.Map;
 @CrossOrigin("https://localhost:3000")
 @RestController
 @AllArgsConstructor
-@RequestMapping("/api/payment")
+@RequestMapping("/api/payment-histories")
 @Tag(name = "결제", description = "결제 API")
-public class PaymentController {
+public class PaymentHistoryController {
 
   private PaymentService paymentService;
 
   @Operation(summary = "결제 내역 조회")
-  @GetMapping("/secure/history")
+  @GetMapping("/secure")
   public Map<String, List<PaymentHistoryResponse>> paymentHistoryResponses(
       @RequestHeader(value = "Authorization") String token) {
     String userEmail = ExtractJWT.payloadJWTExtraction(token, "\"sub\"");
@@ -32,7 +32,7 @@ public class PaymentController {
   }
 
   @Operation(summary = "결제 승인 전 DB에 추가")
-  @PostMapping("/secure")
+  @PostMapping("/secure/addpending")
   public void addPendingPayments(
       @RequestHeader(value = "Authorization") String token,
       @RequestBody List<PendingPaymentRequest> paymentRequests) {

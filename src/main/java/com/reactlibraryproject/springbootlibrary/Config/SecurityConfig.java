@@ -23,7 +23,10 @@ public class SecurityConfig {
                                 .antMatchers("/api/books/secure/**",
                                         "/api/reviews/secure/**",
                                         "/api/messages/secure/**",
-                                        "/api/admin/secure/**")
+                                        "/api/payment-histories/secure/**",
+                                 "/api/cart-items/secure/**",
+                                 "/api/checkouts/secure/**",
+                                 "/api/checkout-histories/secure/**")
                                 .authenticated()
                                 .anyRequest().permitAll()
                 ).oauth2ResourceServer()

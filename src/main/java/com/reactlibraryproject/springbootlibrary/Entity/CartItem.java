@@ -11,6 +11,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.constraints.Email;
 
 @Entity
 @Table(name = "cart_item")
@@ -24,9 +25,13 @@ public class CartItem {
     @Column(name = "id")
     private Long id;
 
+    @Email
+    @Column(name = "user_email")
     private String userEmail;
 
+    @Column(name = "amount")
     private int amount;
 
+    @Column(name = "book_id")
     private Long bookId;
 }

@@ -19,7 +19,7 @@ import java.util.List;
 @CrossOrigin("https://localhost:3000")
 @RestController
 @AllArgsConstructor
-@RequestMapping("/api/cart")
+@RequestMapping("/api/cart-items")
 @Tag(name = "장바구니", description = "장바구니 관련 API")
 public class CartItemController {
 
