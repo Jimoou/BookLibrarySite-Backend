@@ -5,6 +5,7 @@ import com.reactlibraryproject.springbootlibrary.DAO.CartItemRepository;
 import com.reactlibraryproject.springbootlibrary.Entity.Book;
 import com.reactlibraryproject.springbootlibrary.Entity.CartItem;
 import com.reactlibraryproject.springbootlibrary.ReponseModels.CurrentCartItemResponse;
+import com.reactlibraryproject.springbootlibrary.Utils.CartItemFinder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -14,8 +15,10 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
+
 import java.util.Collections;
 import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
@@ -26,111 +29,117 @@ import static org.mockito.Mockito.verify;
 @MockitoSettings(strictness = Strictness.STRICT_STUBS)
 class CartItemServiceTest {
 
-  @InjectMocks private CartItemService cartItemService;
+    @InjectMocks
+    private CartItemService cartItemService;
 
-  public Long bookId;
+    public Long bookId;
 
-  public String userEmail;
+    public String userEmail;
 
-  public CartItem cartItem;
+    public CartItem cartItem;
 
-  public Book testBook;
+    public Book testBook;
+    @Mock
+    private CartItemFinder cartItemFinder;
 
-  @Mock private CartItemRepository cartItemRepository;
+    @Mock
+    private CartItemRepository cartItemRepository;
 
-  @Mock private BookRepository bookRepository;
+    @Mock
+    private BookRepository bookRepository;
 
-  @BeforeEach
-  void setUp() {
-    bookId = 1L;
-    userEmail = "user@email.com";
-    cartItem = CartItem.builder().id(1L).userEmail(userEmail).amount(1).bookId(1L).build();
-    testBook =
-        Book.builder()
-            .id(1L)
-            .title("Title")
-            .author("Author")
-            .description("Description")
-            .copies(1)
-            .copiesAvailable(1)
-            .category("Category")
-            .img("Image")
-            .publisher("Publisher")
-            .price(10000)
-            .coin(0)
-            .publicationDate("2023-03-18")
-            .build();
-  }
+    @BeforeEach
+    void setUp() {
+        bookId = 1L;
+        userEmail = "user@email.com";
+        cartItem = CartItem.builder().id(1L).userEmail(userEmail).amount(1).bookId(1L).build();
+        testBook =
+         Book.builder()
+          .id(1L)
+          .title("Title")
+          .author("Author")
+          .description("Description")
+          .copies(1)
+          .copiesAvailable(1)
+          .category("Category")
+          .img("Image")
+          .publisher("Publisher")
+          .price(10000)
+          .coin(0)
+          .publicationDate("2023-03-18")
+          .build();
+    }
 
-  @Test
-  @DisplayName("장바구니에 추가 테스트")
-  void addBookInCart() {
-    // Given
-    given(cartItemRepository.findByUserEmailAndBookId(userEmail, bookId)).willReturn(null);
+    @Test
+    @DisplayName("장바구니에 추가 테스트")
+    void addBookInCart() {
+        // Given
+        given(cartItemRepository.findByUserEmailAndBookId(userEmail, bookId)).willReturn(null);
 
-    // When
-    cartItemService.addBookInCart(userEmail, bookId);
+        // When
+        cartItemService.addBookInCart(userEmail, bookId);
 
-    // Then
-    verify(cartItemRepository).findByUserEmailAndBookId(userEmail, bookId);
-    verify(cartItemRepository).save(any(CartItem.class));
-  }
+        // Then
+        verify(cartItemRepository).findByUserEmailAndBookId(userEmail, bookId);
+        verify(cartItemRepository).save(any(CartItem.class));
+    }
 
-  @Test
-  @DisplayName("장바구니에서 삭제 테스트")
-  void deleteBookInCart() {
-    // Given
-    given(cartItemRepository.findByUserEmailAndId(userEmail, 1L)).willReturn(cartItem);
+    @Test
+    @DisplayName("장바구니에서 삭제 테스트")
+    void deleteBookInCart() {
+        // Given
+        given(cartItemFinder.itemFinder(userEmail, 1L)).willReturn(cartItem);
 
-    // When
-    cartItemService.deleteCartItem(userEmail, 1L);
+        // When
+        cartItemService.deleteCartItem(userEmail, 1L);
 
-    // Then
-    verify(cartItemRepository).delete(cartItem);
-  }
+        // Then
+        verify(cartItemRepository).delete(cartItem);
+    }
 
-  @Test
-  void currentCart() {
-    // Given
-    List<CartItem> cartItemList = Collections.singletonList(cartItem);
-    List<Book> booksInCart = Collections.singletonList(testBook);
-    given(cartItemRepository.findBooksByUserEmail(userEmail)).willReturn(cartItemList);
-    given(bookRepository.findBooksByBookIds(Collections.singletonList(bookId)))
-        .willReturn(booksInCart);
+    @Test
+    @DisplayName("장바구니 내역")
+    void currentCart() {
+        // Given
+        List<CartItem> cartItemList = Collections.singletonList(cartItem);
+        List<Book> booksInCart = Collections.singletonList(testBook);
+        given(cartItemRepository.findBooksByUserEmail(userEmail)).willReturn(cartItemList);
+        given(bookRepository.findBooksByBookIds(Collections.singletonList(bookId)))
+         .willReturn(booksInCart);
 
-    // When
-    List<CurrentCartItemResponse> result = cartItemService.currentCart(userEmail);
+        // When
+        List<CurrentCartItemResponse> result = cartItemService.currentCart(userEmail);
 
-    // Then
-    assertEquals(1, result.size());
-    assertEquals(testBook, result.get(0).getBook());
-    assertEquals(cartItem.getAmount(), result.get(0).getAmount());
-    assertEquals(cartItem.getId(), result.get(0).getCartItemId());
-  }
+        // Then
+        assertEquals(1, result.size());
+        assertEquals(testBook, result.get(0).getBook());
+        assertEquals(cartItem.getAmount(), result.get(0).getAmount());
+        assertEquals(cartItem.getId(), result.get(0).getCartItemId());
+    }
 
-  @Test
-  @DisplayName("장바구니 수량 테스트")
-  void increaseAmount() {
-    // Given
-    given(cartItemRepository.findByUserEmailAndId(userEmail, 1L)).willReturn(cartItem);
+    @Test
+    @DisplayName("장바구니 수량 테스트")
+    void increaseAmount() {
+        // Given
+        given(cartItemFinder.itemFinder(userEmail, 1L)).willReturn(cartItem);
 
-    // When
-    cartItemService.increaseAmount(userEmail, 1L);
+        // When
+        cartItemService.increaseAmount(userEmail, 1L);
 
-    // Then
-    assertEquals(cartItem.getAmount(), 2);
-  }
+        // Then
+        assertEquals(cartItem.getAmount(), 2);
+    }
 
-  @Test
-  @DisplayName("장바구니 수량 테스트")
-  void decreaseAmount() {
-    // Given
-    given(cartItemRepository.findByUserEmailAndId(userEmail, 1L)).willReturn(cartItem);
+    @Test
+    @DisplayName("장바구니 수량 테스트")
+    void decreaseAmount() {
+        // Given
+        given(cartItemFinder.itemFinder(userEmail, 1L)).willReturn(cartItem);
 
-    // When
-    cartItemService.decreaseAmount(userEmail, 1L);
+        // When
+        cartItemService.decreaseAmount(userEmail, 1L);
 
-    // Then
-    assertEquals(cartItem.getAmount(), 1);
-  }
+        // Then
+        assertEquals(cartItem.getAmount(), 1);
+    }
 }
