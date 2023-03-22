@@ -1,5 +1,6 @@
 package com.reactlibraryproject.springbootlibrary.Service;
 
+import com.reactlibraryproject.springbootlibrary.CustomExceptions.ReviewAlreadyCreatedException;
 import com.reactlibraryproject.springbootlibrary.DAO.ReviewRepository;
 import com.reactlibraryproject.springbootlibrary.Entity.Review;
 import com.reactlibraryproject.springbootlibrary.RequestModels.ReviewRequest;
@@ -16,10 +17,10 @@ import java.time.LocalDate;
 public class ReviewService {
     private ReviewRepository reviewRepository;
 
-    public void postReview(String userEmail, ReviewRequest reviewRequest) throws Exception {
+    public void postReview(String userEmail, ReviewRequest reviewRequest){
         Review validateReview = reviewRepository.findByUserEmailAndBookId(userEmail, reviewRequest.getBookId());
         if (validateReview != null) {
-            throw new Exception("Review already created");
+            throw new ReviewAlreadyCreatedException();
         }
         String reviewDescription = reviewRequest.getReviewDescription();
 
@@ -31,11 +32,10 @@ public class ReviewService {
          .date(Date.valueOf(LocalDate.now()))
          .build();
 
-        review.setDate(Date.valueOf(LocalDate.now()));
         reviewRepository.save(review);
     }
 
-    public boolean userReviewListed(String userEmail, Long bookId) {
+    public boolean reviewBookByUser(String userEmail, Long bookId) {
         Review validateReview = reviewRepository.findByUserEmailAndBookId(userEmail, bookId);
         return validateReview != null;
     }

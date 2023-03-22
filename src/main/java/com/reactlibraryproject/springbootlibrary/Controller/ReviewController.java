@@ -33,7 +33,7 @@ public class ReviewController {
         if (userEmail == null) {
             throw new Exception("User email is missing");
         }
-        return reviewService.userReviewListed(userEmail, bookId);
+        return reviewService.reviewBookByUser(userEmail, bookId);
 
     }
 
