@@ -1,6 +1,5 @@
 package com.reactlibraryproject.springbootlibrary.Service;
 
-import com.reactlibraryproject.springbootlibrary.DAO.BookRepository;
 import com.reactlibraryproject.springbootlibrary.DAO.ReviewRepository;
 import com.reactlibraryproject.springbootlibrary.Entity.Review;
 import com.reactlibraryproject.springbootlibrary.RequestModels.ReviewRequest;
@@ -22,8 +21,8 @@ public class ReviewService {
         if (validateReview != null) {
             throw new Exception("Review already created");
         }
-        String reviewDescription = reviewRequest.getReviewDescription()
-         .orElse("");
+        String reviewDescription = reviewRequest.getReviewDescription();
+
         Review review = Review.builder()
          .bookId(reviewRequest.getBookId())
          .rating(reviewRequest.getRating())
@@ -36,7 +35,7 @@ public class ReviewService {
         reviewRepository.save(review);
     }
 
-    public Boolean userReviewListed(String userEmail, Long bookId) {
+    public boolean userReviewListed(String userEmail, Long bookId) {
         Review validateReview = reviewRepository.findByUserEmailAndBookId(userEmail, bookId);
         return validateReview != null;
     }

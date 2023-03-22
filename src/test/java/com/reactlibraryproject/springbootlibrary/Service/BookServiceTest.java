@@ -83,10 +83,12 @@ class BookServiceTest {
 
   @Test
   @DisplayName("책 대여 테스트")
-  void checkoutBook(){
+  void checkoutBook() {
     // Given
     given(bookFinder.bookFinder(bookId)).willReturn(testBook);
-    doNothing().when(validateCheckout).validate(any(Book.class), any(String.class), any(Long.class));
+    doNothing()
+        .when(validateCheckout)
+        .validate(any(Book.class), any(String.class), any(Long.class));
 
     // When
     Book checkedOutBook = bookService.checkoutBook(userEmail, bookId);
@@ -97,9 +99,8 @@ class BookServiceTest {
 
   @Test
   @DisplayName("책 대여 여부 테스트")
-  void checkoutBookByUser(){
+  void checkoutBookByUser() {
     // Given
-
 
     // When
     boolean validate = bookService.checkoutBookByUser(userEmail, bookId);
@@ -124,7 +125,7 @@ class BookServiceTest {
 
   @Test
   @DisplayName("현재 대여중인 책 목록 테스트")
-  void currentLoans(){
+  void currentLoans() {
     // Given
     List<Checkout> checkoutList = Collections.singletonList(checkout);
     given(checkoutRepository.findBooksByUserEmail(userEmail)).willReturn(checkoutList);
@@ -151,7 +152,7 @@ class BookServiceTest {
 
   @Test
   @DisplayName("책 반납 테스트")
-  void returnBook(){
+  void returnBook() {
     // Given
     given(bookFinder.bookFinder(bookId)).willReturn(testBook);
     given(validateCheckout.validatedCheckout(userEmail, bookId)).willReturn(checkout);

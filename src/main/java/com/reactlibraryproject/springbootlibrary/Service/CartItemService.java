@@ -62,7 +62,7 @@ public class CartItemService {
                     purchaseMap.get(book.getId()).getId()))
         .collect(Collectors.toList());
   }
-  public void increaseAmount(String userEmail, Long id){
+  public void increaseAmount(String userEmail, Long id)throws CartItemNotFoundException{
     CartItem cartItem = cartItemRepository.findByUserEmailAndId(userEmail, id);
     if (cartItem == null) {
       throw new CartItemNotFoundException();

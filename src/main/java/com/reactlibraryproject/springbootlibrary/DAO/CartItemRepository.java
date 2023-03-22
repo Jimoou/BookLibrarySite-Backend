@@ -13,6 +13,8 @@ public interface CartItemRepository extends JpaRepository<CartItem, Long> {
     CartItem findByUserEmailAndBookId(String userEmail, Long bookId);
     CartItem findByUserEmailAndId(String userEmail, Long id);
 
+    CartItem deleteCartItemByUserEmailAndId(String userEmail, Long id);
+
     List<CartItem> findBooksByUserEmail(String userEmail);
 
     @Modifying
