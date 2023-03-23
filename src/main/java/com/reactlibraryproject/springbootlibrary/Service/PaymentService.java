@@ -1,7 +1,7 @@
 package com.reactlibraryproject.springbootlibrary.Service;
 
 import com.reactlibraryproject.springbootlibrary.CustomExceptions.DifferentAmountRequestException;
-import com.reactlibraryproject.springbootlibrary.CustomExceptions.PaymentResponseException;
+import com.reactlibraryproject.springbootlibrary.CustomExceptions.TossPayResponseException;
 import com.reactlibraryproject.springbootlibrary.DAO.PaymentHistoryRepository;
 import com.reactlibraryproject.springbootlibrary.Entity.Book;
 import com.reactlibraryproject.springbootlibrary.Entity.PaymentHistory;
@@ -9,6 +9,7 @@ import com.reactlibraryproject.springbootlibrary.ReponseModels.PaymentHistoryRes
 import com.reactlibraryproject.springbootlibrary.RequestModels.PendingPaymentRequest;
 import com.reactlibraryproject.springbootlibrary.RequestModels.SuccessPaymentRequest;
 import com.reactlibraryproject.springbootlibrary.Utils.BookFinder;
+import com.reactlibraryproject.springbootlibrary.Utils.TossPay;
 import lombok.AllArgsConstructor;
 import org.json.JSONObject;
 import org.springframework.http.ResponseEntity;
@@ -16,9 +17,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.List;
 import java.util.Map;
@@ -32,7 +30,6 @@ public class PaymentService {
   private PaymentHistoryRepository paymentHistoryRepository;
   private CartItemService cartItemService;
   private BookFinder bookFinder;
-  private String tossSecretKey;
 
   public Map<String, List<PaymentHistoryResponse>> paymentHistoryResponses(String userEmail) {
     List<PaymentHistory> paymentHistories =
@@ -57,39 +54,18 @@ public class PaymentService {
   public ResponseEntity<String> successPayment(
       String userEmail, SuccessPaymentRequest paymentRequests)
       throws IOException, InterruptedException {
-
-    String requestBody = createPaymentConfirmRequestBody(paymentRequests);
-
-    HttpRequest request =
-        HttpRequest.newBuilder()
-            .uri(URI.create("https://api.tosspayments.com/v1/payments/confirm"))
-            .header("Authorization", "Basic " + tossSecretKey)
-            .header("Content-Type", "application/json")
-            .method("POST", HttpRequest.BodyPublishers.ofString(requestBody))
-            .build();
-
-    HttpResponse<String> response =
-        HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
-
-    if (response.statusCode() == 200) {
-      updatePayments(userEmail, response);
+    ResponseEntity<String> response = TossPay.pay(paymentRequests);
+    if (response.getStatusCodeValue() == 200) {
+        updatePayments(userEmail, response);
     } else {
-      failPayment(userEmail);
-      throw new PaymentResponseException(response);
+        failPayment(userEmail);
+        throw new TossPayResponseException(response);
     }
-    return ResponseEntity.status(response.statusCode()).build();
+    return response;
   }
 
   public void failPayment(String userEmail) {
     paymentHistoryRepository.deleteByUserEmailAndStatusIsNull(userEmail);
-  }
-
-  private String createPaymentConfirmRequestBody(SuccessPaymentRequest paymentRequests) {
-    String paymentKey = paymentRequests.getPaymentKey();
-    String orderId = paymentRequests.getOrderId();
-    int amount = paymentRequests.getAmount();
-    return String.format(
-        "{\"paymentKey\":\"%s\",\"amount\":%d,\"orderId\":\"%s\"}", paymentKey, amount, orderId);
   }
 
   public void addPendingPayments(String userEmail, List<PendingPaymentRequest> paymentRequests) {
@@ -117,8 +93,8 @@ public class PaymentService {
     paymentHistoryRepository.save(paymentHistory);
   }
 
-  private void updatePayments(String userEmail, HttpResponse<String> response) {
-    JSONObject jsonObject = new JSONObject(response.body());
+  private void updatePayments(String userEmail, ResponseEntity<String> response) {
+    JSONObject jsonObject = new JSONObject(response.getBody());
     String paymentKey = jsonObject.getString("paymentKey");
     String orderId = jsonObject.getString("orderId");
     String paymentDate = jsonObject.getString("approvedAt");
