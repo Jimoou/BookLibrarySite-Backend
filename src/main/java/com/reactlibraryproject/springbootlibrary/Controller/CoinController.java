@@ -25,20 +25,20 @@ public class CoinController {
         return coinService.userCoins(userEmail);
     }
 
-    @Operation(summary = "코인 구매 성공")
-    @GetMapping("/secure/confirm")
-    public ResponseEntity<String> successPayment(
-     @RequestHeader(value = "Authorization") String token,
-     @RequestBody SuccessPaymentRequest paymentRequests)
-     {
-        String userEmail = ExtractJWT.payloadJWTExtraction(token, "\"sub\"");
-        return coinService.successPayment(userEmail, paymentRequests);
-    }
+//    @Operation(summary = "코인 충전 성공")
+//    @GetMapping("/secure/confirm")
+//    public ResponseEntity<String> successPayment(
+//     @RequestHeader(value = "Authorization") String token,
+//     @RequestBody SuccessPaymentRequest paymentRequests)
+//     {
+//        String userEmail = ExtractJWT.payloadJWTExtraction(token, "\"sub\"");
+//        return coinService.successPayment(userEmail);
+//    }
 
     @Operation(summary = "코인 결제")
     @PutMapping("/secure/coin-pay")
-    public void payWithCoin(@RequestHeader(value = "Authorization") String token) {
+    public void payWithCoin(@RequestHeader(value = "Authorization") String token, @RequestParam("amount") int coinsToUse) {
         String userEmail = ExtractJWT.payloadJWTExtraction(token, "\"sub\"");
-        coinService.payWithCoin(userEmail);
+        coinService.useCoin(userEmail, coinsToUse);
     }
 }
