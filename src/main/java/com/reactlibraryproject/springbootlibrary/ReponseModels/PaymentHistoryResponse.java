@@ -7,6 +7,8 @@ import lombok.Data;
 @AllArgsConstructor
 public class PaymentHistoryResponse {
 
+  private Long id;
+
   private String title;
 
   private String author;
