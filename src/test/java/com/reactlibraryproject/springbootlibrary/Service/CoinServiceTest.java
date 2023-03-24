@@ -51,14 +51,8 @@ class CoinServiceTest {
     }
 
     @Test
-    @DisplayName("코인 충전 성공 테스트")
-    void successPayment() {
-
-    }
-
-    @Test
     @DisplayName("코인으로 결제 테스트")
-    void useCoin() {
+    void useCoin() throws Exception {
         // Given
         when(coinRepository.findByUserEmail(anyString())).thenReturn(coin);
         int coinsToUse = 30;
