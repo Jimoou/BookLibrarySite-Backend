@@ -24,7 +24,7 @@ public class TossPay {
         TossPay.tossSecretKey = secretKey;
     }
 
-    public static ResponseEntity<String> pay(SuccessPaymentRequest paymentRequests) throws IOException, InterruptedException {
+    public static ResponseEntity<String> pay(SuccessPaymentRequest paymentRequests) {
         String requestBody = createPaymentConfirmRequestBody(paymentRequests);
 
         HttpRequest request =
@@ -35,9 +35,12 @@ public class TossPay {
           .method("POST", HttpRequest.BodyPublishers.ofString(requestBody))
           .build();
 
-        HttpResponse<String> response =
-         HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
-        
+        HttpResponse<String> response;
+        try {
+            response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
+        } catch (IOException | InterruptedException e) {
+            throw new RuntimeException(e);
+        }
         return ResponseEntity.status(response.statusCode()).body(response.body());
     }
 
