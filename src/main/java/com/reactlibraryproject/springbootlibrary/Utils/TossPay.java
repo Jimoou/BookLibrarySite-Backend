@@ -30,7 +30,7 @@ public class TossPay {
         HttpRequest request =
          HttpRequest.newBuilder()
           .uri(URI.create("https://api.tosspayments.com/v1/payments/confirm"))
-          .header("Authorization", "Basic " + "test")
+          .header("Authorization", "Basic " + tossSecretKey)
           .header("Content-Type", "application/json")
           .method("POST", HttpRequest.BodyPublishers.ofString(requestBody))
           .build();
