@@ -26,7 +26,7 @@ import java.util.Map;
 @AllArgsConstructor
 @RequestMapping("/api/payment-histories")
 @Tag(name = "결제", description = "결제 API")
-public class PaymentHistoryController {
+public class PaymentController {
 
     private PaymentService paymentService;
 
@@ -47,18 +47,18 @@ public class PaymentHistoryController {
         paymentService.addPendingPayments(userEmail, paymentRequests);
     }
 
-    @Operation(summary = "결제 실패시 DB에서 삭제")
+    @Operation(summary = "결제 실패 내역 삭제")
     @DeleteMapping("/secure/delete/fail")
     public void deleteFailPayment(@RequestHeader(value = "Authorization") String token) {
         String userEmail = ExtractJWT.payloadJWTExtraction(token, "\"sub\"");
-        paymentService.deleteFailPayment(userEmail);
+        paymentService.deleteFailedPayments(userEmail);
     }
 
-    @Operation(summary = "결제 승인 API 호출", description = "API 호출 후 결제 내역 업데이트")
+    @Operation(summary = "결제 승인 API 호출", description = "API 승인 후 결제 내역 업데이트")
     @PostMapping("/secure/confirm")
     public ResponseEntity<String> confirmPayment(
      @RequestHeader(value = "Authorization") String token,
-     @RequestBody SuccessPaymentRequest paymentRequests){
+     @RequestBody SuccessPaymentRequest paymentRequests) {
         String userEmail = ExtractJWT.payloadJWTExtraction(token, "\"sub\"");
         return paymentService.confirmPayment(userEmail, paymentRequests);
     }
