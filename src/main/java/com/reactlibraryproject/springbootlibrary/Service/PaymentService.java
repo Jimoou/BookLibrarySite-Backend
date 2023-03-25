@@ -29,9 +29,11 @@ public class PaymentService {
     private PaymentHistoryRepository paymentHistoryRepository;
     private CartItemService cartItemService;
     private BookFinder bookFinder;
+    private CoinService coinService;
 
+    /*도서 결제 내역*/
     public Map<String, List<PaymentHistoryResponse>> paymentHistoryResponses(String userEmail) {
-        deleteFailPayment(userEmail);
+        deleteFailedPayments(userEmail);
         List<PaymentHistory> paymentHistories =
          paymentHistoryRepository.findPaymentByUserEmail(userEmail);
         paymentHistories.sort(Comparator.comparing(PaymentHistory::getPaymentDate).reversed());
@@ -50,24 +52,36 @@ public class PaymentService {
             paymentHistory.getPrice(),
             paymentHistory.getPaymentDate(),
             paymentHistory.getOrderId()))
-         .collect(Collectors.groupingBy(PaymentHistoryResponse::getOrderId));
+         .collect(Collectors.groupingBy(PaymentHistoryResponse::getPaymentDate));
     }
 
+    /*결제 승인 API 호출 및 결과 처리*/
     public ResponseEntity<String> confirmPayment(
-     String userEmail, SuccessPaymentRequest paymentRequests){
+     String userEmail, SuccessPaymentRequest paymentRequests) {
         ResponseEntity<String> response = TossPay.pay(paymentRequests);
         if (response.getStatusCodeValue() == 200) {
-            updatePayments(userEmail, response);
+            processPaymentResponse(userEmail, paymentRequests, response);
             return ResponseEntity.status(response.getStatusCode()).body("{\"message\": \"결제에 성공했습니다\" }");
         } else {
             throw new TossPayResponseException(response);
         }
     }
 
-    public void deleteFailPayment(String userEmail) {
+    /*결제 승인 API 호출 후 결과에 따른 로직 처리*/
+    private void processPaymentResponse(String userEmail, SuccessPaymentRequest paymentRequests, ResponseEntity<String> response) {
+        if (paymentRequests.getOrderId().startsWith("coin")) {
+            coinService.coinPayment(userEmail, paymentRequests);
+        } else {
+            updatePayments(userEmail, response);
+        }
+    }
+
+    /*실패한 결제 내역 삭제*/
+    public void deleteFailedPayments(String userEmail) {
         paymentHistoryRepository.deleteByUserEmailAndStatusIsNull(userEmail);
     }
 
+    /*대기 중인 결제 추가*/
     public void addPendingPayments(String userEmail, List<PendingPaymentRequest> paymentRequests) {
         paymentRequests.forEach(
          paymentRequest -> {
@@ -76,6 +90,7 @@ public class PaymentService {
          });
     }
 
+    /*대기 중인 결제 builder*/
     private void addPendingPayment(
      String userEmail, Book book, PendingPaymentRequest paymentRequest) {
         PaymentHistory paymentHistory =
@@ -93,6 +108,7 @@ public class PaymentService {
         paymentHistoryRepository.save(paymentHistory);
     }
 
+    /*결제 승인 후 대기 중인 결제 내역 업데이트*/
     private void updatePayments(String userEmail, ResponseEntity<String> response) {
         JSONObject jsonObject = new JSONObject(response.getBody());
         String paymentKey = jsonObject.getString("paymentKey");
@@ -107,17 +123,27 @@ public class PaymentService {
         int getTotalPrice = pendingPaymentHistories.stream().mapToInt(PaymentHistory::getPrice).sum();
 
         if (responseTotalPrice == getTotalPrice) {
-            pendingPaymentHistories.forEach(
-             pendingPayment -> {
-                 pendingPayment.setPaymentKey(paymentKey);
-                 pendingPayment.setPaymentDate(paymentDate);
-                 pendingPayment.setOrderId(orderId);
-                 pendingPayment.setStatus(status);
-                 paymentHistoryRepository.save(pendingPayment);
-                 cartItemService.deleteCartItem(userEmail, pendingPayment.getCartItemId());
-             });
+            updatePendingPaymentsFromResponse(paymentKey, orderId, paymentDate, status, pendingPaymentHistories);
         } else {
             throw new DifferentAmountRequestException();
         }
+    }
+
+    /*API 응답에 따라 대기 중인 결제 내역 업데이트*/
+    private void updatePendingPaymentsFromResponse(String paymentKey, String orderId, String paymentDate, String status, List<PaymentHistory> pendingPaymentHistories) {
+        pendingPaymentHistories.forEach(
+         pendingPayment -> {
+             updatePendingPayment(paymentKey, orderId, paymentDate, status, pendingPayment);
+             paymentHistoryRepository.save(pendingPayment);
+             cartItemService.deleteCartItem(pendingPayment.getUserEmail(), pendingPayment.getCartItemId());
+         });
+    }
+
+    /*대기 중인 결제 내역 업데이트 set*/
+    private void updatePendingPayment(String paymentKey, String orderId, String paymentDate, String status, PaymentHistory pendingPayment) {
+        pendingPayment.setPaymentKey(paymentKey);
+        pendingPayment.setPaymentDate(paymentDate);
+        pendingPayment.setOrderId(orderId);
+        pendingPayment.setStatus(status);
     }
 }

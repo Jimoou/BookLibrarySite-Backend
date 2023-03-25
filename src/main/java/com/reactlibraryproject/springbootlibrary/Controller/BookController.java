@@ -1,7 +1,7 @@
 package com.reactlibraryproject.springbootlibrary.Controller;
 
 import com.reactlibraryproject.springbootlibrary.Entity.Book;
-import com.reactlibraryproject.springbootlibrary.ReponseModels.ShelfCurrentLoansResponse;
+import com.reactlibraryproject.springbootlibrary.ReponseModels.CurrentLoansResponse;
 import com.reactlibraryproject.springbootlibrary.Service.BookService;
 import com.reactlibraryproject.springbootlibrary.Utils.ExtractJWT;
 import io.swagger.v3.oas.annotations.Operation;
@@ -28,7 +28,7 @@ public class BookController {
 
     @Operation(summary = "유저의 현재 대여중인 책 목록")
     @GetMapping("/secure/currentloans")
-    public List<ShelfCurrentLoansResponse> currentLoans(@RequestHeader(value = "Authorization") String token) throws Exception {
+    public List<CurrentLoansResponse> currentLoans(@RequestHeader(value = "Authorization") String token) throws Exception {
         String userEmail = ExtractJWT.payloadJWTExtraction(token, "\"sub\"");
         return bookService.currentLoans(userEmail);
     }
@@ -49,9 +49,9 @@ public class BookController {
 
     @Operation(summary = "책 대여")
     @PutMapping("/secure/checkout")
-    public Book checkoutBook(@RequestHeader(value = "Authorization") String token, @RequestParam Long bookId) throws Exception {
+    public Book checkoutBook(@RequestHeader(value = "Authorization") String token, @RequestParam Long bookId, @RequestParam int amount){
         String userEmail = ExtractJWT.payloadJWTExtraction(token, "\"sub\"");
-        return bookService.checkoutBook(userEmail, bookId);
+        return bookService.checkoutBook(userEmail, bookId, amount);
     }
 
     @Operation(summary = "책 반납")

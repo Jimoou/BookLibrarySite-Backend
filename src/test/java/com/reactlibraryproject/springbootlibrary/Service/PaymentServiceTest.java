@@ -90,7 +90,7 @@ class PaymentServiceTest {
     String userEmail = "user@email.com";
 
     // When
-    paymentService.failPayment(userEmail);
+    paymentService.deleteFailedPayments(userEmail);
 
     // Then
     verify(paymentHistoryRepository, times(1)).deleteByUserEmailAndStatusIsNull(userEmail);

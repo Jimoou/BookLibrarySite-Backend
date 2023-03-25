@@ -17,10 +17,8 @@ public class ValidateCheckout {
   public void validate(Book book, String userEmail, Long bookId) {
     if (checkoutBookByUser(userEmail, bookId)) {
       throw new AlreadyCheckedOutException();
-    } else if (checkoutAvailable(book)) {
+    } else if (!checkoutAvailable(book)) {
       throw new CopiesAvailableException();
-    } else {
-      throw new NotCheckedOutException();
     }
   }
 

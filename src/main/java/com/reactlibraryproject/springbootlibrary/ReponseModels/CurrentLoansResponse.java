@@ -6,7 +6,7 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class ShelfCurrentLoansResponse {
+public class CurrentLoansResponse {
     private Book book;
     private int daysLeft;
 }
