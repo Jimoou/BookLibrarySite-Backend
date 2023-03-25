@@ -1,7 +1,10 @@
 package com.reactlibraryproject.springbootlibrary.Service;
 
+import com.reactlibraryproject.springbootlibrary.DAO.CoinChargingHistoryRepository;
 import com.reactlibraryproject.springbootlibrary.DAO.CoinRepository;
 import com.reactlibraryproject.springbootlibrary.Entity.Coin;
+import com.reactlibraryproject.springbootlibrary.Entity.CoinChargingHistory;
+import com.reactlibraryproject.springbootlibrary.ReponseModels.CoinChargingHistoryResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -11,6 +14,9 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
+
+import java.util.Collections;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -25,8 +31,13 @@ class CoinServiceTest {
 
     public Coin coin;
 
+    public List<CoinChargingHistory> coinHistories;
+
     @Mock
     private CoinRepository coinRepository;
+
+    @Mock
+    private CoinChargingHistoryRepository coinChargingHistoryRepository;
 
     @BeforeEach
     void setUp() {
@@ -35,6 +46,16 @@ class CoinServiceTest {
          .userEmail("user@email.com")
          .amount(100)
          .build();
+        CoinChargingHistory coinChargingHistory = CoinChargingHistory.builder()
+         .price(10000)
+         .userEmail("user@email.com")
+         .amount(100)
+         .paymentKey("paymentKey")
+         .paymentDate("2023-03-24")
+         .orderId("orderId")
+         .status("DONE")
+         .build();
+        coinHistories = Collections.singletonList(coinChargingHistory);
     }
 
     @Test
@@ -50,17 +71,18 @@ class CoinServiceTest {
         assertEquals(100, userCoins);
     }
 
+
     @Test
-    @DisplayName("코인으로 결제 테스트")
-    void useCoin() throws Exception {
-        // Given
-        when(coinRepository.findByUserEmail(anyString())).thenReturn(coin);
-        int coinsToUse = 30;
+    @DisplayName("코인 충전 내역 테스트")
+    void coinHistories() {
+        //Given
+        when(coinChargingHistoryRepository.findByUserEmail(anyString())).thenReturn(coinHistories);
 
-        // When
-        coinService.useCoin(coin.getUserEmail(), coinsToUse);
+        //When
+        List<CoinChargingHistoryResponse> historyResponseList = coinService.getCoinChargingHistory(anyString());
 
-        // Then
-        assertEquals(coin.getAmount(), 70);
+        //Then
+        assertEquals(1, historyResponseList.size());
     }
+
 }
