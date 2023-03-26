@@ -26,7 +26,10 @@ public class SecurityConfig {
                                         "/api/payment-histories/secure/**",
                                  "/api/cart-items/secure/**",
                                  "/api/checkouts/secure/**",
-                                 "/api/checkout-histories/secure/**")
+                                 "/api/checkout-histories/secure/**",
+                                 "/api/coins/secure/**",
+                                 "/api/coin-using-histories/secure/**",
+                                 "/api/coin-chargin-histories/secure/**")
                                 .authenticated()
                                 .anyRequest().permitAll()
                 ).oauth2ResourceServer()
