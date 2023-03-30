@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-@CrossOrigin("https://localhost:3000")
+@CrossOrigin("https://springboot-library-add4e.web.app/")
 @RestController
 @AllArgsConstructor
 @RequestMapping("/api/coins")
