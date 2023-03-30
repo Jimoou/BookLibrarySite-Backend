@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@CrossOrigin("https://localhost:3000")
+@CrossOrigin("https://springboot-library-add4e.web.app/")
 @RestController
 @AllArgsConstructor
 @RequestMapping("/api/messages")

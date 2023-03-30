@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 import java.util.Map;
 
-@CrossOrigin("https://localhost:3000")
+@CrossOrigin("https://springboot-library-add4e.web.app/")
 @RestController
 @AllArgsConstructor
 @RequestMapping("/api/payment-histories")
